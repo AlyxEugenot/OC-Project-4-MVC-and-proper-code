@@ -1,0 +1,18 @@
+{
+    "files.exclude": {
+        "**/__pycache__": true
+    },
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${workspaceFolder}/tests;${workspaceFolder}/src",
+        "jupyter.notebookFileRoot": "${workspaceFolder}/src"
+    },
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "${workspaceFolder}/tests:${workspaceFolder}/src",
+        "jupyter.notebookFileRoot": "${workspaceFolder}/src"
+    },
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.terminal.activateEnvironment": true,
+    "editor.rulers": [100],
+    "autoDocstring.docstringFormat": "google",
+}
