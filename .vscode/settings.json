@@ -13,6 +13,6 @@
     },
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.terminal.activateEnvironment": true,
-    "editor.rulers": [100],
+    "editor.rulers": [80],
     "autoDocstring.docstringFormat": "google",
 }
