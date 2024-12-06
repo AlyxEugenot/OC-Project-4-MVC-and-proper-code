@@ -104,6 +104,27 @@ class Address:
         self.postcode = postcode
         self.country_name = country_name
 
+    def __str__(self):
+        """str method. Address formatted.
+
+        Returns:
+            str: Address formatted.
+        """
+        complete_address = [
+            self.addressee_id,
+            self.delivery_point,
+            self.additional_geo_info,
+            self.house_nb_street_name,
+            self.additional_delivery_info,
+            self.postcode,
+            self.country_name,
+        ]
+        filled_address = []
+        for element in complete_address:
+            if element != "" or element is None:
+                filled_address.append(element)
+        return "\n".join(filled_address)
+
 
 class Tournament:
     """Tournament class. Tournaments are split in multiple rounds."""
@@ -137,7 +158,7 @@ class Tournament:
         self.rounds_amount = rounds_amount
         if description is None:
             self.description = f"Tournament {name} at {localization.postcode}\
-                the {datetime.date.today()}."
+                the {self.start_date}."
         else:
             self.description = description
 

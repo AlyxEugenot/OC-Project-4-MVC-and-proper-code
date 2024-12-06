@@ -2,6 +2,7 @@
 
 import models.model as model
 import random
+import numpy.random as nprand
 import string
 import datetime
 
@@ -22,11 +23,11 @@ def generate_players(amount: int = 4) -> list[model.Player]:
         player = model.Player(
             id=generate_specific_str("AANNNNN"),
             first_name=generate_specific_str("Cvacv"),
-            last_name=generate_str(max_len=8),
+            last_name=generate_str().title(),
             birth_date=datetime.date(
-                random.randrange(1970, 2022),
-                random.randrange(1, 12),
-                random.randrange(1, 31),
+                random.randint(1970, 2022),
+                random.randint(1, 12),
+                random.randint(1, 28),
             ),
             elo=random.randint(150, 2000),
         )
@@ -35,12 +36,39 @@ def generate_players(amount: int = 4) -> list[model.Player]:
     return new_players
 
 
-def generate_str(min_len: int = 3, max_len: int = 12) -> str:
+def generate_address(person_name: str) -> model.Address:
+    """Generates random address.
+
+    Returns:
+        model.Address: Random address.
+    """
+    addressee_id = f"{random.choice(["Mr","Mme","Mx"])}. {person_name}"
+    delivery_point = f"{nprand.choice(
+        a=["", 
+            f"Appartement {random.randint(1,50)}", 
+            f"Escalier {random.choice("ABCDE")}",
+            f"Chambre {random.randint(1,50)}"
+            ],
+        p=[.3,.3,.3,.1]
+        )}"
+    house_nb_street_name = f"{random.randint(1,250)} {nprand.choice(
+            a=["Rue", "Avenue","Place","Parvis"],
+            p=[.45,.35,.15,.05]
+        )} {nprand.choice(["","Bis","Ter"],p=[.7,.2,.1])} {" ".join(
+            [generate_str(2,6) for i in range(random.randint(1,4))]
+            ).title()}"
+    postcode = f"{generate_specific_str("nnnnn")} {generate_str().upper()}"
+
+    result = model.Address(addressee_id, delivery_point, house_nb_street_name, postcode)
+    return result
+
+
+def generate_str(min_len: int = 3, max_len: int = 8) -> str:
     """Generates any string.
 
     Args:
         min_len (int, optional): String's minimum length. Defaults to 3.
-        max_len (int, optional): String's maximum length. Defaults to 12.
+        max_len (int, optional): String's maximum length. Defaults to 8.
 
     Returns:
         str: String generated.
@@ -51,7 +79,7 @@ def generate_str(min_len: int = 3, max_len: int = 12) -> str:
 
 
 def generate_specific_str(model: str) -> str:
-    """Generates specific str from model in argument.
+    """Generates specific str from model in argument. Same length and 
     c=consonnant, v=vowel, n=number, any=letter. 
     Upper and lower stay as is.
 
@@ -74,10 +102,10 @@ def generate_specific_str(model: str) -> str:
             c = random.choice(string.ascii_lowercase)
 
         if type(c) is int:
-            chars.append(str(c))
+            c = str(c)
         elif char.isupper():
-            chars.append(c.upper())
-        else:
-            chars.append(c)
+            c = c.upper()
+
+        chars.append(c)
 
     return "".join(chars)
