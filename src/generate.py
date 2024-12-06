@@ -9,6 +9,21 @@ import datetime
 VOWEL, CONSONNANT = ("aeiouy"), ("bcdfghjklmnpqrstvwxz")
 
 
+def test_input(
+    generation: callable, occurences: int = 20, in_between_character: str = ""
+):
+    """Prints in console *occurences* number of *generation* generated str.
+
+    Args:
+        generation (callable): Function used to generate str. (can be lambda)
+        occurences (int, optional): Number of inputs in console. Defaults to 20.
+        in_between_character (str, optional): Character between inputs.\
+            (can be \\n). Defaults to "".
+    """
+    for i in range(occurences):
+        print(f"{in_between_character}{generation()}")
+
+
 def generate_players(amount: int = 4) -> list[model.Player]:
     """Generates *amount* number of random players.
 
@@ -36,12 +51,18 @@ def generate_players(amount: int = 4) -> list[model.Player]:
     return new_players
 
 
-def generate_address(person_name: str) -> model.Address:
+def generate_address(person_name: str = None) -> model.Address:
     """Generates random address.
+
+    Args:
+        person_name (str, optional): Name of the person the address is for.\
+            Automatically generated if None. Defaults to None.
 
     Returns:
         model.Address: Random address.
     """
+    if person_name is None:
+        person_name = str(generate_players(1)[0])
     addressee_id = f"{random.choice(["Mr","Mme","Mx"])}. {person_name}"
     delivery_point = f"{nprand.choice(
         a=["", 
