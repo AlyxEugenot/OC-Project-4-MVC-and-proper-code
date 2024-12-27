@@ -3,6 +3,8 @@ import datetime
 import re
 import random
 
+# import generate
+
 
 class Player:
     """Player Class."""
@@ -133,11 +135,10 @@ class Tournament:
         self,
         id: int,
         name: str,
-        players: list[Player, int],
+        players: list[Player],
         localization: Address,
         rounds_amount: int = 4,
-        *,
-        description: str,
+        description: str = "",
     ):
         """Tournament init.
 
@@ -153,18 +154,30 @@ class Tournament:
         """
         self.id = id
         self.name = name
-        self.players = players
+        self.players = [[player,0] for player in players]
+        self.rounds = []
         self.localization = localization
         self.rounds_amount = rounds_amount
-        if description is None:
-            self.description = f"Tournament {name} at {localization.postcode}\
-                the {self.start_date}."
+
+        self.start_time = None
+        self.end_time = None
+
+        if description == "":
+            self.description = (
+                f"Tournament {name} at {localization.postcode}"
+                f"the {self.start_time}."
+            )
         else:
             self.description = description
 
-        self.start_date = datetime.date.today()
-        self.end_date = None
-        self.round_list = []
+    def add_player(self, player:Player):
+        self.players.append([player,0])
+
+    def start_tournament(self):
+        self.start_time = datetime.datetime.now()
+
+    def end_tournament(self):
+        self.end_time = datetime.datetime.now()
 
     def __str__(self):
         """str method. Returns tournament's name.
@@ -242,7 +255,7 @@ class Round:
 class Match:
     """Match class. Used to keep track of match results."""
 
-    def __init__(self, id: int, parent_round: Round, players: list[Player, int]):
+    def __init__(self, id: int, parent_round: Round, players: list[Player]):
         """Match init.
 
         Args:
