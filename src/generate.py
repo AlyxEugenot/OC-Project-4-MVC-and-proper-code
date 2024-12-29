@@ -9,7 +9,7 @@ import datetime
 VOWEL, CONSONNANT = ("aeiouy"), ("bcdfghjklmnpqrstvwxz")
 
 
-def test_input(
+def test_input(  # FIXME should be elsewhere
     generation: callable, occurences: int = 20, in_between_character: str = ""
 ):
     """Prints in console *occurences* number of *generation* generated str.
@@ -130,3 +130,10 @@ def generate_specific_str(model: str) -> str:
         chars.append(c)
 
     return "".join(chars)
+
+
+def is_empty_string(string_to_test: str) -> bool:  # FIXME should be elsewhere
+    if string_to_test == "" or string_to_test is None:
+        return True
+    else:
+        return False

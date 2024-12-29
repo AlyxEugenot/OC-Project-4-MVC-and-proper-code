@@ -5,11 +5,9 @@
     "terminal.integrated.defaultProfile.windows": "Command Prompt",
     "terminal.integrated.env.windows": {
         "PYTHONPATH": "${workspaceFolder}/tests;${workspaceFolder}/src",
-        "jupyter.notebookFileRoot": "${workspaceFolder}/src"
     },
     "terminal.integrated.env.linux": {
         "PYTHONPATH": "${workspaceFolder}/tests:${workspaceFolder}/src",
-        "jupyter.notebookFileRoot": "${workspaceFolder}/src"
     },
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.terminal.activateEnvironment": true,
