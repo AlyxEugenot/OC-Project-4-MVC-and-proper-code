@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 import datetime
-from models.model import Player, Tournament, Round, Match, Address
+from model import Player, Tournament, Round, Match, Address
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 SAVED_DATA_PATH = PROJECT_ROOT / "data" / "data.json"
@@ -114,6 +114,7 @@ def player_to_json(player: Player) -> dict:
 
 def player_from_id(player_id: str) -> Player:
     """Return Player object from json through id.
+    Return None if ID not found.
 
     Args:
         player_id (str): Player ID (format AB12345)
@@ -121,7 +122,10 @@ def player_from_id(player_id: str) -> Player:
     Returns:
         Player: Player object
     """
-    json_ref = load_data()[PLAYERS][player_id]
+    try:
+        json_ref = load_data()[PLAYERS][player_id]
+    except KeyError:
+        return None
     player = Player(
         id=player_id,
         first_name=json_ref["first_name"],
@@ -210,6 +214,7 @@ def tournament_to_json(tournament: Tournament) -> dict:
 
 def tournament_from_id(tournament_id: str) -> Tournament:
     """Return Tournament object from json through id.
+    Return None if ID not found.
 
     Args:
         tournament_id (str): Tournament ID
@@ -217,7 +222,10 @@ def tournament_from_id(tournament_id: str) -> Tournament:
     Returns:
         Tournament: Tournament object
     """
-    json_ref = load_data()[TOURNAMENTS][tournament_id]
+    try:
+        json_ref = load_data()[TOURNAMENTS][tournament_id]
+    except KeyError:
+        return None
     tournament = Tournament(
         id=tournament_id,
         name=json_ref["name"],
@@ -263,6 +271,7 @@ def round_to_json(round: Round) -> dict:
 
 def round_from_id(round_id: str) -> Round:
     """Return Round object from json through id.
+    Return None if ID not found.
 
     Args:
         round_id (str): Round ID
@@ -270,7 +279,10 @@ def round_from_id(round_id: str) -> Round:
     Returns:
         Round: Round object
     """
-    json_ref = load_data()[ROUNDS][round_id]
+    try:
+        json_ref = load_data()[ROUNDS][round_id]
+    except KeyError:
+        return None
     this_round = Round(
         id=round_id,
         name=json_ref["name"],
@@ -312,6 +324,7 @@ def match_to_json(match: Match) -> dict:
 
 def match_from_id(match_id: str) -> Match:
     """Return Match object from json through id.
+    Return None if ID not found.
 
     Args:
         match_id (str): Match ID
@@ -319,7 +332,10 @@ def match_from_id(match_id: str) -> Match:
     Returns:
         Match: Match object
     """
-    json_ref = load_data()[MATCHES][match_id]
+    try:
+        json_ref = load_data()[MATCHES][match_id]
+    except KeyError:
+        return None
     this_match = Match(
         id=match_id,
         parent_round=round_from_id(json_ref["parent_round"]),
@@ -336,8 +352,8 @@ def match_from_id(match_id: str) -> Match:
 
 
 def datetime_to_str(date: datetime.datetime, timespec: str = "seconds") -> str:
-    """Return datetime or date to isoformat. 
-    
+    """Return datetime or date to isoformat.
+
     Return None if date is None, to let empty data stay empty.
 
     Args:
