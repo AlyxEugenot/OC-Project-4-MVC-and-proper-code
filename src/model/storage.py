@@ -122,10 +122,12 @@ def player_from_id(player_id: str) -> Player:
     Returns:
         Player: Player object
     """
-    try:
-        json_ref = load_data()[PLAYERS][player_id]
-    except KeyError:
+    data = load_data()
+    if PLAYERS not in data:
+        raise LookupError
+    if player_id not in data[PLAYERS]:
         return None
+    json_ref = data[PLAYERS][player_id]
     player = Player(
         id=player_id,
         first_name=json_ref["first_name"],
@@ -222,10 +224,12 @@ def tournament_from_id(tournament_id: str) -> Tournament:
     Returns:
         Tournament: Tournament object
     """
-    try:
-        json_ref = load_data()[TOURNAMENTS][tournament_id]
-    except KeyError:
+    data = load_data()
+    if TOURNAMENTS not in data:
+        raise LookupError
+    if tournament_id not in data[TOURNAMENTS]:
         return None
+    json_ref = data[TOURNAMENTS][tournament_id]
     tournament = Tournament(
         id=tournament_id,
         name=json_ref["name"],
@@ -279,10 +283,12 @@ def round_from_id(round_id: str) -> Round:
     Returns:
         Round: Round object
     """
-    try:
-        json_ref = load_data()[ROUNDS][round_id]
-    except KeyError:
+    data = load_data()
+    if ROUNDS not in data:
+        raise LookupError
+    if round_id not in data[ROUNDS]:
         return None
+    json_ref = data[ROUNDS][round_id]
     this_round = Round(
         id=round_id,
         name=json_ref["name"],
@@ -332,10 +338,12 @@ def match_from_id(match_id: str) -> Match:
     Returns:
         Match: Match object
     """
-    try:
-        json_ref = load_data()[MATCHES][match_id]
-    except KeyError:
+    data = load_data()
+    if MATCHES not in data:
+        raise LookupError
+    if match_id not in data[MATCHES]:
         return None
+    json_ref = data[MATCHES][match_id]
     this_match = Match(
         id=match_id,
         parent_round=round_from_id(json_ref["parent_round"]),

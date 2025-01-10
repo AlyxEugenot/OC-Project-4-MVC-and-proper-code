@@ -1,6 +1,6 @@
 """Some tools to generate random elements."""
 
-import models.model as model
+import model
 import random
 import numpy.random as nprand
 import string
