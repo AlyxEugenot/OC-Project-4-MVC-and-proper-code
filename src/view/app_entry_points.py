@@ -1,7 +1,7 @@
 import click
-import controller.mainMenu
+import src.controller.menus.mainMenu
 
 
 @click.command()
 def start_app():
-    controller.mainMenu.main_menu()
+    src.controller.menus.mainMenu.main_menu()

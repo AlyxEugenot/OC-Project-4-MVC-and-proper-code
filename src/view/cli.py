@@ -1,44 +1,18 @@
+# TODO delete this whole file probably or is this just the "View"?
 import click
+from controller.controller import Controller
+from src.view.inputs import Inputs
+from src.view.style import Style
+
 
 
 class View:  # parent of all views ?
-    quitapp = False
-
-    def main(self):
-        while not self.quitapp:
-            self.cli()
-
-    @click.group()
-    def cli():
-        pass
-
-    def quit(self):
-        self.quitapp = True
-
-    @click.command(name="b")
-    def back(self):
-        pass
-
-
-@click.command()
-@click.argument("name")
-@click.option("--greeting", "-g", default="Bonjour")
-def hello_world(name, greeting):
-    click.secho("{}, {}".format(greeting, name), fg="blue", bg="white")
-
-
-@click.command()
-@click.argument("end_arg")
-@click.option(
-    "--same_wording",
-    "-g",
-    "-other_option_for_same_wording_param",
-)
-def func(end_arg, same_wording):
-    click.echo(f"{same_wording}, {end_arg}")
-
+    def __init__(self, controller: Controller=None):
+        self.controller = controller
+        self.inputs = Inputs()
+        self.style = Style()
+        
 
 if __name__ == "__main__":
-    _view = View
-    _view.main()
-    
+    _view = View()
+    _view.inputs.ask_prompt

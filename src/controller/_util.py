@@ -4,7 +4,7 @@ import view
 import model
 import generate
 
-class _util:
+class util:
     
 
     def ask_address(self, intro: str) -> model.Address:
