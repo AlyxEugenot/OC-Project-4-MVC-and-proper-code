@@ -1,9 +1,9 @@
 """Docstring to come"""  # TODO
 
-from view import View
-import model
-import generate
-import src.controller.menus.mainMenu as mainMenu
+# from view import View
+# import model
+# import generate
+from src.controller.menus.mainMenu import MainMenu
 from menuManager import MenuManager
 
 
@@ -73,27 +73,27 @@ print(a_instance.b_instance.access_a_value())  # Output: 42
 
 
 class Controller:
-    def __init__(self, view: View):
+    def __init__(self):#, view: View):
         self.quitapp = False
-        self.menu_handler = MenuManager(self,mainMenu)
-        self.view = view
-        self.view.controller=self
+        self.menu_handler: MenuManager = None
+        # self.view = view
 
     def quit(self):
+        # self.menu_handler.current_menu.text_obj.prefix_all_str("Quitting...")
         self.quitapp = True
         # sys.exit(0)
 
     def run(self):
         while self.quitapp is False:
             self.menu_handler.current_menu.work()
-        
+
     def start(self):
-        while self.quitapp is False:
-            mainMenu.main_menu()
+        self.menu_handler = MenuManager(self, MainMenu(self))
+        self.run()
 
 
 if __name__ == "__main__":
-    app = Controller(view=View)
+    app = Controller()
     app.start()
     # créer/lancer un tournoi
     # créer/lancer un round
