@@ -1,50 +1,16 @@
-import controller
 # from view.texts import Text
-from menus._menu import Menu
+from typing import TYPE_CHECKING
 
-# TODO je viens d'enlever les options aux textes (j'organisais ce qui s'affichait ou non là-bas)
-# TODO à la place, je vais faire ce travail dans le controller
-
-# TODO il faut que je commence à écrire vraiment comment afficher et utiliser le menu principal
-# TODO pour savoir par quelle fonction et à quel endroit du programme accéder aux données
-#      (et où on gère "l'affichage selon")
-# TODO donc j'utilise et je décide comment les utiliser
-# TODO Les endroits sont:
-#  - ici
-#  - controller.py
-#  - texts (avec options)
-# a
-
-
-class Choice:
-    def __init__(
-        self,
-        default_order: int,
-        description: str,
-        menu: Menu,
-        display_condition: bool = True,
-    ):
-        self.default_order = default_order
-        self.desciption = description
-        self.menu = menu
-        self.display_condition = display_condition
-
-
-class Arborescence:
-    def __init__(self, menus: tuple[Menu]):
-        self.menus = menus
-
-    def go_back(self) -> Menu:
-        return self.menus[-2]
-
-    def go_root(self) -> Menu:
-        return self.menus[0]
+if TYPE_CHECKING:
+    from .menus import Menu, Arborescence
+if TYPE_CHECKING:
+    from controller import Controller
 
 
 class MenuManager:
-    def __init__(self, controller: controller.Controller, menu: Menu):
+    def __init__(self, controller: "Controller", menu: "Menu"):
         self.controller = controller
-        self.current_menu:Menu = menu
+        self.current_menu:"Menu" = menu
         self.current_menu.controller = self.controller
 
     def input_handling(self, input: str):
@@ -56,9 +22,10 @@ class MenuManager:
             if menu is not None:
                 self.current_menu = menu
             else:
-                self.current_menu.text_obj.prefix_all_str(f"Wrong input")
+                # self.current_menu.text_obj.prefix_all_str(f"Wrong input")
+                pass
 
-    def get_current_arborescence(self) -> Arborescence:
+    def get_current_arborescence(self) -> "Arborescence":
         return self.current_menu.arborescence
 
     def regular_inputs(self, which_input):

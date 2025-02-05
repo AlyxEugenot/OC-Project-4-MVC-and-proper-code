@@ -1,38 +1,28 @@
-class Option:
-    def __init__(
-        self, command_handle:str, description: str, display_condition: function = None
-    ):
-        self.command_handle = command_handle
-        self.description = description
-        self.display_condition = display_condition
+# class Option:
+#     def __init__(
+#         self, command_handle:str, description: str, display_condition: callable = None
+#     ):
+#         self.command_handle = command_handle
+#         self.description = description
+#         self.display_condition = display_condition
 
 
+# FIXME
+# FIXME text was a way to write and stock all texts here and get them later elsewhere
+# FIXME BUT it will be the class that handles text writing (text written elsewhere) and not just a text container
+# FIXME SO will be called from the View and not Controller
+# FIXME
 class Text:
     def __init__(
         self,
         *,
         title: str = "/!\\ Title missing.",
         paragraph: str = "/!\\ Paragraph missing.",
-        options: list[Option] = "/!\\ Options missing."
+        # options: list[Option] = "/!\\ Options missing."
     ):
         self.title = title
         self.paragraph = paragraph
-        self.options = self.organize_options(options)
+        # self.options = self.organize_options(options)
 
-
-
-class MainMenu(Text):
-    def __init__(self, display_continue_tournament_condition: function):
-        title = """Main menu:"""
-        options = [######################################
-            Option(
-                1,
-                "Continuer le tournoi précédent",
-                display_continue_tournament_condition,
-            ),
-            Option(2, "Créer un nouveau tournoi"),
-            Option(3, "Ajouter de nouveaux joueurs"),
-            Option(4, "Consulter les rapports"),
-        ] ##################################################
-        
-        super().__init__(title=title, options=options)
+    def func_for_all_texts(self, paragraph: str):
+        pass

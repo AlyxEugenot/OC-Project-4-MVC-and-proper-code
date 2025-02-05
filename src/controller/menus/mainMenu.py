@@ -1,13 +1,13 @@
-import controller.controller
 # import view
-import controller
 # import view.texts
-from _menu import Menu
-from menuManager import Choice
+from ._menu import Menu, Choice
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    import controller
 
 class MainMenu(Menu):
-    def __init__(self, controller: controller.Controller):
+    def __init__(self, controller: "controller.Controller"):
         display_continue_tournament_condition = self.display_continue_tournament_bool()
         choices = [
             Choice(
@@ -23,9 +23,9 @@ class MainMenu(Menu):
             Choice(default_order=4, description="Consulter les rapports", menu=None),
         ]
         super().__init__(
-            text_obj=None,#FIXME view.texts.MainMenu,
+            title="Main Menu",
             choices=choices,
-            previous_menu=None,
+            previous_menu=MainMenu, # override in next step, this is too avoid error
         )
         self.arborescence = [MainMenu]
         self.controller = controller
