@@ -25,7 +25,7 @@ class MainMenu(Menu):
         super().__init__(
             title="Main Menu",
             choices=choices,
-            previous_menu=MainMenu, # override in next step, this is too avoid error
+            previous_menu=None, # override in next step, this is too avoid error
         )
         self.arborescence = [MainMenu]
         self.controller = controller

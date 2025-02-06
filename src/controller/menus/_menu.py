@@ -65,9 +65,10 @@ class Menu(ABC):
         self.text_collection = text_collection
         self.choices = choices
         self.organize_choices(choices)
-        self.arborescence = Arborescence([previous_menu.arborescence, Self])
-        self.controller: "Controller" = previous_menu.controller
         self.loop_by_default = loop_by_default
+        if previous_menu is not None: # for first menu
+            self.arborescence = Arborescence([previous_menu.arborescence, Self])
+            self.controller: "Controller" = previous_menu.controller
 
     def organize_choices(self, choices: list[Choice]) -> list[Choice]:
         remaining_choices = []
