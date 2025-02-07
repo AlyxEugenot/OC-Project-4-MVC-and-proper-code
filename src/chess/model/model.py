@@ -1,4 +1,6 @@
 # TODO insert docstring when classes are more fleshed out.
+__all__ = ["Player","Address","Tournament","Round","Match"]
+
 import datetime
 import re
 import random

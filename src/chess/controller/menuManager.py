@@ -13,18 +13,6 @@ class MenuManager:
         self.current_menu:"Menu" = menu
         self.current_menu.controller = self.controller
 
-    def input_handling(self, input: str):
-        output = self.regular_inputs(input)
-        if output is not None:
-            return
-        else:
-            menu = self.current_menu.resolve_input(input)
-            if menu is not None:
-                self.current_menu = menu
-            else:
-                # self.current_menu.text_obj.prefix_all_str(f"Wrong input")
-                pass
-
     def get_current_arborescence(self) -> "Arborescence":
         return self.current_menu.arborescence
 

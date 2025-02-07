@@ -1,10 +1,10 @@
 """Docstring to come"""  # TODO
 
-# from view import View
 # import model
 # import generate
-from .menus import MainMenu
-from .menuManager import MenuManager
+from chess.controller.menus import MainMenu
+from chess.controller.menuManager import MenuManager
+from chess.view import View
 
 
 # region GPT
@@ -73,10 +73,10 @@ from .menuManager import MenuManager
 
 
 class Controller:
-    def __init__(self):#, view: View): #FIXME ajouter la view quand j'aurai réglé les problèmes
+    def __init__(self, view: View):
         self.quitapp = False
         self.menu_handler: MenuManager = None
-        # self.view = view
+        self.view = view
 
     def quit(self):
         # self.menu_handler.current_menu.text_obj.prefix_all_str("Quitting...")
@@ -85,16 +85,24 @@ class Controller:
 
     def run(self):
         while self.quitapp is False:
-            self.menu_handler.current_menu.work()
+            self.menu_handler.current_menu.loop()
+            
+            self.menu_handler.current_menu = (
+                self.menu_handler.current_menu.arborescence.go_back()(self)
+            )
 
     def start(self):
         self.menu_handler = MenuManager(self, MainMenu(self))
         self.run()
 
 
-if __name__ == "__main__":
-    app = Controller()
+def execute_program():
+    app = Controller(view=View())
     app.start()
     # créer/lancer un tournoi
     # créer/lancer un round
     # "créer" un match
+
+
+if __name__ == "__main__":
+    execute_program()

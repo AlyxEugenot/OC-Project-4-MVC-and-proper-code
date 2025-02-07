@@ -3,7 +3,7 @@ from typing import Self
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from controller.controller import Controller
+    from chess import Controller, View
 
 
 # TODO je viens d'enlever les options aux textes (j'organisais ce qui s'affichait ou non là-bas)
@@ -23,17 +23,23 @@ if TYPE_CHECKING:
 class Choice:
     def __init__(
         self,
-        default_order: int,
-        description: str,
-        menu: "Menu",
+        default_order: int=1,
+        description: str="Description",
+        invoke: callable = None,
+        # menu: "Menu" = None,
         display_condition: bool = True,
     ):
         self.default_order = default_order
         self.desciption = description
-        self.menu = menu
+        self.invoke = invoke
+        # self.menu = menu
         self.display_condition = display_condition
-    
+
+    def __str__(self):
+        return f"{self.default_order} > {self.desciption}"
+
     def __repr__(self):
+        return str(self)
         return f"{self.default_order} > {self.menu} : {self.desciption}"
 
 
@@ -42,7 +48,10 @@ class Arborescence:
         self.menus = menus
 
     def go_back(self) -> "Menu":
-        return self.menus[-2]
+        if len(self.menus) > 1:
+            return self.menus[-2]#(self) #FIXME test
+        else:
+            return self.menus[0]
 
     def go_root(self) -> "Menu":
         return self.menus[0]
@@ -52,25 +61,26 @@ class Menu(ABC):
     def __init__(
         self,
         previous_menu: Self,
-        choices: tuple[Choice],
-        title:str,
-        # text_collection va probablement devenir un dict qui contient 
-        # 1 - paragraph
-        # 2 - choices
-        # 3 - les inputs (OU au choix entre choices et inputs OU input est un choices en 1)
-        text_collection : dict[str:str]={"paragraph":"/!\\ not implemented"}, 
-        loop_by_default:bool=True
+        title: str,
+        text_items: dict[str : tuple[str, tuple[Choice]]] = {
+            "paragraph": ["/!\\ not implemented", Choice(1, "choice not implemented")]
+        },
+        loop_item_by_default: bool = True,
     ):
         self.title = title
-        self.text_collection = text_collection
-        self.choices = choices
-        self.organize_choices(choices)
-        self.loop_by_default = loop_by_default
-        if previous_menu is not None: # for first menu
-            self.arborescence = Arborescence([previous_menu.arborescence, Self])
-            self.controller: "Controller" = previous_menu.controller
+        self.loop_item_by_default = loop_item_by_default
+        self.text_items = text_items
+        for key, item in self.text_items.items():
+            self.text_items[key][1] = self.organize_choices(item[1])
 
-    def organize_choices(self, choices: list[Choice]) -> list[Choice]:
+        if previous_menu is not None:  # for first menu
+            self.arborescence = Arborescence([previous_menu.arborescence.menus, Self])
+            self.controller: "Controller" = previous_menu.controller
+            self.view: "View" = previous_menu.view
+
+    def organize_choices(
+        self, choices: list[Choice]
+    ) -> list[Choice]:  # TODO implement one item choices
         remaining_choices = []
         choices.sort(key=lambda x: x.default_order)
         for choice in choices:
@@ -80,12 +90,13 @@ class Menu(ABC):
 
         for i, choice in enumerate(remaining_choices):
             choice.default_order = i + 1
+        return remaining_choices
 
     def loop(self):
         while True:
             self.work()
 
-            if self.loop_by_default is False:
+            if self.loop_item_by_default is False:
                 break
             # print(
             #     self.text_obj.prefix_all_str(
@@ -93,13 +104,20 @@ class Menu(ABC):
             #     )
             # )
 
-    def resolve_input(self, input: str) -> Self:
-        choice_dict = dict([[str(x.default_order), x.menu] for x in self.choices])
-        if input in choice_dict.keys():
-            return choice_dict[input]
+    def resolve_input(self, input: str, choices: tuple[Choice]) -> callable:
+        output = self.controller.menu_handler.regular_inputs(input)
+        if output is not None:
+            return self.null
         else:
-            return None
+            choice_dict = dict([[str(x.default_order), x.invoke] for x in choices])
+            if input in choice_dict.keys():
+                return choice_dict[input]
+            else:
+                return self.null
 
     @abstractmethod
     def work(self):
+        pass
+    
+    def null(self):
         pass
