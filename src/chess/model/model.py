@@ -85,7 +85,7 @@ class Address:
 
         Args:
             addressee_id (str): 1. Addressee ID: civility, title or quality +\
-                firstname+ surname. ex: M. Valéry DUPONT
+                firstname + surname. ex: M. Valéry DUPONT
             delivery_point (str): 2. Identification complement: appt nb,\
                 letter box, stair, corridor. ex: Appartment 12 Stairs C
             house_nb_street_name (str): 4. Number and street name.\
@@ -98,7 +98,7 @@ class Address:
             additional_delivery_info (str, optional):
                 5. Hamlet (lieu-dit) or particular distribution service:\
                 post box, poste restante. ex: La Chaise Dieu. Defaults to "".
-            country_name (str, optional): 7. Country name. Defaults to "France".
+            country_name (str, optional): 7. Country name. Defaults to "FRANCE".
         """
         self.addressee_id = addressee_id
         self.delivery_point = delivery_point
@@ -106,7 +106,7 @@ class Address:
         self.house_nb_street_name = house_nb_street_name
         self.additional_delivery_info = additional_delivery_info
         self.postcode = postcode
-        self.country_name = country_name
+        self.country_name = country_name.upper()
 
     def __str__(self):
         """str method. Address formatted.

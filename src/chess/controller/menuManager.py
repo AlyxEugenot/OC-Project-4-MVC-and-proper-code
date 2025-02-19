@@ -11,20 +11,21 @@ class MenuManager:
     def __init__(self, controller: "Controller", menu: "Menu"):
         self.controller = controller
         self.current_menu:"Menu" = menu
-        self.current_menu.controller = self.controller
+        self.next_menu:"Menu"=None
 
-    def get_current_arborescence(self) -> "Arborescence":
-        return self.current_menu.arborescence
-
-    def regular_inputs(self, which_input):
+    def regular_inputs(self, which_input:str):
         match which_input:
             case "q":
                 # TODO confirm ?
                 self.controller.quit()
                 # don't return to end the loop (?)
             case "b":
-                return self.get_current_arborescence().go_back()
+                return self.current_menu.arborescence.go_back()
             case "m":
-                return self.get_current_arborescence().go_root()
+                return self.current_menu.arborescence.go_root()
             case _:
                 return None
+    def set_next_menu(self):
+        self.current_menu= self.next_menu
+        self.current_menu.controller = self.controller
+        

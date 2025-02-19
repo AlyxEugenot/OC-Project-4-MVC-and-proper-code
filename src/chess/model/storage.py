@@ -7,7 +7,7 @@ __all__ = [
     "player_to_json",
     "player_from_id",
     "address_to_json",
-    "address_from_id",
+    "address_from_json",
     "tournament_to_json",
     "tournament_from_id",
     "round_to_json",
