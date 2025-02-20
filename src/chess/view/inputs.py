@@ -1,6 +1,6 @@
 import click
 import chess.model
-import chess.generate
+import chess.model.generate
 
 # handle text beautifully
 
@@ -22,11 +22,14 @@ def create_address(address_context: str) -> chess.model.Address:  # TODO str_pre
             "1. Identification du destinataire : civilité, titre ou qualité "
             "+ prénom + nom.\n\tEx : M. Valéry DUPONT\n\t"
             f"[Generate complete address if empty]{suffix}"
-        )
+        ),
+        default="",
     )
 
-    if addressee_id == "":
-        return chess.generate.generate_address(chess.generate.generate_players(1)[0])
+    if addressee_id == "":  # FIXME j'ai pas pu mettre de str vide
+        return chess.model.generate.generate_address(
+            chess.model.generate.generate_players(1)[0]
+        )
 
     delivery_point = click.prompt(
         (

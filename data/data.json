@@ -1,0 +1,25 @@
+{
+    "players": {},
+    "tournaments": {
+        "890793": {
+            "name": "oe oe oe",
+            "players": [],
+            "rounds": [],
+            "localization": {
+                "addressee_id": "Mr. Qoqzi Tdal",
+                "delivery_point": "Escalier D",
+                "additional_geo_info": "",
+                "house_nb_street_name": "51 Avenue Bis Krlgj Tf",
+                "additional_delivery_info": "",
+                "postcode": "87368 NFXQ",
+                "country_name": "FRANCE"
+            },
+            "rounds_amount": 4,
+            "description": "Tournament oe oe oe at 87368 NFXQthe None.",
+            "start_time": null,
+            "end_time": null
+        }
+    },
+    "rounds": {},
+    "matches": {}
+}

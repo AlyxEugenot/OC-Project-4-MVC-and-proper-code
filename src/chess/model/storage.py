@@ -21,7 +21,7 @@ from pathlib import Path
 import datetime
 from chess.model import Player, Tournament, Round, Match, Address
 
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 SAVED_DATA_PATH = PROJECT_ROOT / "data" / "data.json"
 
 PLAYERS = "players"
@@ -252,12 +252,20 @@ def tournament_from_id(tournament_id: str) -> Tournament:
         players=[
             [player_from_id(player[0]), player[1]] for player in json_ref["players"]
         ],
+        rounds_id=json_ref["rounds"],
         localization=address_from_json(json_ref["localization"]),
         rounds_amount=json_ref["rounds_amount"],
         description=json_ref["description"],
     )
-    tournament.start_time = (datetime.datetime.fromisoformat(json_ref["start_date"]),)
-    tournament.end_time = datetime.datetime.fromisoformat(json_ref["end_date"])
+    try:
+        tournament.start_time = datetime.datetime.fromisoformat(json_ref["start_date"])
+    except KeyError:
+        pass
+
+    try:
+        tournament.end_time = datetime.datetime.fromisoformat(json_ref["end_date"])
+    except KeyError:
+        pass
 
     return tournament
 

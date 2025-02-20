@@ -1,5 +1,6 @@
 # TODO insert docstring when classes are more fleshed out.
-__all__ = ["Player","Address","Tournament","Round","Match"]
+#TODO and redo all of them anyway
+__all__ = ["Player", "Address", "Tournament", "Round", "Match"]
 
 import datetime
 import re
@@ -129,6 +130,9 @@ class Address:
                 filled_address.append(element)
         return "\n".join(filled_address)
 
+    def __repr__(self):
+        return f"{self.addressee_id}, {self.postcode}"
+
 
 class Tournament:
     """Tournament class. Tournaments are split in multiple rounds."""
@@ -138,10 +142,13 @@ class Tournament:
         id: int,
         name: str,
         players: list[Player],
+        rounds_id: list["Round"],
         localization: Address,
         rounds_amount: int = 4,
+        start_time: datetime.datetime = None,
+        end_time: datetime.datetime = None,
         description: str = "",
-    ):
+    ):#FIXME redo docstring
         """Tournament init.
 
         Args:
@@ -156,24 +163,24 @@ class Tournament:
         """
         self.id = id
         self.name = name
-        self.players = [[player,0] for player in players]
-        self.rounds = []
+        self.players = [[player, 0] for player in players]
+        self.rounds = rounds_id
         self.localization = localization
         self.rounds_amount = rounds_amount
 
-        self.start_time = None
-        self.end_time = None
+        self.start_time = start_time
+        self.end_time = end_time
 
         if description == "":
             self.description = (
-                f"Tournament {name} at {localization.postcode}"
-                f"the {self.start_time}."
+                f"Tournament {name} at {localization.postcode}."
+                # f"the {self.start_time}."
             )
         else:
             self.description = description
 
-    def add_player(self, player:Player):
-        self.players.append([player,0])
+    def add_player(self, player: Player):
+        self.players.append([player, 0])
 
     def start_tournament(self):
         self.start_time = datetime.datetime.now()
