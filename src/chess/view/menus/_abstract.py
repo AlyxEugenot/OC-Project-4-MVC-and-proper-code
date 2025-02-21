@@ -14,9 +14,10 @@ class MenuAbstractItem:
 
 
 class Menu(MenuAbstractItem):
-    def __init__(self, menu_option_name: str, title: str = None) -> None:
-        super().__init__(menu_option_name)
-        self.title = title if title is not None else menu_option_name
+    def __init__(self, title: str, menu_option_name: str=None) -> None:
+        self.title = title
+        self.menu_option_name = menu_option_name if menu_option_name is not None else title
+        super().__init__(self.menu_option_name)
         self.children: list[MenuAbstractItem] = []
         self.loop_above=False
 
@@ -35,7 +36,7 @@ class Menu(MenuAbstractItem):
             for i, item in enumerate(self.children):
                 print(i + 1, item.menu_option_name)
 
-            choice = input("Sélectionne un choix :")
+            choice = input("Sélectionne un choix : ")
             # regular_inputs(choice) # TODO
 
             choice = int(choice)

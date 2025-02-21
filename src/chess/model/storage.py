@@ -4,7 +4,7 @@ __all__ = [
     "save_data",
     "load_data",
     "sort_data",
-    "player_to_json",
+    "save_player",
     "player_from_id",
     "address_to_json",
     "address_from_json",
@@ -22,7 +22,7 @@ import datetime
 from chess.model import Player, Tournament, Round, Match, Address
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-SAVED_DATA_PATH = PROJECT_ROOT / "data" / "data.json"
+SAVED_DATA_PATH = PROJECT_ROOT / "data" / "tournaments" / "data.json"
 
 PLAYERS = "players"
 TOURNAMENTS = "tournaments"
@@ -106,6 +106,10 @@ def sort_data() -> dict:
 
 
 # region player
+def save_player(player: Player):
+    save_data(player_to_json(player))
+
+
 def player_to_json(player: Player) -> dict:
     """Return json implementation from Player object.
 
@@ -120,7 +124,7 @@ def player_to_json(player: Player) -> dict:
             player.id: {
                 "first_name": player.first_name,
                 "last_name": player.last_name,
-                "birth_date": datetime_to_str(player.birth_date, timespec="auto"),
+                "birth_date": datetime_to_str(player.birth_date),
                 "elo": player.elo,
             }
         }
@@ -383,7 +387,9 @@ def match_from_id(match_id: str) -> Match:
 # endregion
 
 
-def datetime_to_str(date: datetime.datetime, timespec: str = "seconds") -> str:
+def datetime_to_str(
+    date: datetime.datetime,
+) -> str:  # FIXME effacer dans la docstring aussi, timespec: str = "seconds") -> str:
     """Return datetime or date to isoformat.
 
     Return None if date is None, to let empty data stay empty.
@@ -396,7 +402,7 @@ def datetime_to_str(date: datetime.datetime, timespec: str = "seconds") -> str:
         str: date to isoformat. None if None
     """
     if date is not None:
-        return date.isoformat(timespec=timespec)
+        return date.isoformat()
     else:
         return None
 

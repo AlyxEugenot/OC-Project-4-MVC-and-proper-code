@@ -8,7 +8,7 @@ class WhichTournament(_abstract.Menu):
     def __init__(self):
         title = "Choisir un tournoi"
         menu_option_name = "Tournoi"
-        super().__init__(menu_option_name=menu_option_name, title=title)
+        super().__init__(title=title,menu_option_name=menu_option_name)
 
         self.add_tournaments_to_continue()
         self.add_child(_abstract.Action("Créer un tournoi", self.create_tournament))
@@ -62,10 +62,10 @@ class WhichTournament(_abstract.Menu):
 
 class TournamentHandling(_abstract.Menu):
     def __init__(self, tournament: model.Tournament):
-        menu_option_name = str(tournament)
-        title = "Tournoi"
+        title = f"Tournoi {str(tournament)}"
+        menu_option_name = f"Tournoi {str(tournament)}"
         self.tournament = tournament
-        super().__init__(menu_option_name, title)
+        super().__init__(title, menu_option_name)
         self.loop_above = True
 
         # self.parent = self.parent.parent #FIXME l'héritage n'est pas encore initialisé
