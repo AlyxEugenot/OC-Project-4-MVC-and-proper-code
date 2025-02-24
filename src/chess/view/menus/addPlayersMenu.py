@@ -11,7 +11,7 @@ class AddPlayers(_abstract.Menu):
     def __init__(self):
         menu_option_name = "Ajouter de nouveaux joueurs"
         title = "Ajout de joueurs"
-        super().__init__(title, menu_option_name)
+        super().__init__(title=title, menu_option_name=menu_option_name)
         self.add_child(
             _abstract.Action(
                 "Générer des nouveaux joueurs aléatoires", self.generate_new_random
@@ -52,9 +52,9 @@ class AddPlayers(_abstract.Menu):
     def get_valid_date(self) -> datetime.date:  # FIXME put in model
         try:
             date = input("Birth date (format DD/MM/YYYY) : ")
-            day, month, year = [int(x.strip()) for x in date.split("/")]    
+            day, month, year = [int(x.strip()) for x in date.split("/")]
             date = datetime.date(year, month, day)
-        except ValueError:  # TODO put good kind of error here
+        except ValueError:
             print("Wrong date format.")
             date = self.get_valid_date()
         return date

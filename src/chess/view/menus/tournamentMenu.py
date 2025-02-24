@@ -8,7 +8,7 @@ class WhichTournament(_abstract.Menu):
     def __init__(self):
         title = "Choisir un tournoi"
         menu_option_name = "Tournoi"
-        super().__init__(title=title,menu_option_name=menu_option_name)
+        super().__init__(title=title, menu_option_name=menu_option_name)
 
         self.add_tournaments_to_continue()
         self.add_child(_abstract.Action("Créer un tournoi", self.create_tournament))
@@ -65,7 +65,7 @@ class TournamentHandling(_abstract.Menu):
         title = f"Tournoi {str(tournament)}"
         menu_option_name = f"Tournoi {str(tournament)}"
         self.tournament = tournament
-        super().__init__(title, menu_option_name)
+        super().__init__(title=title, menu_option_name=menu_option_name)
         self.loop_above = True
 
         # self.parent = self.parent.parent #FIXME l'héritage n'est pas encore initialisé
@@ -97,13 +97,17 @@ class TournamentHandling(_abstract.Menu):
                     print("Minimum 4 joueurs pour commencer le tournoi.")
             elif not self.any_round_not_over():
                 self.add_child(
-                    _abstract.Action("Commencer un nouveau round.", self.start_new_round)
+                    _abstract.Action(
+                        "Commencer un nouveau round.", self.start_new_round
+                    )
                 )
             else:
                 rounds = self.tournament.rounds
                 unfinished_round = [x for x in rounds if x.end_time is not None]
                 if len(unfinished_round) > 1:
-                    raise RecursionError("Multiple unfinished rounds. Normally impossible.")
+                    raise RecursionError(
+                        "Multiple unfinished rounds. Normally impossible."
+                    )
                 unfinished_round = unfinished_round[0]
                 # self.add_child(RoundHandling(unfinished_round)) # TODO round handling
                 self.add_child(_abstract.Action(f"En cours: {unfinished_round.name}"))
