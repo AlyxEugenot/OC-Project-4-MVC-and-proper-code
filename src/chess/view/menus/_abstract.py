@@ -1,5 +1,8 @@
 import typing
 
+if typing.TYPE_CHECKING:
+    from chess.controller.app import Context
+
 
 class MenuAbstractItem:
     def __init__(self, menu_option_name: str) -> None:
@@ -14,18 +17,24 @@ class MenuAbstractItem:
 
 
 class Menu(MenuAbstractItem):
-    def __init__(self, title: str, menu_option_name: str=None) -> None:
+    def __init__(self, title: str, menu_option_name: str = None) -> None:
         self.title = title
-        self.menu_option_name = menu_option_name if menu_option_name is not None else title
+        self.menu_option_name = (
+            menu_option_name if menu_option_name is not None else title
+        )
         super().__init__(self.menu_option_name)
         self.children: list[MenuAbstractItem] = []
-        self.loop_above=False
+        self.loop_above = False
+        self.context: "Context" = None
 
     def add_child(self, item: MenuAbstractItem) -> None:
         if item.parent != None:
             raise ValueError("Contient déjà un parent")
         item.parent = self
         self.children.append(item)
+
+        if issubclass(type(item), Menu):
+            item.context = self.context
 
     def execute(self) -> None:
         while True:
@@ -43,6 +52,7 @@ class Menu(MenuAbstractItem):
             print()
 
             if choice == 0 and self.parent != None:
+                self.on_exit()
                 self.parent.execute()
 
             elif choice > 0 and choice <= len(self.children):
@@ -50,13 +60,15 @@ class Menu(MenuAbstractItem):
 
             else:
                 print("Input non reconnu.")
-                
+
             if self.loop_above:
                 break
 
+    def on_exit(self):
+        pass
+
     def organize_children(self):
-        """Sort children menu first, action second.
-        """
+        """Sort children menu first, action second."""
         children, new_children = self.children, []
         for child in children:
             if type(child) is Menu:
@@ -70,7 +82,7 @@ class Menu(MenuAbstractItem):
         return self.title
 
     def __repr__(self):
-        return f"{str(self.parent)} > {self.title} > {"/".join(str(x) for x in self.children)}"
+        return f"{str(self.parent)} > {self.title} > {"|".join(str(x) for x in self.children)}"
 
 
 def not_implemented():
@@ -89,6 +101,6 @@ class Action(MenuAbstractItem):
 
     def connect(self, ext_callback) -> None:
         self.callback = ext_callback
-        
+
     def __repr__(self):
         return f"Action: {self.menu_option_name}"

@@ -1,12 +1,10 @@
 # TODO insert docstring when classes are more fleshed out.
-#TODO and redo all of them anyway
+# TODO and redo all of them anyway
 __all__ = ["Player", "Address", "Tournament", "Round", "Match"]
 
 import datetime
 import re
 import random
-
-# import generate
 
 
 class Player:
@@ -148,7 +146,7 @@ class Tournament:
         start_time: datetime.datetime = None,
         end_time: datetime.datetime = None,
         description: str = "",
-    ):#FIXME redo docstring
+    ):  # FIXME redo docstring
         """Tournament init.
 
         Args:

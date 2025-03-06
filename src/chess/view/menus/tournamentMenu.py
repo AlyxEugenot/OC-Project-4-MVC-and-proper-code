@@ -1,7 +1,10 @@
 import chess.view
 import chess.view.menus._abstract as _abstract
-import chess.model as model
 import chess.model.generate as generate
+
+# from typing import TYPE_CHECKING
+# if TYPE_CHECKING:
+import chess.model as model
 
 
 class WhichTournament(_abstract.Menu):
@@ -9,16 +12,34 @@ class WhichTournament(_abstract.Menu):
         title = "Choisir un tournoi"
         menu_option_name = "Tournoi"
         super().__init__(title=title, menu_option_name=menu_option_name)
+        self.loop_above = True
 
-        self.add_tournaments_to_continue()
-        self.add_child(_abstract.Action("Créer un tournoi", self.create_tournament))
+    def execute(self):
+        while True:
+            self.children.clear()
+
+            self.add_tournaments_to_continue()
+            self.add_child(_abstract.Action("Créer un tournoi", self.create_tournament))
+
+            return super().execute()
 
     def add_tournaments_to_continue(self):
         tournaments_ids = model.load_data()[model.storage.TOURNAMENTS].keys()
-        all_tournaments = [model.tournament_from_id(x) for x in tournaments_ids]
+        all_tournaments = [
+            model.tournament_from_id(int(x)) for x in tournaments_ids
+        ]  # TODO enlever le int(x) quand j'aurai fait la fonction "envoie les id de tournois qui renverront que des int"
         unfinished_tournaments = [x for x in all_tournaments if x.end_time is None]
         for t in unfinished_tournaments:
-            self.add_child(TournamentHandling(t))
+            self.add_child(
+                _abstract.Action(
+                    f"Tournoi {t.name}", lambda: self.select_tournament(t.id)
+                )
+            )
+
+    def select_tournament(self, id: int):
+        self.context.current_tournament_id = id
+        self.parent.tournament.load_tournament()
+        self.parent.tournament.execute()
 
     def create_tournament(self) -> model.Tournament:
         tournament_id = input("Quel est l'ID du tournoi ? (generate random if empty) ")
@@ -27,7 +48,7 @@ class WhichTournament(_abstract.Menu):
             # TODO confirmation de "on a trouvé un tournoi à tel ID, voulez-vous en créer un avec un ID différent ?"
             return model.storage.tournament_from_id(tournament_id)
 
-        if generate.is_empty_string(tournament_id):
+        if tournament_id == "":
             tournament_id = generate.generate_specific_str("nnnnnn")
             while model.storage.tournament_from_id(tournament_id) is not None:
                 tournament_id = generate.generate_specific_str("nnnnnn")
@@ -61,19 +82,36 @@ class WhichTournament(_abstract.Menu):
 
 
 class TournamentHandling(_abstract.Menu):
-    def __init__(self, tournament: model.Tournament):
-        title = f"Tournoi {str(tournament)}"
-        menu_option_name = f"Tournoi {str(tournament)}"
-        self.tournament = tournament
-        super().__init__(title=title, menu_option_name=menu_option_name)
+    def __init__(self):
+        self.tournament = None
+        super().__init__(title="Tournoi")
         self.loop_above = True
 
-        # self.parent = self.parent.parent #FIXME l'héritage n'est pas encore initialisé
+        self.callback_get_tournament_from_id = _abstract.not_implemented
+        self.callback_start_tournament = _abstract.not_implemented
+        self.callback_end_tournament = _abstract.not_implemented
+        self.callback_start_new_round = _abstract.not_implemented
+        self.callback_add_players_to_tournament = _abstract.not_implemented
+        self.callback_add_rounds_to_menu = _abstract.not_implemented
+        self.callback_any_round_not_over = _abstract.not_implemented
+
+    def on_exit(self):
+        self.tournament = None
+        self.context.current_tournament_id = None
+        self.title = f"Tournoi"
+
+    def load_tournament(self):  # TODO va falloir appeler cette fonction quelque part :>
+        if self.context.current_tournament_id is None:
+            raise TypeError("Trying to load a tournament it does not find.")
+        self.tournament = self.callback_get_tournament_from_id(
+            self.context.current_tournament_id
+        )
+        self.title = f"Tournoi {str(self.tournament)}"
 
     def execute(self):
         while True:
-            if type(self.parent) is WhichTournament:
-                self.parent = self.parent.parent
+            if self.tournament is None:
+                raise RuntimeError("Tournament should be set.")
 
             self.children.clear()
 
@@ -119,22 +157,25 @@ class TournamentHandling(_abstract.Menu):
 
             super().execute()
 
+    def get_tournament_from_data(self, tournament_id: int) -> model.Tournament | None:
+        return self.callback_get_tournament_from_id(tournament_id)
+
     def start_tournament(self):
-        print("start")
+        self.callback_start_tournament()
         self.start_new_round()
 
     def end_tournament(self):
-        print("end")
+        self.callback_end_tournament()
 
     def start_new_round(self):
-        print("start new round")
+        self.callback_start_new_round()
 
     def add_players_to_tournament(self):
-        print("add_players")
+        # afficher les joueurs ajoutables au tournoi
+        self.callback_add_players_to_tournament()
 
     def add_rounds_to_menu(self):
-        print("add_rounds")
+        self.callback_add_rounds_to_menu()
 
     def any_round_not_over(self) -> bool:
-        return True  # TODO change from view to model
-        # mettre callback en paramètre
+        return self.callback_any_round_not_over(self.context.current_tournament_id)

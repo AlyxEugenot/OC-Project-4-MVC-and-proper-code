@@ -38,11 +38,13 @@ DICT_STRUCTURE = {
 }
 
 
-def save_data(data_to_save: dict) -> dict:
-    """Update json file with "data_to_save". All values to save must be placed under existing dictionnaries : 'players', 'tournaments', 'rounds', 'matches'. KeyError raised otherwise.
+def save_data(data_to_save: dict[str, dict]) -> dict:
+    """Update json file with "data_to_save". All values to save must be placed \
+        under existing dictionnaries : 'players', 'tournaments', 'rounds',\
+            'matches'. KeyError raised otherwise.
 
     Args:
-        data_to_save (dict): data in dict format `key:value,...`
+        data_to_save (dict[str, dict]): data in dict format `players:dict[id:dict]`
 
     Returns:
         dict: json file saved
@@ -60,7 +62,7 @@ def save_data(data_to_save: dict) -> dict:
     return saved_data
 
 
-def load_data() -> dict:
+def load_data() -> dict[str, dict[str, dict]]:
     """Load and return json file. Create base if nonexistent.
 
     Returns:
@@ -74,7 +76,7 @@ def load_data() -> dict:
         return _setup_json_base()
 
 
-def _setup_json_base() -> dict:
+def _setup_json_base() -> dict[str, dict]:
     """Creates necessary json architecture.
 
     Returns:
@@ -88,7 +90,7 @@ def _setup_json_base() -> dict:
     return json_file
 
 
-def sort_data() -> dict:
+def sort_data() -> dict[str, dict[str, dict]]:
     """Return data sorted in dicts.
 
     Returns:
@@ -234,22 +236,23 @@ def tournament_to_json(tournament: Tournament) -> dict:
     return this_json
 
 
-def tournament_from_id(tournament_id: str) -> Tournament:
+def tournament_from_id(tournament_id: int) -> Tournament:
     """Return Tournament object from json through id.
     Return None if ID not found.
 
     Args:
-        tournament_id (str): Tournament ID
+        tournament_id (int): Tournament ID
 
     Returns:
         Tournament: Tournament object
     """
+    str_tournament_id = str(tournament_id)
     data = load_data()
     if TOURNAMENTS not in data:
         raise LookupError
-    if tournament_id not in data[TOURNAMENTS]:
+    if str_tournament_id not in data[TOURNAMENTS]:
         return None
-    json_ref = data[TOURNAMENTS][tournament_id]
+    json_ref = data[TOURNAMENTS][str_tournament_id]
     tournament = Tournament(
         id=tournament_id,
         name=json_ref["name"],
@@ -301,22 +304,23 @@ def round_to_json(round: Round) -> dict:
     return this_json
 
 
-def round_from_id(round_id: str) -> Round:
+def round_from_id(round_id: int) -> Round:
     """Return Round object from json through id.
     Return None if ID not found.
 
     Args:
-        round_id (str): Round ID
+        round_id (int): Round ID
 
     Returns:
         Round: Round object
     """
+    str_round_id = str(round_id)
     data = load_data()
     if ROUNDS not in data:
         raise LookupError
-    if round_id not in data[ROUNDS]:
+    if str_round_id not in data[ROUNDS]:
         return None
-    json_ref = data[ROUNDS][round_id]
+    json_ref = data[ROUNDS][str_round_id]
     this_round = Round(
         id=round_id,
         name=json_ref["name"],
@@ -356,22 +360,23 @@ def match_to_json(match: Match) -> dict:
     return this_json
 
 
-def match_from_id(match_id: str) -> Match:
+def match_from_id(match_id: int) -> Match:
     """Return Match object from json through id.
     Return None if ID not found.
 
     Args:
-        match_id (str): Match ID
+        match_id (int): Match ID
 
     Returns:
         Match: Match object
     """
+    str_match_id = str(match_id)
     data = load_data()
     if MATCHES not in data:
         raise LookupError
-    if match_id not in data[MATCHES]:
+    if str_match_id not in data[MATCHES]:
         return None
-    json_ref = data[MATCHES][match_id]
+    json_ref = data[MATCHES][str_match_id]
     this_match = Match(
         id=match_id,
         parent_round=round_from_id(json_ref["parent_round"]),
@@ -405,14 +410,3 @@ def datetime_to_str(
         return date.isoformat()
     else:
         return None
-
-
-if __name__ == "__main__":
-    temp = {
-        PLAYERS: {"ID12345": {"a": 1, "b": 2}},
-        TOURNAMENTS: {"pwet": 1},
-        ROUNDS: {},
-        MATCHES: {},
-    }
-    save_data(temp)
-    pass
