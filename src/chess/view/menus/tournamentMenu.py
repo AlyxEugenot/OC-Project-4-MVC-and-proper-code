@@ -1,4 +1,5 @@
 import chess.view
+import chess.view.menus
 import chess.view.menus._abstract as _abstract
 import chess.model.generate as generate
 
@@ -83,8 +84,9 @@ class WhichTournament(_abstract.Menu):
 
 class TournamentHandling(_abstract.Menu):
     def __init__(self):
-        self.tournament = None
-        super().__init__(title="Tournoi")
+        self.tournament: model.Tournament = None
+        # self.rounds=None
+        super().__init__(title="Tournoi vide")
         self.loop_above = True
 
         self.callback_get_tournament_from_id = _abstract.not_implemented
@@ -98,9 +100,9 @@ class TournamentHandling(_abstract.Menu):
     def on_exit(self):
         self.tournament = None
         self.context.current_tournament_id = None
-        self.title = f"Tournoi"
+        self.title = f"Tournoi vide"
 
-    def load_tournament(self):  # TODO va falloir appeler cette fonction quelque part :>
+    def load_tournament(self):
         if self.context.current_tournament_id is None:
             raise TypeError("Trying to load a tournament it does not find.")
         self.tournament = self.callback_get_tournament_from_id(
@@ -148,7 +150,11 @@ class TournamentHandling(_abstract.Menu):
                     )
                 unfinished_round = unfinished_round[0]
                 # self.add_child(RoundHandling(unfinished_round)) # TODO round handling
-                self.add_child(_abstract.Action(f"En cours: {unfinished_round.name}"))
+                self.add_child(
+                    _abstract.Action(
+                        f"En cours: {unfinished_round.name}",
+                    )
+                )
                 rounds.remove(unfinished_round[0])
                 for r in rounds:
                     # self.add_child(RoundHandling(unfinished_round)) # TODO round handling
@@ -157,10 +163,8 @@ class TournamentHandling(_abstract.Menu):
 
             super().execute()
 
-    def get_tournament_from_data(self, tournament_id: int) -> model.Tournament | None:
-        return self.callback_get_tournament_from_id(tournament_id)
-
     def start_tournament(self):
+        self.tournament.start_tournament()
         self.callback_start_tournament()
         self.start_new_round()
 
@@ -172,7 +176,16 @@ class TournamentHandling(_abstract.Menu):
 
     def add_players_to_tournament(self):
         # afficher les joueurs ajoutables au tournoi
-        self.callback_add_players_to_tournament()
+        while True:
+            id = input("ID du joueur: ")
+            if id == "":
+                break
+
+            result = self.callback_add_players_to_tournament(id, self.tournament)
+            if result is None:
+                print("Joueur non trouvé. Ne rien entrer pour revenir au tournoi.\n")
+            else:
+                print("Joueur ajouté. Ne rien entrer pour revenir au tournoi.\n")
 
     def add_rounds_to_menu(self):
         self.callback_add_rounds_to_menu()

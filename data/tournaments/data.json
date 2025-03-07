@@ -112,7 +112,32 @@
     "tournaments": {
         "890793": {
             "name": "oe oe oe",
-            "players": [],
+            "players": [
+                [
+                    "AA00000",
+                    0
+                ],
+                [
+                    "BL37659",
+                    0
+                ],
+                [
+                    "NK00418",
+                    0
+                ],
+                [
+                    "AA11111",
+                    0
+                ],
+                [
+                    "HO31948",
+                    0
+                ],
+                [
+                    "GX66539",
+                    0
+                ]
+            ],
             "rounds": [],
             "localization": {
                 "addressee_id": "Mr. Qoqzi Tdal",

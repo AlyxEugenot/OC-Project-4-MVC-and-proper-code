@@ -48,7 +48,11 @@ class Menu(MenuAbstractItem):
             choice = input("Sélectionne un choix : ")
             # regular_inputs(choice) # TODO
 
-            choice = int(choice)
+            try:
+                choice = int(choice)
+            except ValueError:
+                pass
+
             print()
 
             if choice == 0 and self.parent != None:

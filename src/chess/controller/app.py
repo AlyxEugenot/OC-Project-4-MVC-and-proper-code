@@ -1,3 +1,4 @@
+import chess.model.callbacks
 import chess.view.menus
 import chess.view.menus._abstract
 import chess.view.menus.addPlayersMenu
@@ -25,6 +26,7 @@ class App:
     def setup_view(self):
         tournament = self.view_main_menu.tournament
         tournament.callback_get_tournament_from_id = chess.model.tournament_from_id
+        tournament.callback_add_players_to_tournament = chess.model.callbacks.add_player_to_tournament
         # round = tournament.round
 
         reports = find_menu(WhichReports, self.view_main_menu)

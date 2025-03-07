@@ -8,6 +8,7 @@ __all__ = [
     "player_from_id",
     "address_to_json",
     "address_from_json",
+    "save_tournament",
     "tournament_to_json",
     "tournament_from_id",
     "round_to_json",
@@ -55,7 +56,7 @@ def save_data(data_to_save: dict[str, dict]) -> dict:
         if which_dict not in saved_data.keys():
             raise KeyError("Wrong input for entry dict")
         for key, value in data_to_save[which_dict].items():
-            saved_data[which_dict][key] = value
+            saved_data[which_dict][str(key)] = value
 
     with open(SAVED_DATA_PATH, mode="w", encoding="utf-8") as file:
         new_file = json.dump(saved_data, file, indent=4)
@@ -134,7 +135,7 @@ def player_to_json(player: Player) -> dict:
     return this_json
 
 
-def player_from_id(player_id: str) -> Player:
+def player_from_id(player_id: str) -> Player | None:
     """Return Player object from json through id.
     Return None if ID not found.
 
@@ -210,6 +211,10 @@ def address_from_json(address: dict) -> Address:
 
 
 # region tournament
+def save_tournament(tournament: Tournament):
+    save_data(tournament_to_json(tournament))
+
+
 def tournament_to_json(tournament: Tournament) -> dict:
     """Return json implementation from Tournament object.
 
