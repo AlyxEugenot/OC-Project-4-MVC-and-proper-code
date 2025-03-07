@@ -6,6 +6,7 @@ import chess.model.generate as generate
 # from typing import TYPE_CHECKING
 # if TYPE_CHECKING:
 import chess.model as model
+import chess.model.storage
 
 
 class WhichTournament(_abstract.Menu):
@@ -25,9 +26,11 @@ class WhichTournament(_abstract.Menu):
             return super().execute()
 
     def add_tournaments_to_continue(self):
-        tournaments_ids = model.load_data()[model.storage.TOURNAMENTS].keys()
+        tournaments_ids = chess.model.storage.load_data()[
+            chess.model.storage.TOURNAMENTS
+        ].keys()
         all_tournaments = [
-            model.tournament_from_id(int(x)) for x in tournaments_ids
+            model.Tournament.from_id(int(x)) for x in tournaments_ids
         ]  # TODO enlever le int(x) quand j'aurai fait la fonction "envoie les id de tournois qui renverront que des int"
         unfinished_tournaments = [x for x in all_tournaments if x.end_time is None]
         for t in unfinished_tournaments:
@@ -45,13 +48,13 @@ class WhichTournament(_abstract.Menu):
     def create_tournament(self) -> model.Tournament:
         tournament_id = input("Quel est l'ID du tournoi ? (generate random if empty) ")
 
-        if model.storage.tournament_from_id(tournament_id) is not None:
+        if model.Tournament.from_id(tournament_id) is not None:
             # TODO confirmation de "on a trouvé un tournoi à tel ID, voulez-vous en créer un avec un ID différent ?"
-            return model.storage.tournament_from_id(tournament_id)
+            return model.Tournament.from_id(tournament_id)
 
         if tournament_id == "":
             tournament_id = generate.generate_specific_str("nnnnnn")
-            while model.storage.tournament_from_id(tournament_id) is not None:
+            while model.Tournament.from_id(tournament_id) is not None:
                 tournament_id = generate.generate_specific_str("nnnnnn")
         name = input("Tournament name: ")
         players: str = input("Enter players' ID separated by commas:(can be empty) ")
@@ -59,7 +62,7 @@ class WhichTournament(_abstract.Menu):
         players_found = [
             player.strip()
             for player in players
-            if model.storage.player_from_id(player.strip()) is not None
+            if model.Player.from_id(player.strip()) is not None
         ]
         localization = chess.view.create_address("\nTournament address: ")
         # TODO find avant
@@ -78,7 +81,8 @@ class WhichTournament(_abstract.Menu):
             tournament.rounds_amount = int(rounds_amount)
         if description != "":
             tournament.description = description
-        model.storage.save_data(model.storage.tournament_to_json(tournament))
+
+        tournament.save()
         return tournament
 
 
@@ -89,7 +93,6 @@ class TournamentHandling(_abstract.Menu):
         super().__init__(title="Tournoi vide")
         self.loop_above = True
 
-        self.callback_get_tournament_from_id = _abstract.not_implemented
         self.callback_start_tournament = _abstract.not_implemented
         self.callback_end_tournament = _abstract.not_implemented
         self.callback_start_new_round = _abstract.not_implemented
@@ -105,7 +108,7 @@ class TournamentHandling(_abstract.Menu):
     def load_tournament(self):
         if self.context.current_tournament_id is None:
             raise TypeError("Trying to load a tournament it does not find.")
-        self.tournament = self.callback_get_tournament_from_id(
+        self.tournament = model.Tournament.from_id(
             self.context.current_tournament_id
         )
         self.title = f"Tournoi {str(self.tournament)}"
