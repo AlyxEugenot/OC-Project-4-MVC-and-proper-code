@@ -29,6 +29,7 @@ class App:
         # round = tournament.round
 
         reports = find_menu(WhichReports, self.view_main_menu)
+        reports.callback_all_players=chess.model.callbacks.list_all_players
 
 
 class Context:

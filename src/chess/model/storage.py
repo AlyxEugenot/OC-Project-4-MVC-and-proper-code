@@ -79,11 +79,20 @@ def sort_data() -> dict[str, dict[str, dict]]:
     Returns:
         dict: sorted data
     """
+
+    def sort(item, sorting_key):
+        return item[1][sorting_key]
+
     this_json = load_data()
     sorted_json = DICT_STRUCTURE
 
     for key in this_json:
-        sorted_json[key] = dict(sorted(this_json[key].items()))
+        if key == PLAYERS:
+            sorted_json[key] = dict(
+                sorted(this_json[key].items(), key=lambda item: sort(item, "last_name"))
+            )
+        else:
+            sorted_json[key] = dict(sorted(this_json[key].items()))
 
     with open(SAVED_DATA_PATH, mode="w", encoding="utf-8") as file:
         json.dump(sorted_json, file, indent=4)
