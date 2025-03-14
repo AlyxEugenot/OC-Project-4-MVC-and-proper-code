@@ -99,6 +99,16 @@ def sort_data() -> dict[str, dict[str, dict]]:
     return sorted_json
 
 
+def id_already_exists(id, dict_key: str):
+    this_json = load_data()
+    if dict_key not in this_json.keys():
+        raise LookupError
+    if id in this_json[dict_key].keys():
+        return True
+    else:
+        return False
+
+
 def datetime_to_str(
     date: datetime.datetime,
 ) -> str:  # FIXME effacer dans la docstring aussi, timespec: str = "seconds") -> str:

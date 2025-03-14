@@ -1,12 +1,9 @@
 import datetime
-import typing
-from chess.model import Player, Address
+from chess.model import Player, Address, Round
 from typing import Self
 from chess.model.storage import save_data, load_data, TOURNAMENTS, datetime_to_str
 
 
-if typing.TYPE_CHECKING:
-    from chess.model import Round
 
 
 class Tournament:
@@ -17,7 +14,7 @@ class Tournament:
         id: int,
         name: str,
         players: list[list[Player, int]],
-        rounds_id: list["Round"],
+        rounds: list[Round],
         localization: Address,
         rounds_amount: int = 4,
         start_time: datetime.datetime = None,
@@ -39,7 +36,7 @@ class Tournament:
         self.id = id
         self.name = name
         self.players = [[player[0], player[1]] for player in players]
-        self.rounds = rounds_id
+        self.rounds = rounds
         self.localization = localization
         self.rounds_amount = rounds_amount
 
@@ -59,9 +56,11 @@ class Tournament:
 
     def start_tournament(self):
         self.start_time = datetime.datetime.now()
+        self.save()
 
     def end_tournament(self):
         self.end_time = datetime.datetime.now()
+        self.save()
 
     def save(self):
         save_data(self.to_json())
@@ -114,24 +113,33 @@ class Tournament:
             players=[
                 [Player.from_id(player[0]), player[1]] for player in json_ref["players"]
             ],
-            rounds_id=json_ref["rounds"],
+            rounds=[Round.from_id(id) for id in json_ref["rounds"]],
             localization=Address.from_json(json_ref["localization"]),
             rounds_amount=json_ref["rounds_amount"],
             description=json_ref["description"],
         )
-        try:
-            tournament.start_time = datetime.datetime.fromisoformat(
-                json_ref["start_date"]
-            )
-        except KeyError:
-            pass
 
-        try:
-            tournament.end_time = datetime.datetime.fromisoformat(json_ref["end_date"])
-        except KeyError:
-            pass
+        tournament.start_time = (
+            datetime.datetime.fromisoformat(json_ref["start_time"])
+            if json_ref["start_time"]
+            else None
+        )
+
+        tournament.end_time = (
+            datetime.datetime.fromisoformat(json_ref["end_time"])
+            if json_ref["end_time"]
+            else None
+        )
 
         return tournament
+
+    def players_already_met(self, player1: Player, player2: Player) -> bool:
+        for r in self.rounds:
+            for m in r.matches:
+                if player1 in m.players:
+                    if player2 in m.players:
+                        return True
+        return False
 
     def __str__(self):
         """str method. Returns tournament's name.

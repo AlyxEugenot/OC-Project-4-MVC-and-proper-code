@@ -1,23 +1,29 @@
 import datetime
+import random
 from typing import Self, TYPE_CHECKING
-from chess.model.storage import save_data, load_data, ROUNDS, datetime_to_str
+from chess.model.storage import save_data, load_data, ROUNDS, datetime_to_str, MATCHES
 from chess.model import Match
 
 
 if TYPE_CHECKING:
-    from chess.model import Tournament
+    from chess.model import Tournament, Player
 
 
 class Round:
     """Round class. Rounds are composed of multiple matches."""
 
-    def __init__(self, id: int, name: str):  # , tournament: "Tournament"):
+    def __init__(
+        self, id: int, name: str, matches: list[Match]
+    ):  # , tournament: "Tournament"):
         """Round init.
 
         Args:
-            id (int): Round ID.
+            id (int): Round ID. (len 6)
             name (str): Round Name. ex: "Round 1"
-            tournament (Tournament): Tournament the round is a part of.
+            matches(list[Match]): All matches of this round.
+
+
+            tournament (Tournament): Tournament the round is a part of. #FIXME delete ?
         """
         self.id = id
         self.name = name
@@ -25,9 +31,10 @@ class Round:
 
         self.start_time = None
         self.end_time = None
-        self.matches: list[Match] = []
+        self.matches = matches
 
         self.start_round()
+        self.save()
 
     def start_round(self):
         """Set the time for the round start.
@@ -63,7 +70,7 @@ class Round:
             ROUNDS: {
                 self.id: {
                     "name": self.name,
-                    "matches": [_match.id for _match in self.matches],
+                    "matches": [match.id for match in self.matches],
                     # "parent_tournament": self.parent_tournament,
                     "start_time": datetime_to_str(self.start_time),
                     "end_time": datetime_to_str(self.end_time),
@@ -92,11 +99,19 @@ class Round:
         this_round = Round(
             id=round_id,
             name=json_ref["name"],
+            matches=[Match.from_id(entry) for entry in json_ref["matches"]],
             # tournament=json_ref["parent_tournament"],
         )
-        this_round.matches = [Match.from_id(entry) for entry in json_ref["matches"]]
-        this_round.start_time = datetime.datetime.fromisoformat(json_ref["start_time"])
-        this_round.end_time = datetime.datetime.fromisoformat(json_ref["end_time"])
+        this_round.start_time = (
+            datetime.datetime.fromisoformat(json_ref["start_time"])
+            if json_ref["start_time"]
+            else None
+        )
+        this_round.end_time = (
+            datetime.datetime.fromisoformat(json_ref["end_time"])
+            if json_ref["end_time"]
+            else None
+        )
 
         return this_round
 

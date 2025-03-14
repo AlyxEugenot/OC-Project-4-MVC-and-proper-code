@@ -8,20 +8,18 @@ from chess.model.storage import save_data, load_data, MATCHES
 class Match:
     """Match class. Used to keep track of match results."""
 
-    def __init__(
-        self, id: int, players: list[Player]
-    ):  # parent_round: Round, players: list[Player]):
+    def __init__(self, id: int, players: list[Player]):
         """Match init.
 
         Args:
-            id (int): Match ID.
-            parent_round (Round): Round the match is a part of.
+            id (int): Match ID. (len 10)
             players (list[Player, int]): Players and their current match points.
         """
         self.id = id
         # self.parent_round = parent_round
         self.players = players
-        self.score = [{players[0]: 0, players[1]: 0}]
+        self.score = {players[0]: 0, players[1]: 0}
+        self.save()
 
     def pick_white_player(self) -> Player:
         """Pick white player at random.
@@ -45,12 +43,14 @@ class Match:
         """
         if player is None:
             for p in self.score:
-                self.score[p] += 0.5
+                self.score[p.id] += 0.5
+                self.save()
             return "Tie"
 
         for p in self.score:
             if p == player:
-                self.score[p] += 1
+                self.score[p.id] += 1
+                self.save()
             return f"Player {player} wins."
 
         raise ValueError
@@ -108,18 +108,26 @@ class Match:
         }
         return this_match
 
+    def is_over(self) -> bool:
+        if self.score[self.players[0]] + self.score[self.players[1]] < 1:
+            return False
+        return True
+
     def __str__(self):
         """str method. Returns match's score.
 
         Returns:
             str: Match score.
         """
-        return str(self.score)
+        return (
+            f"{str(self.players[0])}: {self.score[self.players[0]]}, "
+            f"{str(self.players[1])}: {self.score[self.players[1]]}"
+        )
 
     def __repr__(self):
-        """repr method. Returns match's ID.
+        """repr method. Returns match's ID and score.
 
         Returns:
-            int: Match ID.
+            str: Match ID and score.
         """
-        return self.id
+        return f"{str(self.id)}: {str(self.score)}"

@@ -20,7 +20,7 @@ class MainMenu(_abstract.Menu):
         self.add_child(reportsMenu.WhichReports())
 
         self.tournament = tournamentMenu.TournamentHandling()
-        # set up tournament parent reliationship
+        # set up tournament parent relationship
         self.add_child(self.tournament)
         self.children.remove(self.tournament)
 

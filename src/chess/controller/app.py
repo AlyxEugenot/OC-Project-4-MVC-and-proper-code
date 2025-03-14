@@ -1,9 +1,9 @@
-import chess.model.callbacks
+import chess.model
 import chess.view.menus
 import chess.view.menus._abstract
 import chess.view.menus.addPlayersMenu
 import chess.view.menus.mainMenu
-import chess.model
+import chess.model.callbacks
 
 # import chess.controller.context
 
@@ -26,7 +26,11 @@ class App:
     def setup_view(self):
         tournament = self.view_main_menu.tournament
         tournament.callback_add_players_to_tournament = chess.model.callbacks.add_player_to_tournament
-        # round = tournament.round
+        tournament.callback_start_new_round=chess.model.callbacks.start_new_round
+        round = tournament.round
+        round.context = self.context
+        # match = round.match
+        # match.context = self.context
 
         reports = find_menu(WhichReports, self.view_main_menu)
         reports.callback_all_players=chess.model.callbacks.list_all_players

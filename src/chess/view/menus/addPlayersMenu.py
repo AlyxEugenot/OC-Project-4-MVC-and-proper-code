@@ -44,7 +44,7 @@ class AddPlayers(_abstract.Menu):
         if not model.Player(player_id, "", "", None).is_id_valid():
             print("ID is not valid (format AB12345).")
             player_id = self.get_valid_player_id()
-        if model.player_from_id(player_id) is not None:
+        if model.Player.from_id(player_id) is not None:
             print("ID already exists.")
             player_id = self.get_valid_player_id()
         return player_id

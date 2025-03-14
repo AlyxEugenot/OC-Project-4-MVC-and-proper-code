@@ -1,26 +1,21 @@
+import chess.model
 import chess.view
 import chess.view.menus
 import chess.view.menus._abstract as _abstract
-import chess.model.generate as generate
-
-# from typing import TYPE_CHECKING
-# if TYPE_CHECKING:
-import chess.model as model
-
 
 
 class RoundHandling(_abstract.Menu):
     def __init__(self):
-        self.round: model.Round = None
-        # self.rounds=None
+        self.round: chess.model.Round = None
         super().__init__(title="Round vide")
         self.loop_above = True
+
+        # self.matches =
 
         self.callback_get_round_from_id = _abstract.not_implemented
         self.callback_start_round = _abstract.not_implemented
         self.callback_end_round = _abstract.not_implemented
         self.callback_start_new_round = _abstract.not_implemented
-        self.callback_any_match_not_over = _abstract.not_implemented
 
     def on_exit(self):
         self.round = None
@@ -30,9 +25,7 @@ class RoundHandling(_abstract.Menu):
     def load_round(self):  # TODO va falloir appeler cette fonction quelque part :>
         if self.context.current_round_id is None:
             raise TypeError("Trying to load a round it does not find.")
-        self.round = self.callback_get_round_from_id(
-            self.context.current_round_id
-        )
+        self.round = chess.model.Round.from_id(self.context.current_round_id)
         self.title = f"Round {str(self.round)}"
 
     def execute(self):
@@ -51,30 +44,30 @@ class RoundHandling(_abstract.Menu):
                     )
                 )
             else:
-                matches = self.round.matches
-                unfinished_matches = [x for x in matches if x.end_time is not None]
-                if len(unfinished_matches) > 1:
-                    raise RecursionError(
-                        "Multiple unfinished rounds. Normally impossible."
+                # créer une copie de la liste
+                matches = list(self.round.matches)
+                unfinished_matches = [x for x in matches if not x.is_over()]
+                for match in unfinished_matches:
+                    self.add_child(
+                        _abstract.Action(  # FIXME pas une action si "match" est un menu
+                            f"En cours: {match.players[0]} vs {match.players[1]}",
+                        )
                     )
-                unfinished_matches = unfinished_matches[0]
-                # self.add_child(RoundHandling(unfinished_round)) # TODO round handling
-                self.add_child(
-                    _abstract.Action(
-                        f"En cours: {unfinished_matches.name}",
-                    )
-                )
-                matches.remove(unfinished_matches[0])
+                    matches.remove(match)
                 for r in matches:
                     # self.add_child(RoundHandling(unfinished_round)) # TODO round handling
                     # ou peut-être juste un print des rounds terminés
-                    self.add_child(_abstract.Action(f"Terminé: {r.name}"))
+                    self.add_child(_abstract.Action(f"Terminé: {str(r)}"))
 
             super().execute()
 
     def start_round(self):
         self.callback_start_round()
         self.start_new_round()
+
+    def play_match(match: chess.model.Match):
+        # passer dans un autre menu ?
+        pass
 
     def end_round(self):
         self.callback_end_round()
@@ -83,5 +76,7 @@ class RoundHandling(_abstract.Menu):
         self.callback_start_new_round()
 
     def any_match_not_over(self) -> bool:
-        return self.callback_any_match_not_over(self.context.current_tournament_id)
-
+        for match in self.round.matches:
+            if not match.is_over():
+                return True
+        return False

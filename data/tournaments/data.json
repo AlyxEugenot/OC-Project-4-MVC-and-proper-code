@@ -138,7 +138,9 @@
                     0
                 ]
             ],
-            "rounds": [],
+            "rounds": [
+                245099
+            ],
             "localization": {
                 "addressee_id": "Mr. Qoqzi Tdal",
                 "delivery_point": "Escalier D",
@@ -150,10 +152,58 @@
             },
             "rounds_amount": 4,
             "description": "Tournament oe oe oe at 87368 NFXQ.",
-            "start_time": null,
+            "start_time": "2025-03-14T17:23:59.078785",
             "end_time": null
         }
     },
-    "rounds": {},
-    "matches": {}
+    "rounds": {
+        "245099": {
+            "name": "Round 1",
+            "matches": [
+                7425144039,
+                6342200098,
+                4500128041
+            ],
+            "start_time": "2025-03-14T17:23:59.133130",
+            "end_time": null
+        }
+    },
+    "matches": {
+        "7425144039": {
+            "score": [
+                [
+                    "AA00000",
+                    0
+                ],
+                [
+                    "BL37659",
+                    0
+                ]
+            ]
+        },
+        "6342200098": {
+            "score": [
+                [
+                    "NK00418",
+                    0
+                ],
+                [
+                    "AA11111",
+                    0
+                ]
+            ]
+        },
+        "4500128041": {
+            "score": [
+                [
+                    "HO31948",
+                    0
+                ],
+                [
+                    "GX66539",
+                    0
+                ]
+            ]
+        }
+    }
 }

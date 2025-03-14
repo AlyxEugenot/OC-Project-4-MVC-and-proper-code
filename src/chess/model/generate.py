@@ -1,6 +1,7 @@
 """Some tools to generate random elements."""
 
 import chess.model as model
+import chess.model.storage as storage
 import random
 import numpy.random as nprand
 import string
@@ -132,6 +133,21 @@ def generate_specific_str(model: str) -> str:
 
     return "".join(chars)
 
+def generate_available_id(json_key:str):
+    id=None
+    while id is None or storage.id_already_exists(id,json_key):
+        match json_key:
+            case storage.PLAYERS:   
+                id = generate_specific_str("aannnnn")
+            case storage.TOURNAMENTS :
+                id = random.randint(100000,999999)                    
+            case storage.ROUNDS:
+                id = random.randint(100000,999999)
+            case storage.MATCHES:
+                id = random.randint(1000000000,9999999999)
+            case _:
+                raise ValueError("La clé n'existe pas dans le fichier de save. / Elle est mal écrite.")    
+    return id
 
 def is_empty_string(string_to_test: str) -> bool:  # FIXME should be elsewhere
     if string_to_test == "" or string_to_test is None:

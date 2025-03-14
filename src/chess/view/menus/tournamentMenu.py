@@ -7,6 +7,7 @@ import chess.model.generate as generate
 # if TYPE_CHECKING:
 import chess.model as model
 import chess.model.storage
+import chess.view.menus.roundMenu
 
 
 class WhichTournament(_abstract.Menu):
@@ -53,9 +54,9 @@ class WhichTournament(_abstract.Menu):
             return model.Tournament.from_id(tournament_id)
 
         if tournament_id == "":
-            tournament_id = generate.generate_specific_str("nnnnnn")
-            while model.Tournament.from_id(tournament_id) is not None:
-                tournament_id = generate.generate_specific_str("nnnnnn")
+            tournament_id = generate.generate_available_id(
+                chess.model.storage.TOURNAMENTS
+            )
         name = input("Tournament name: ")
         players: str = input("Enter players' ID separated by commas:(can be empty) ")
         players = players.split(",")
@@ -89,16 +90,22 @@ class WhichTournament(_abstract.Menu):
 class TournamentHandling(_abstract.Menu):
     def __init__(self):
         self.tournament: model.Tournament = None
-        # self.rounds=None
         super().__init__(title="Tournoi vide")
         self.loop_above = True
 
-        self.callback_start_tournament = _abstract.not_implemented
-        self.callback_end_tournament = _abstract.not_implemented
-        self.callback_start_new_round = _abstract.not_implemented
-        self.callback_add_players_to_tournament = _abstract.not_implemented
-        self.callback_add_rounds_to_menu = _abstract.not_implemented
-        self.callback_any_round_not_over = _abstract.not_implemented
+        self.round = chess.view.menus.roundMenu.RoundHandling()
+        # set up tournament parent reliationship
+        self.add_child(self.round)
+        self.children.remove(self.round)
+        self.round.on_round_end = self.on_round_end
+        # créé pour récup les nombres de points des joueurs et bien commencer le nouveau round MAIS
+        # inutile si on save à chaque fin de match et que l'on check les data à chaque fois qu'on veut connaitre les points
+        # en plus, "le cumul des points" peut servir à pas mal d'endroits
+
+        self.callback_end_tournament = _abstract.not_implemented  # TODO
+        self.callback_start_new_round = _abstract.not_implemented  # done
+        self.callback_add_players_to_tournament = _abstract.not_implemented  # done
+        self.callback_add_rounds_to_menu = _abstract.not_implemented  # TODO
 
     def on_exit(self):
         self.tournament = None
@@ -108,9 +115,7 @@ class TournamentHandling(_abstract.Menu):
     def load_tournament(self):
         if self.context.current_tournament_id is None:
             raise TypeError("Trying to load a tournament it does not find.")
-        self.tournament = model.Tournament.from_id(
-            self.context.current_tournament_id
-        )
+        self.tournament = model.Tournament.from_id(self.context.current_tournament_id)
         self.title = f"Tournoi {str(self.tournament)}"
 
     def execute(self):
@@ -145,7 +150,8 @@ class TournamentHandling(_abstract.Menu):
                     )
                 )
             else:
-                rounds = self.tournament.rounds
+                #créer une copie de la liste
+                rounds = list(self.tournament.rounds)
                 unfinished_round = [x for x in rounds if x.end_time is not None]
                 if len(unfinished_round) > 1:
                     raise RecursionError(
@@ -168,14 +174,17 @@ class TournamentHandling(_abstract.Menu):
 
     def start_tournament(self):
         self.tournament.start_tournament()
-        self.callback_start_tournament()
         self.start_new_round()
 
     def end_tournament(self):
         self.callback_end_tournament()
 
     def start_new_round(self):
-        self.callback_start_new_round()
+        round = self.callback_start_new_round(self.tournament)
+        self.context.current_round_id = round.id
+        self.tournament.save()
+        self.round.load_round()
+        self.round.execute()
 
     def add_players_to_tournament(self):
         # afficher les joueurs ajoutables au tournoi
@@ -194,4 +203,11 @@ class TournamentHandling(_abstract.Menu):
         self.callback_add_rounds_to_menu()
 
     def any_round_not_over(self) -> bool:
-        return self.callback_any_round_not_over(self.context.current_tournament_id)
+        for round in self.tournament.rounds:
+            if round.end_time is not None:
+                return True
+        return False
+
+    def on_round_end(self):
+        # self.round.m  # FIXME est-ce que y'en a besoin ?
+        pass
