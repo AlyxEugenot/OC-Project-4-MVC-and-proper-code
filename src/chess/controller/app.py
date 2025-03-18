@@ -25,15 +25,19 @@ class App:
 
     def setup_view(self):
         tournament = self.view_main_menu.tournament
-        tournament.callback_add_players_to_tournament = chess.model.callbacks.add_player_to_tournament
-        tournament.callback_start_new_round=chess.model.callbacks.start_new_round
-        round = tournament.round
-        round.context = self.context
-        # match = round.match
-        # match.context = self.context
+        tournament.callback_add_players_to_tournament = (
+            chess.model.callbacks.add_player_to_tournament
+        )
+        tournament.callback_start_new_round = chess.model.callbacks.start_new_round
+        round_menu = tournament.round_menu
+        match_menu = round_menu.match_menu
+        match_menu.context = round_menu.context = self.context
+        round_menu.callback_update_tournament_scores = (
+            chess.model.callbacks.update_tournament_scores
+        )
 
         reports = find_menu(WhichReports, self.view_main_menu)
-        reports.callback_all_players=chess.model.callbacks.list_all_players
+        reports.callback_all_players = chess.model.callbacks.list_all_players
 
 
 class Context:

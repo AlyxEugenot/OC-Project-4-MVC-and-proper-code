@@ -8,17 +8,21 @@ from chess.model.storage import save_data, load_data, MATCHES
 class Match:
     """Match class. Used to keep track of match results."""
 
-    def __init__(self, id: int, players: list[Player]):
+    def __init__(self, id: int, players: list[Player], white_player: Player = None):
         """Match init.
 
         Args:
             id (int): Match ID. (len 10)
             players (list[Player, int]): Players and their current match points.
+            white_player (Player): Player playing first. Always leave empty.
         """
         self.id = id
         # self.parent_round = parent_round
         self.players = players
         self.score = {players[0]: 0, players[1]: 0}
+        self.white = (
+            white_player if white_player is not None else self.pick_white_player()
+        )
         self.save()
 
     def pick_white_player(self) -> Player:
@@ -43,15 +47,15 @@ class Match:
         """
         if player is None:
             for p in self.score:
-                self.score[p.id] += 0.5
+                self.score[p] += 0.5
                 self.save()
             return "Tie"
 
         for p in self.score:
             if p == player:
-                self.score[p.id] += 1
+                self.score[p] += 1
                 self.save()
-            return f"Player {player} wins."
+                return f"Player {player} wins."
 
         raise ValueError
 
@@ -75,6 +79,7 @@ class Match:
                         [self.players[0].id, self.score[self.players[0]]],
                         [self.players[1].id, self.score[self.players[1]]],
                     ],
+                    "white": self.white.id,
                 }
             }
         }
@@ -101,17 +106,35 @@ class Match:
             id=match_id,
             # parent_round=round_from_id(json_ref["parent_round"]),
             players=[Player.from_id(player[0]) for player in json_ref["score"]],
+            white_player=Player.from_id(json_ref["white"]),
         )
         this_match.score = {
             this_match.players[0]: json_ref["score"][0][1],
             this_match.players[1]: json_ref["score"][1][1],
         }
+        
+        this_match.save()
         return this_match
 
     def is_over(self) -> bool:
         if self.score[self.players[0]] + self.score[self.players[1]] < 1:
             return False
         return True
+
+    def result(self) -> str:
+        """Donne le résultat du match.
+
+        Returns:
+            str: Résultat du match.
+        """
+        if self.score[self.players[0]] > 0:
+            if self.score[self.players[0]] < 1:
+                return "Égalité."
+            return f"{str(self.players[0])} a gagné."
+        if self.score[self.players[1]] > 0:
+            return f"{str(self.players[1])} a gagné."
+        else:
+            return "Match non joué."
 
     def __str__(self):
         """str method. Returns match's score.
@@ -120,8 +143,12 @@ class Match:
             str: Match score.
         """
         return (
-            f"{str(self.players[0])}: {self.score[self.players[0]]}, "
-            f"{str(self.players[1])}: {self.score[self.players[1]]}"
+            f"{str(self.players[0])}"
+            f"{"[W]" if self.white == self.players[0] else ""}: "
+            f"{self.score[self.players[0]]}, "
+            f"{str(self.players[1])}"
+            f"{"[W]" if self.white == self.players[1] else ""}: "
+            f"{self.score[self.players[1]]}"
         )
 
     def __repr__(self):

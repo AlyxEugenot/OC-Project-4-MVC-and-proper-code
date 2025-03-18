@@ -4,8 +4,6 @@ from typing import Self
 from chess.model.storage import save_data, load_data, TOURNAMENTS, datetime_to_str
 
 
-
-
 class Tournament:
     """Tournament class. Tournaments are split in multiple rounds."""
 
@@ -131,14 +129,18 @@ class Tournament:
             else None
         )
 
+        tournament.save()
         return tournament
 
     def players_already_met(self, player1: Player, player2: Player) -> bool:
         for r in self.rounds:
             for m in r.matches:
-                if player1 in m.players:
-                    if player2 in m.players:
+                ids = [player.id for player in m.players]
+                if player1.id in ids:
+                    if player2.id in ids:
                         return True
+                    else:
+                        break # plus d'équivalence possible dans ce round
         return False
 
     def __str__(self):

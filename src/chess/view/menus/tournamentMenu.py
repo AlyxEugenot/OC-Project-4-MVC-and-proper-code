@@ -93,11 +93,11 @@ class TournamentHandling(_abstract.Menu):
         super().__init__(title="Tournoi vide")
         self.loop_above = True
 
-        self.round = chess.view.menus.roundMenu.RoundHandling()
-        # set up tournament parent reliationship
-        self.add_child(self.round)
-        self.children.remove(self.round)
-        self.round.on_round_end = self.on_round_end
+        self.round_menu = chess.view.menus.roundMenu.RoundHandling()
+        # set up tournament-round parent relationship
+        self.add_child(self.round_menu)
+        self.children.remove(self.round_menu)
+        self.round_menu.on_round_end = self.on_round_end  # TODO ??????
         # créé pour récup les nombres de points des joueurs et bien commencer le nouveau round MAIS
         # inutile si on save à chaque fin de match et que l'on check les data à chaque fois qu'on veut connaitre les points
         # en plus, "le cumul des points" peut servir à pas mal d'endroits
@@ -150,9 +150,9 @@ class TournamentHandling(_abstract.Menu):
                     )
                 )
             else:
-                #créer une copie de la liste
+                # créer une copie de la liste
                 rounds = list(self.tournament.rounds)
-                unfinished_round = [x for x in rounds if x.end_time is not None]
+                unfinished_round = [x for x in rounds if x.end_time is None]
                 if len(unfinished_round) > 1:
                     raise RecursionError(
                         "Multiple unfinished rounds. Normally impossible."
@@ -162,13 +162,18 @@ class TournamentHandling(_abstract.Menu):
                 self.add_child(
                     _abstract.Action(
                         f"En cours: {unfinished_round.name}",
+                        lambda: self.load_round(unfinished_round.id),
                     )
                 )
-                rounds.remove(unfinished_round[0])
+                rounds.remove(unfinished_round)
                 for r in rounds:
                     # self.add_child(RoundHandling(unfinished_round)) # TODO round handling
                     # ou peut-être juste un print des rounds terminés
-                    self.add_child(_abstract.Action(f"Terminé: {r.name}"))
+                    self.add_child(
+                        _abstract.Action(
+                            f"Terminé: {r.name}", lambda: self.load_round(r.id)
+                        )
+                    )
 
             super().execute()
 
@@ -181,10 +186,13 @@ class TournamentHandling(_abstract.Menu):
 
     def start_new_round(self):
         round = self.callback_start_new_round(self.tournament)
-        self.context.current_round_id = round.id
         self.tournament.save()
-        self.round.load_round()
-        self.round.execute()
+        self.load_round(round.id)
+
+    def load_round(self, round_id):
+        self.context.current_round_id = round_id
+        self.round_menu.load_round()
+        self.round_menu.execute()
 
     def add_players_to_tournament(self):
         # afficher les joueurs ajoutables au tournoi
@@ -204,7 +212,7 @@ class TournamentHandling(_abstract.Menu):
 
     def any_round_not_over(self) -> bool:
         for round in self.tournament.rounds:
-            if round.end_time is not None:
+            if round.end_time is None:
                 return True
         return False
 

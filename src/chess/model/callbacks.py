@@ -33,6 +33,14 @@ def list_all_players() -> list[str, str, str, date, int]:
 
     return returned_list
 
+def update_tournament_scores(tournament:chess.model.Tournament,finished_matches:list[chess.model.Match]):
+    for match in finished_matches:
+        for player in match.players:
+            for t_player in tournament.players:
+                if t_player[0].id == player.id:
+                    t_player[1]+=match.score[player]
+                    break
+    tournament.save()
 
 def start_new_round(tournament: chess.model.Tournament) -> chess.model.Round:
     generated_pairs = generate_pairs_for_new_round(tournament)
@@ -63,7 +71,7 @@ def generate_pairs_for_new_round(  # FIXME move ? rien à faire ici ?
     for i in range(0, len(sorted_players), 2):
         player1_idx, player2_idx = 0, 1
         # if enough players to assign other players
-        if len(sorted_players) // 2 > 2:
+        if len(sorted_players) // 2 > 1:
             # while player 1 already met his opponent:
             while tournament.players_already_met(
                 sorted_players[player1_idx][0], sorted_players[player2_idx][0]

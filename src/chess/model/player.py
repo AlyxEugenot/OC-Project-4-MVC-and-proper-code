@@ -107,4 +107,4 @@ class Player:
         Returns:
             str: Player ID.
         """
-        return self.id
+        return f"{self.id}: {self.first_name[0]} {self.last_name}"

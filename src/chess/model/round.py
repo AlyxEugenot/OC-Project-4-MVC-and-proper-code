@@ -52,6 +52,7 @@ class Round:
             datetime.datetime: Datetime of end of round.
         """
         self.end_time = datetime.datetime.now()
+        self.save()
         return self.end_time
 
     def save(self):
@@ -113,6 +114,7 @@ class Round:
             else None
         )
 
+        this_round.save()
         return this_round
 
     def __str__(self):
