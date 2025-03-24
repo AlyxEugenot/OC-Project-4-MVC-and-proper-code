@@ -101,8 +101,9 @@ class Address:
         ]
         filled_address = []
         for element in complete_address:
-            if element != "" or element is None:
-                filled_address.append(element)
+            if element == "" or element is None:
+                continue
+            filled_address.append(element)
         return "\n".join(filled_address)
 
     def __repr__(self):

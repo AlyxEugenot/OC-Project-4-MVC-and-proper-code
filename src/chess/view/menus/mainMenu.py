@@ -17,7 +17,7 @@ class MainMenu(_abstract.Menu):
 
         self.add_child(tournamentMenu.WhichTournament())
         self.add_child(addPlayersMenu.AddPlayers())
-        self.add_child(reportsMenu.WhichReports())
+        self.add_child(reportsMenu.Reports())
 
         self.tournament = tournamentMenu.TournamentHandling()
         # set up tournament parent relationship

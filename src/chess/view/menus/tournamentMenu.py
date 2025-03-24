@@ -97,15 +97,12 @@ class TournamentHandling(_abstract.Menu):
         # set up tournament-round parent relationship
         self.add_child(self.round_menu)
         self.children.remove(self.round_menu)
-        self.round_menu.on_round_end = self.on_round_end  # TODO ??????
         # créé pour récup les nombres de points des joueurs et bien commencer le nouveau round MAIS
         # inutile si on save à chaque fin de match et que l'on check les data à chaque fois qu'on veut connaitre les points
         # en plus, "le cumul des points" peut servir à pas mal d'endroits
 
-        self.callback_end_tournament = _abstract.not_implemented  # TODO
         self.callback_start_new_round = _abstract.not_implemented  # done
         self.callback_add_players_to_tournament = _abstract.not_implemented  # done
-        self.callback_add_rounds_to_menu = _abstract.not_implemented  # TODO
 
     def on_exit(self):
         self.tournament = None
@@ -144,11 +141,19 @@ class TournamentHandling(_abstract.Menu):
                 else:
                     print("Minimum 4 joueurs pour commencer le tournoi.")
             elif not self.any_round_not_over():
-                self.add_child(
-                    _abstract.Action(
-                        "Commencer un nouveau round.", self.start_new_round
+                if self.tournament_final_round_reached():
+                    self.add_child(
+                        _abstract.Action(
+                            "Dernier round joué. Clôturer ce tournoi.",
+                            self.end_tournament,
+                        )
                     )
-                )
+                else:
+                    self.add_child(
+                        _abstract.Action(
+                            "Commencer un nouveau round.", self.start_new_round
+                        )
+                    )
             else:
                 # créer une copie de la liste
                 rounds = list(self.tournament.rounds)
@@ -182,7 +187,8 @@ class TournamentHandling(_abstract.Menu):
         self.start_new_round()
 
     def end_tournament(self):
-        self.callback_end_tournament()
+        self.tournament.end_tournament()
+        self.parent.execute()
 
     def start_new_round(self):
         round = self.callback_start_new_round(self.tournament)
@@ -207,15 +213,14 @@ class TournamentHandling(_abstract.Menu):
             else:
                 print("Joueur ajouté. Ne rien entrer pour revenir au tournoi.\n")
 
-    def add_rounds_to_menu(self):
-        self.callback_add_rounds_to_menu()
-
     def any_round_not_over(self) -> bool:
         for round in self.tournament.rounds:
             if round.end_time is None:
                 return True
         return False
 
-    def on_round_end(self):
-        # self.round.m  # FIXME est-ce que y'en a besoin ?
-        pass
+    def tournament_final_round_reached(self) -> bool:
+        if len(self.tournament.rounds) >= self.tournament.rounds_amount:
+            return True
+        else:
+            return False

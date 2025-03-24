@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Type
 from chess.view.menus.roundMenu import RoundHandling
 from chess.view.menus.addPlayersMenu import AddPlayers
 from chess.view.menus.tournamentMenu import TournamentHandling, WhichTournament
-from chess.view.menus.reportsMenu import WhichReports
+from chess.view.menus.reportsMenu import Reports
 
 
 class App:
@@ -36,8 +36,23 @@ class App:
             chess.model.callbacks.update_tournament_scores
         )
 
-        reports = find_menu(WhichReports, self.view_main_menu)
-        reports.callback_all_players = chess.model.callbacks.list_all_players
+        reports = find_menu(Reports, self.view_main_menu)
+        reports.callback_all_players = chess.model.callbacks.list_players
+        reports.callback_all_tournaments = chess.model.callbacks.list_tournaments
+        reports.callback_all_players_from_tournament = (
+            lambda id: chess.model.callbacks.list_players_from_tournament(id)
+        )
+        reports.callback_rounds_from_tournament = (
+            lambda id: chess.model.callbacks.list_rounds_from_tournament(id)
+        )
+        reports.callback_rounds_matches_from_tournament = (
+            lambda id: chess.model.callbacks.list_rounds_from_tournament(
+                id, match_is_int=False
+            )
+        )
+        reports.callback_matches_from_tournament = (
+            lambda id: chess.model.callbacks.list_matches_from_round(id)
+        )
 
 
 class Context:

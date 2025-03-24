@@ -87,12 +87,33 @@ def sort_data() -> dict[str, dict[str, dict]]:
     sorted_json = DICT_STRUCTURE
 
     for key in this_json:
-        if key == PLAYERS:
-            sorted_json[key] = dict(
-                sorted(this_json[key].items(), key=lambda item: sort(item, "last_name"))
-            )
-        else:
-            sorted_json[key] = dict(sorted(this_json[key].items()))
+        match key:
+            case "players":
+                sorted_json[key] = dict(
+                    sorted(
+                        this_json[key].items(),
+                        key=lambda item: sort(item, "last_name"),
+                    )
+                )
+            case "rounds":
+                sorted_json[key] = dict(
+                    sorted(
+                        this_json[key].items(),
+                        key=lambda item: sort(item, "start_time"),
+                    )
+                )
+            case "matches":
+                sorted_json[key] = dict(sorted(this_json[key].items()))
+                for match in sorted_json[key]:
+                    # Sort players by descending score
+                    sorted_json[key][match]["score"] = sorted(
+                        sorted_json[key][match]["score"],
+                        key=lambda item: item[1],
+                        reverse=True,
+                    )
+
+            case _:
+                sorted_json[key] = dict(sorted(this_json[key].items()))
 
     with open(SAVED_DATA_PATH, mode="w", encoding="utf-8") as file:
         json.dump(sorted_json, file, indent=4)

@@ -15,8 +15,8 @@ class RoundHandling(_abstract.Menu):
         # set up round-match parent relationship
         self.add_child(self.match_menu)
         self.children.remove(self.match_menu)
-        
-        self.callback_update_tournament_scores=_abstract.not_implemented
+
+        self.callback_update_tournament_scores = _abstract.not_implemented
 
     def on_exit(self):
         self.parent.load_tournament()
@@ -38,35 +38,46 @@ class RoundHandling(_abstract.Menu):
             self.children.clear()
 
             if self.round.end_time is not None:
-                pass  # TODO ?
+                # TODO ?
+                # rapport des matchs finis de ce round ?
+                continue
+                # on ne veut pas pouvoir modifier les matchs déjà finis dans un
+                # round passé donc on fait pas la suite de la while loop
             elif not self.any_match_not_over():
                 self.add_child(
                     _abstract.Action(
-                        "Terminer le round et commencer le prochain.",
-                        self.end_round,
+                        "Terminer le round et revenir au tournoi.",
+                        lambda: self.end_round(False),
                     )
                 )
-            else:
-                # créer une copie de la liste
-                matches = list(self.round.matches)
-                unfinished_matches = [x for x in matches if not x.is_over()]
-                for match in unfinished_matches:
+                if not self.parent.tournament_final_round_reached():
                     self.add_child(
                         _abstract.Action(
-                            f"En cours: {match.players[0]} vs {match.players[1]}",  # str pour prénom nom ?
-                            lambda id=match.id: self.load_match(id),
+                            "Terminer le round et commencer le nouveau.", self.end_round
                         )
                     )
-                    matches.remove(match)
-                for match in matches:
-                    # self.add_child(RoundHandling(unfinished_round)) # TODO round handling
-                    # ou peut-être juste un print des rounds terminés
-                    self.add_child(
-                        _abstract.Action(
-                            f"Terminé: {str(match)}",
-                            lambda id=match.id: self.load_match(id),
-                        )
+                # TODO self.add_div()
+
+            # créer une copie de la liste
+            matches = list(self.round.matches)
+            unfinished_matches = [x for x in matches if not x.is_over()]
+            for match in unfinished_matches:
+                self.add_child(
+                    _abstract.Action(
+                        f"En cours: {match.players[0]} vs {match.players[1]}",
+                        lambda id=match.id: self.load_match(id),
                     )
+                )
+                matches.remove(match)
+            for match in matches:
+                # self.add_child(RoundHandling(unfinished_round)) # TODO round handling
+                # ou peut-être juste un print des rounds terminés
+                self.add_child(
+                    _abstract.Action(
+                        f"Terminé: {str(match)}",
+                        lambda id=match.id: self.load_match(id),
+                    )
+                )
 
             super().execute()
 
@@ -75,11 +86,16 @@ class RoundHandling(_abstract.Menu):
         self.match_menu.load_match()
         self.match_menu.execute()
 
-    def end_round(self):
+    def end_round(self, start_new_round: bool = True):
         self.round.end_round()
-        self.callback_update_tournament_scores(self.parent.tournament, self.round.matches)
-        self.parent.load_tournament()
-        self.parent.start_new_round()
+        self.callback_update_tournament_scores(
+            self.parent.tournament, self.round.matches
+        )
+        if start_new_round:
+            self.parent.start_new_round()
+        else:
+            self.parent.load_tournament()
+            self.parent.execute()
 
     def any_match_not_over(self) -> bool:
         for match in self.round.matches:
