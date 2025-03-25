@@ -18,7 +18,7 @@ def add_player_to_tournament(
 
 def list_players(
     player_ids: list[str] = None,
-) -> list[str, str, str, str, int]:  # all players if None
+) -> tuple[str, str, str, str, int]:  # all players if None
     players_json = chess.model.storage.sort_data()[chess.model.storage.PLAYERS]
 
     returned_list = [["ID", "Nom", "Prénom", "Date de naissance", "Elo"]]
@@ -39,7 +39,7 @@ def list_players(
     return returned_list
 
 
-def list_players_from_tournament(tournament_id: str) -> list[str, str, str, str, int]:
+def list_players_from_tournament(tournament_id: str) -> tuple[str, str, str, str, int]:
     tournaments_json = chess.model.storage.load_data()[chess.model.storage.TOURNAMENTS]
 
     try:
@@ -58,7 +58,7 @@ def list_players_from_tournament(tournament_id: str) -> list[str, str, str, str,
 
 def list_rounds_from_tournament(
     tournament_id: str, match_is_int: bool = True
-) -> list[int, str, str, str, str]:  # multiline if match_is_int is False
+) -> tuple[int, str, str, str, str]:  # multiline if match_is_int is False
     json = chess.model.storage.sort_data()
     tournaments_json = json[chess.model.storage.TOURNAMENTS]
     rounds_json = json[chess.model.storage.ROUNDS]
@@ -138,7 +138,7 @@ def list_matches_from_round(round_id: str):
 
 def list_tournaments(
     tournament_id: str = None,
-) -> list[str, str, str, str, str, str, str, str, str]:  # all tournaments if None
+) -> tuple[str, str, str, str, str, str, str, str, str]:  # all tournaments if None
     tournaments_json = chess.model.storage.sort_data()[chess.model.storage.TOURNAMENTS]
 
     returned_list = [
