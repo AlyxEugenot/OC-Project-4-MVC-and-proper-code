@@ -37,7 +37,7 @@ class WhichTournament(_abstract.Menu):
         for t in unfinished_tournaments:
             self.add_child(
                 _abstract.Action(
-                    f"Tournoi {t.name}", lambda: self.select_tournament(t.id)
+                    f"Tournoi {t.name}", lambda id=t.id: self.select_tournament(id)
                 )
             )
 
@@ -76,6 +76,7 @@ class WhichTournament(_abstract.Menu):
             id=tournament_id,
             name=name,
             players=players_found,
+            rounds=[],
             localization=localization,
         )
         if rounds_amount != "":

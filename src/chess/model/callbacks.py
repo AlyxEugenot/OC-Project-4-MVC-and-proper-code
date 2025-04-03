@@ -276,8 +276,8 @@ def json_date_to_str(json_date: str) -> str:
 
 
 def json_datetime_to_str(json_datetime: str) -> str:
-    if json_datetime == "null":
-        return "null"
+    if json_datetime is None:
+        return "None"
     else:
         return datetime.fromisoformat(json_datetime).strftime("%d-%m-%Y %H:%M")
 
