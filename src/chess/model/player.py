@@ -1,7 +1,8 @@
 import datetime
 import re
 from typing import Self
-from chess.model.storage import save_data, load_data, PLAYERS, datetime_to_str
+from chess.model.storage import save_data, load_data, PLAYERS
+import chess.utils as utils
 
 
 class Player:
@@ -48,7 +49,7 @@ class Player:
                 self.id: {
                     "first_name": self.first_name,
                     "last_name": self.last_name,
-                    "birth_date": datetime_to_str(self.birth_date),
+                    "birth_date": utils.datetime_to_isoformat(self.birth_date),
                     "elo": self.elo,
                 }
             }

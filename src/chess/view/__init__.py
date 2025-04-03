@@ -1,3 +1,1 @@
 """View"""
-
-from .inputs import *

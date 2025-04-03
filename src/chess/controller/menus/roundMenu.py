@@ -1,8 +1,6 @@
 import chess.model
-import chess.view
-import chess.view.menus
-import chess.view.menus._abstract as _abstract
-import chess.view.menus.matchMenu
+import chess.controller.menus
+import chess.controller.menus._abstract as _abstract
 
 
 class RoundHandling(_abstract.Menu):
@@ -11,7 +9,7 @@ class RoundHandling(_abstract.Menu):
         super().__init__(title="Round vide")
         self.loop_above = True
 
-        self.match_menu = chess.view.menus.matchMenu.MatchHandling()
+        self.match_menu = chess.controller.menus.MatchHandling()
         # set up round-match parent relationship
         self.add_child(self.match_menu)
         self.children.remove(self.match_menu)
@@ -24,7 +22,7 @@ class RoundHandling(_abstract.Menu):
         self.context.current_round_id = None
         self.title = f"Round vide"
 
-    def load_round(self):  # TODO va falloir appeler cette fonction quelque part :>
+    def load_round(self):
         if self.context.current_round_id is None:
             raise TypeError("Trying to load a round it does not find.")
         self.round = chess.model.Round.from_id(self.context.current_round_id)
@@ -47,7 +45,7 @@ class RoundHandling(_abstract.Menu):
                 self.add_child(
                     _abstract.Action(
                         "Terminer le round et revenir au tournoi.",
-                        lambda: self.end_round(False),
+                        lambda: self.end_round(start_new_round=False),
                     )
                 )
                 if not self.parent.tournament_final_round_reached():
@@ -56,7 +54,6 @@ class RoundHandling(_abstract.Menu):
                             "Terminer le round et commencer le nouveau.", self.end_round
                         )
                     )
-                # TODO self.add_div()
 
             # créer une copie de la liste
             matches = list(self.round.matches)
@@ -70,8 +67,6 @@ class RoundHandling(_abstract.Menu):
                 )
                 matches.remove(match)
             for match in matches:
-                # self.add_child(RoundHandling(unfinished_round)) # TODO round handling
-                # ou peut-être juste un print des rounds terminés
                 self.add_child(
                     _abstract.Action(
                         f"Terminé: {str(match)}",

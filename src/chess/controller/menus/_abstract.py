@@ -7,7 +7,7 @@ if typing.TYPE_CHECKING:
 class MenuAbstractItem:
     def __init__(self, menu_option_name: str) -> None:
         self.menu_option_name = menu_option_name
-        self.parent: "Menu" = None
+        self.parent: Menu = None
 
     def execute(self) -> None:
         pass
@@ -108,3 +108,13 @@ class Action(MenuAbstractItem):
 
     def __repr__(self):
         return f"Action: {self.menu_option_name}"
+
+
+def find_menu(menutype: typing.Type[Menu], menu_to_search: Menu) -> Menu | None:
+    for child in menu_to_search.children:
+        if issubclass(type(child), Menu):
+            if type(child) is menutype:
+                return child
+            found_deeper = find_menu(menutype, child)
+            if found_deeper is not None:
+                return found_deeper

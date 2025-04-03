@@ -1,12 +1,9 @@
-import chess.view
-import chess.view.menus._abstract as _abstract
+import chess.controller.menus._abstract as _abstract
 import chess.model as model
-import chess.model.generate as generate
+import chess.utils as utils
 import datetime
 
 
-# TODO mettre tout ce qui touche au model dans le model (donc les générations
-# de joueur et les connect ensuite)
 class AddPlayers(_abstract.Menu):
     def __init__(self):
         menu_option_name = "Ajouter de nouveaux joueurs"
@@ -23,9 +20,9 @@ class AddPlayers(_abstract.Menu):
 
     def generate_new_random(self):
         amount = int(input("Combien : ").strip())
-        players = generate.generate_players(amount)
+        players = utils.generate_players(amount)
         for player in players:
-            model.save_player(player)
+            player.save()
             print(f"player {str(player)} added.")
 
     def generate_new_player(self):
@@ -36,10 +33,10 @@ class AddPlayers(_abstract.Menu):
             birth_date=self.get_valid_date(),
             elo=int(input("Elo : ").strip()),
         )
-        model.save_player(player)
+        player.save()
         print(f"player {str(player)} added.")
 
-    def get_valid_player_id(self) -> str:  # FIXME put in model
+    def get_valid_player_id(self) -> str:
         player_id = input("Player ID : ")
         if not model.Player(player_id, "", "", None).is_id_valid():
             print("ID is not valid (format AB12345).")
@@ -49,7 +46,7 @@ class AddPlayers(_abstract.Menu):
             player_id = self.get_valid_player_id()
         return player_id
 
-    def get_valid_date(self) -> datetime.date:  # FIXME put in model
+    def get_valid_date(self) -> datetime.date:
         try:
             date = input("Birth date (format DD/MM/YYYY) : ")
             day, month, year = [int(x.strip()) for x in date.split("/")]

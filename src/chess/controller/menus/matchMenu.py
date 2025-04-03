@@ -1,7 +1,5 @@
 import chess.model
-import chess.view
-import chess.view.menus
-import chess.view.menus._abstract as _abstract
+import chess.controller.menus._abstract as _abstract
 
 
 class MatchHandling(_abstract.Menu):

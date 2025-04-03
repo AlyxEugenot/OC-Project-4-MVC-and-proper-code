@@ -1,32 +1,26 @@
 """Some tools to generate random elements."""
 
-import chess.model as model
+__all__ = [
+    "generate_available_id",
+    "generate_players",
+    "generate_address",
+    "generate_specific_str",
+    "generate_str",
+]
+import typing  # FIXME
+
+if typing.TYPE_CHECKING:
+    import chess.model as model
 import chess.model.storage as storage
 import random
 import numpy.random as nprand
 import string
 import datetime
-import typing
 
 VOWEL, CONSONNANT = ("aeiouy"), ("bcdfghjklmnpqrstvwxz")
 
 
-def test_input(  # FIXME should be elsewhere
-    generation: typing.Callable, occurences: int = 20, in_between_character: str = ""
-):
-    """Prints in console *occurences* number of *generation* generated str.
-
-    Args:
-        generation (typing.Callable): Function used to generate str. (can be lambda)
-        occurences (int, optional): Number of inputs in console. Defaults to 20.
-        in_between_character (str, optional): Character between inputs.\
-            (can be \\n). Defaults to "".
-    """
-    for i in range(occurences):
-        print(f"{in_between_character}{generation()}")
-
-
-def generate_players(amount: int = 4) -> list[model.Player]:
+def generate_players(amount: int = 4) -> list["model.Player"]:
     """Generates *amount* number of random players.
 
     Args:
@@ -35,10 +29,12 @@ def generate_players(amount: int = 4) -> list[model.Player]:
     Returns:
         list[model.Player]: List of players generated.
     """
+    import chess.model as model  # FIXME
+
     new_players = []
     for player in range(amount):
         player = model.Player(
-            id=generate_specific_str("AANNNNN"),
+            id=generate_available_id(storage.PLAYERS),
             first_name=generate_specific_str("Cvacv"),
             last_name=generate_str().title(),
             birth_date=datetime.date(
@@ -46,14 +42,14 @@ def generate_players(amount: int = 4) -> list[model.Player]:
                 random.randint(1, 12),
                 random.randint(1, 28),
             ),
-            elo=random.randint(150, 2000),
+            elo=random.randint(0, 2000),
         )
         new_players.append(player)
 
     return new_players
 
 
-def generate_address(person_name: str = None) -> model.Address:
+def generate_address(person_name: str = None) -> "model.Address":
     """Generates random address.
 
     Args:
@@ -63,6 +59,8 @@ def generate_address(person_name: str = None) -> model.Address:
     Returns:
         model.Address: Random address.
     """
+    import chess.model as model  # FIXME
+
     if person_name is None:
         person_name = str(generate_players(1)[0])
     addressee_id = f"{random.choice(["Mr","Mme","Mx"])}. {person_name}"
@@ -133,24 +131,21 @@ def generate_specific_str(model: str) -> str:
 
     return "".join(chars)
 
-def generate_available_id(json_key:str):
-    id=None
-    while id is None or storage.id_already_exists(id,json_key):
-        match json_key:
-            case storage.PLAYERS:   
-                id = generate_specific_str("aannnnn")
-            case storage.TOURNAMENTS :
-                id = random.randint(100000,999999)                    
-            case storage.ROUNDS:
-                id = random.randint(100000,999999)
-            case storage.MATCHES:
-                id = random.randint(1000000000,9999999999)
-            case _:
-                raise ValueError("La clé n'existe pas dans le fichier de save. / Elle est mal écrite.")    
-    return id
 
-def is_empty_string(string_to_test: str) -> bool:  # FIXME should be elsewhere
-    if string_to_test == "" or string_to_test is None:
-        return True
-    else:
-        return False
+def generate_available_id(json_key: str):
+    id = None
+    while id is None or storage.id_already_exists(id, json_key):
+        match json_key:
+            case storage.PLAYERS:
+                id = generate_specific_str("aannnnn")
+            case storage.TOURNAMENTS:
+                id = random.randint(100000, 999999)
+            case storage.ROUNDS:
+                id = random.randint(100000, 999999)
+            case storage.MATCHES:
+                id = random.randint(1000000000, 9999999999)
+            case _:
+                raise ValueError(
+                    "La clé n'existe pas dans le fichier de save. / Elle est mal écrite."
+                )
+    return id

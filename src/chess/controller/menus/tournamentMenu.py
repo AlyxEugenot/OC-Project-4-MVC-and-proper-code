@@ -1,13 +1,13 @@
 import chess.view
-import chess.view.menus
-import chess.view.menus._abstract as _abstract
-import chess.model.generate as generate
+import chess.controller.menus
+import chess.controller.menus._abstract as _abstract
+import chess.utils.generate as utils
 
 # from typing import TYPE_CHECKING
 # if TYPE_CHECKING:
 import chess.model as model
 import chess.model.storage
-import chess.view.menus.roundMenu
+import chess.view.inputs
 
 
 class WhichTournament(_abstract.Menu):
@@ -30,9 +30,7 @@ class WhichTournament(_abstract.Menu):
         tournaments_ids = chess.model.storage.load_data()[
             chess.model.storage.TOURNAMENTS
         ].keys()
-        all_tournaments = [
-            model.Tournament.from_id(int(x)) for x in tournaments_ids
-        ]  # TODO enlever le int(x) quand j'aurai fait la fonction "envoie les id de tournois qui renverront que des int"
+        all_tournaments = [model.Tournament.from_id(int(x)) for x in tournaments_ids]
         unfinished_tournaments = [x for x in all_tournaments if x.end_time is None]
         for t in unfinished_tournaments:
             self.add_child(
@@ -46,29 +44,35 @@ class WhichTournament(_abstract.Menu):
         self.parent.tournament.load_tournament()
         self.parent.tournament.execute()
 
+    # TODO faire une fonction qui valide l'input et le redemande si pas bon
     def create_tournament(self) -> model.Tournament:
-        tournament_id = input("Quel est l'ID du tournoi ? (generate random if empty) ")
+        tournament_id = input("Quel est l'ID du tournoi ? (Générer au hasard si vide) ")
 
-        if model.Tournament.from_id(tournament_id) is not None:
-            # TODO confirmation de "on a trouvé un tournoi à tel ID, voulez-vous en créer un avec un ID différent ?"
-            return model.Tournament.from_id(tournament_id)
+        tournament = model.Tournament.from_id(tournament_id)
+        if tournament is not None:
+            want_new = input(
+                f"Le tournoi {tournament} existe déjà avec cet ID. "
+                "Voulez-vous en créer un autre ? (O/N)"
+            )
+            if want_new.capitalize().strip() == "O":
+                return self.create_tournament()
+            else:
+                return tournament
 
         if tournament_id == "":
-            tournament_id = generate.generate_available_id(
-                chess.model.storage.TOURNAMENTS
-            )
-        name = input("Tournament name: ")
-        players: str = input("Enter players' ID separated by commas:(can be empty) ")
+            tournament_id = utils.generate_available_id(chess.model.storage.TOURNAMENTS)
+        name = input("Nom du tournoi: ")
+        players: str = input(
+            "Sélectionnez les ID de joueurs séparés par des "
+            "virgules : (peut être vide) "
+        )
         players = players.split(",")
         players_found = [
             player.strip()
             for player in players
             if model.Player.from_id(player.strip()) is not None
         ]
-        localization = chess.view.create_address("\nTournament address: ")
-        # TODO find avant
-        # TODO faire le find address
-        # TODO faire un menu pour les create address et player auquel au switch quand besoin ?
+        localization = chess.view.inputs.create_address("\nAdresse du tournoi: ")
         rounds_amount = input("\nRounds amount (default 4): ")
         description = input("Description:(generate if empty) ")
 
@@ -94,7 +98,7 @@ class TournamentHandling(_abstract.Menu):
         super().__init__(title="Tournoi vide")
         self.loop_above = True
 
-        self.round_menu = chess.view.menus.roundMenu.RoundHandling()
+        self.round_menu = chess.controller.menus.RoundHandling()
         # set up tournament-round parent relationship
         self.add_child(self.round_menu)
         self.children.remove(self.round_menu)
@@ -124,7 +128,7 @@ class TournamentHandling(_abstract.Menu):
             self.children.clear()
 
             if self.tournament.end_time is not None:
-                pass  # TODO ?
+                pass  # TODO reports résumé du tournoi (global à toutes les options ?)
             elif self.tournament.start_time is None:
                 self.add_child(
                     _abstract.Action(
@@ -164,7 +168,6 @@ class TournamentHandling(_abstract.Menu):
                         "Multiple unfinished rounds. Normally impossible."
                     )
                 unfinished_round = unfinished_round[0]
-                # self.add_child(RoundHandling(unfinished_round)) # TODO round handling
                 self.add_child(
                     _abstract.Action(
                         f"En cours: {unfinished_round.name}",
@@ -173,8 +176,6 @@ class TournamentHandling(_abstract.Menu):
                 )
                 rounds.remove(unfinished_round)
                 for r in rounds:
-                    # self.add_child(RoundHandling(unfinished_round)) # TODO round handling
-                    # ou peut-être juste un print des rounds terminés
                     self.add_child(
                         _abstract.Action(
                             f"Terminé: {r.name}", lambda: self.load_round(r.id)

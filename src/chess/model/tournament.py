@@ -1,7 +1,8 @@
 import datetime
 from chess.model import Player, Address, Round
 from typing import Self
-from chess.model.storage import save_data, load_data, TOURNAMENTS, datetime_to_str
+from chess.model.storage import save_data, load_data, TOURNAMENTS
+import chess.utils as utils
 
 
 class Tournament:
@@ -43,7 +44,7 @@ class Tournament:
 
         if description == "":
             self.description = (
-                f"Tournament {name} at {localization.postcode}."
+                f"Tournoi {name} à {localization.postcode}."
                 # f"the {self.start_time}."
             )
         else:
@@ -81,8 +82,8 @@ class Tournament:
                     "localization": self.localization.to_json(),
                     "rounds_amount": self.rounds_amount,
                     "description": self.description,
-                    "start_time": datetime_to_str(self.start_time),
-                    "end_time": datetime_to_str(self.end_time),
+                    "start_time": utils.datetime_to_isoformat(self.start_time),
+                    "end_time": utils.datetime_to_isoformat(self.end_time),
                 }
             }
         }
@@ -140,7 +141,7 @@ class Tournament:
                     if player2.id in ids:
                         return True
                     else:
-                        break # plus d'équivalence possible dans ce round
+                        break  # plus d'équivalence possible dans ce round
         return False
 
     def __str__(self):

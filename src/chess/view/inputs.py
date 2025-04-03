@@ -1,6 +1,6 @@
 import click
 import chess.model
-import chess.model.generate
+import chess.utils
 
 # handle text beautifully
 
@@ -27,8 +27,8 @@ def create_address(address_context: str) -> chess.model.Address:  # TODO str_pre
     )
 
     if addressee_id == "":  # FIXME j'ai pas pu mettre de str vide
-        return chess.model.generate.generate_address(
-            chess.model.generate.generate_players(1)[0]
+        return chess.utils.generate_address(
+            chess.utils.generate_players(1)[0]
         )
 
     delivery_point = click.prompt(

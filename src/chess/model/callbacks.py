@@ -1,7 +1,6 @@
 import chess.model
 import chess.model.storage
-import chess.model.generate
-from datetime import date, datetime
+import chess.utils as utils
 
 
 def add_player_to_tournament(
@@ -23,7 +22,7 @@ def list_players(
 
     returned_list = [["ID", "Nom", "Prénom", "Date de naissance", "Elo"]]
     if player_ids is not None:
-        players_json = slim_json_dict_by_ids(players_json, player_ids)
+        players_json = utils.slim_json_dict_by_ids(players_json, player_ids)
 
     for key, value in players_json.items():
         returned_list.append(
@@ -31,7 +30,7 @@ def list_players(
                 key,
                 value["last_name"],
                 value["first_name"],
-                f"{json_date_to_str(value["birth_date"])}",
+                f"{utils.json_date_to_str(value["birth_date"])}",
                 value["elo"],
             ]
         )
@@ -73,7 +72,7 @@ def list_rounds_from_tournament(
         return [["Tournoi"], ["non trouvé."]]
 
     returned_list = [["ID", "Nom", "Matchs", "Début du round", "Fin du round"]]
-    rounds_json = slim_json_dict_by_ids(rounds_json, [str(r) for r in rounds])
+    rounds_json = utils.slim_json_dict_by_ids(rounds_json, [str(r) for r in rounds])
 
     for key, value in rounds_json.items():
         if match_is_int:
@@ -100,8 +99,8 @@ def list_rounds_from_tournament(
                 key,
                 value["name"],
                 matches_str,
-                f"{json_datetime_to_str(value["start_time"])}",
-                f"{json_datetime_to_str(value["end_time"])}",
+                f"{utils.json_datetime_to_str(value["start_time"])}",
+                f"{utils.json_datetime_to_str(value["end_time"])}",
             ]
         )
     return returned_list
@@ -182,13 +181,13 @@ def list_tournaments(
             [
                 key,
                 value["name"],
-                f"{nested_list_to_str(value["players"])}",
+                f"{utils.nested_list_to_str(value["players"])}",
                 f"{"\n".join([str(x) for x in value["rounds"]])}",
                 f"{str(chess.model.Address.from_json(value["localization"]))}",
                 value["rounds_amount"],
                 value["description"],
-                f"{json_datetime_to_str(value["start_time"])}",
-                f"{json_datetime_to_str(value["end_time"])}",
+                f"{utils.json_datetime_to_str(value["start_time"])}",
+                f"{utils.json_datetime_to_str(value["end_time"])}",
             ]
         )
 
@@ -208,15 +207,13 @@ def update_tournament_scores(
 
 
 def start_new_round(tournament: chess.model.Tournament) -> chess.model.Round:
-    generated_pairs = generate_pairs_for_new_round(tournament)
+    generated_pairs = utils.generate_pairs_for_new_round(tournament)
     matches = []
     for opponents in generated_pairs:
-        match_id = chess.model.generate.generate_available_id(
-            chess.model.storage.MATCHES
-        )
+        match_id = utils.generate_available_id(chess.model.storage.MATCHES)
         matches.append(chess.model.Match(id=match_id, players=opponents))
 
-    round_id = chess.model.generate.generate_available_id(chess.model.storage.ROUNDS)
+    round_id = utils.generate_available_id(chess.model.storage.ROUNDS)
     new_round = chess.model.Round(
         id=round_id,
         name=f"Round {len(tournament.rounds)+1}",
@@ -224,69 +221,3 @@ def start_new_round(tournament: chess.model.Tournament) -> chess.model.Round:
     )
     tournament.rounds.append(new_round)
     return new_round
-
-
-def generate_pairs_for_new_round(  # FIXME move ? rien à faire ici ?
-    tournament: chess.model.Tournament,
-) -> list[list[chess.model.Player]]:
-    # sort by player score
-    sorted_players: list = sorted(tournament.players, key=lambda i: i[1], reverse=True)
-    duos = []
-    # assign players by duo
-    for i in range(0, len(sorted_players), 2):
-        player1_idx, player2_idx = 0, 1
-        # if enough players to assign other players
-        if len(sorted_players) // 2 > 1:
-            # while player 1 already met his opponent:
-            while tournament.players_already_met(
-                sorted_players[player1_idx][0], sorted_players[player2_idx][0]
-            ):
-                # get next possible player
-                player2_idx += 1
-
-                # if no more players available, get 1st one given (closest score)
-                try:
-                    sorted_players[player2_idx]
-                except IndexError:
-                    player2_idx = 1
-                    break
-
-        duos.append([sorted_players[player1_idx][0], sorted_players[player2_idx][0]])
-        sorted_players.pop(player2_idx)
-        sorted_players.pop(player1_idx)
-
-    return duos
-
-
-def nested_list_to_str(
-    nested_list: list[list[str]], inner_join_str: str = " ", outer_join_str: str = "\n"
-) -> str:
-    inner_strs = []
-    for outer in nested_list:
-        inner_strs.append(inner_join_str.join([str(x) for x in outer]))
-    final_str = outer_join_str.join(inner_strs)
-    return final_str
-
-
-def json_date_to_str(json_date: str) -> str:
-    if json_date == "null":
-        return "null"
-    else:
-        return datetime.fromisoformat(json_date).strftime("%d-%m-%Y")
-
-
-def json_datetime_to_str(json_datetime: str) -> str:
-    if json_datetime is None:
-        return "None"
-    else:
-        return datetime.fromisoformat(json_datetime).strftime("%d-%m-%Y %H:%M")
-
-
-def slim_json_dict_by_ids(dict_to_slim: dict[str, dict], ids: list) -> dict[str, dict]:
-    reduced_dict = {}
-    for id in ids:
-        try:
-            reduced_dict[id] = dict_to_slim[id]
-        except KeyError:
-            print(f"{id} non trouvé.")
-    return reduced_dict

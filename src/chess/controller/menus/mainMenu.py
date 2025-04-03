@@ -1,7 +1,7 @@
-import chess.view.menus._abstract as _abstract
-import chess.view.menus.tournamentMenu as tournamentMenu
-import chess.view.menus.addPlayersMenu as addPlayersMenu
-import chess.view.menus.reportsMenu as reportsMenu
+import chess.controller.menus._abstract as _abstract
+import chess.controller.menus.tournamentMenu as tournamentMenu
+import chess.controller.menus.addPlayersMenu as addPlayersMenu
+import chess.controller.menus.reportsMenu as reportsMenu
 
 from typing import TYPE_CHECKING
 
@@ -29,4 +29,4 @@ if __name__ == "__main__":
     import chess.controller.app
 
     app = chess.controller.app.App()
-    app.view_main_menu.execute()
+    app.main_menu.execute()

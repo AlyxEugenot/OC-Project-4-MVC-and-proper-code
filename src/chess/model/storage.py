@@ -129,22 +129,3 @@ def id_already_exists(id, dict_key: str):
     else:
         return False
 
-
-def datetime_to_str(
-    date: datetime.datetime,
-) -> str:  # FIXME effacer dans la docstring aussi, timespec: str = "seconds") -> str:
-    """Return datetime or date to isoformat.
-
-    Return None if date is None, to let empty data stay empty.
-
-    Args:
-        date (datetime.datetime): datetime or date to stringify
-        timespec (str, optional): "seconds" if type(date) is datetime. "auto" if type(date) is date. Defaults to "seconds".
-
-    Returns:
-        str: date to isoformat. None if None
-    """
-    if date is not None:
-        return date.isoformat()
-    else:
-        return None

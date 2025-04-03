@@ -1,5 +1,4 @@
-import chess.view
-import chess.view.menus._abstract as _abstract
+import chess.controller.menus._abstract as _abstract
 import tabulate
 
 

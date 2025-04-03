@@ -1,8 +1,9 @@
 import datetime
 import random
 from typing import Self, TYPE_CHECKING
-from chess.model.storage import save_data, load_data, ROUNDS, datetime_to_str, MATCHES
+from chess.model.storage import save_data, load_data, ROUNDS
 from chess.model import Match
+import chess.utils as utils
 
 
 if TYPE_CHECKING:
@@ -12,18 +13,13 @@ if TYPE_CHECKING:
 class Round:
     """Round class. Rounds are composed of multiple matches."""
 
-    def __init__(
-        self, id: int, name: str, matches: list[Match]
-    ):  # , tournament: "Tournament"):
+    def __init__(self, id: int, name: str, matches: list[Match]):
         """Round init.
 
         Args:
             id (int): Round ID. (len 6)
             name (str): Round Name. ex: "Round 1"
             matches(list[Match]): All matches of this round.
-
-
-            tournament (Tournament): Tournament the round is a part of. #FIXME delete ?
         """
         self.id = id
         self.name = name
@@ -73,8 +69,8 @@ class Round:
                     "name": self.name,
                     "matches": [match.id for match in self.matches],
                     # "parent_tournament": self.parent_tournament,
-                    "start_time": datetime_to_str(self.start_time),
-                    "end_time": datetime_to_str(self.end_time),
+                    "start_time": utils.datetime_to_isoformat(self.start_time),
+                    "end_time": utils.datetime_to_isoformat(self.end_time),
                 }
             }
         }
