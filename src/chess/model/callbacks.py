@@ -1,4 +1,5 @@
 import chess.model
+import chess.model.generate
 import chess.model.storage
 import chess.utils as utils
 
@@ -15,7 +16,39 @@ def add_player_to_tournament(
         return None
 
 
-def list_players(
+def update_tournament_scores(
+    tournament: chess.model.Tournament, finished_matches: list[chess.model.Match]
+):
+    for match in finished_matches:
+        for player in match.players:
+            for t_player in tournament.players:
+                if t_player[0].id == player.id:
+                    t_player[1] += match.score[player]
+                    break
+    tournament.save()
+
+
+def start_new_round(tournament: chess.model.Tournament) -> chess.model.Round:
+    generated_pairs = utils.generate_pairs_for_new_round(tournament)
+    matches = []
+    for opponents in generated_pairs:
+        match_id = chess.model.generate.generate_available_id(
+            chess.model.storage.MATCHES
+        )
+        matches.append(chess.model.Match(id=match_id, players=opponents))
+
+    round_id = chess.model.generate.generate_available_id(chess.model.storage.ROUNDS)
+    new_round = chess.model.Round(
+        id=round_id,
+        name=f"Round {len(tournament.rounds)+1}",
+        matches=matches,
+    )
+    tournament.rounds.append(new_round)
+    return new_round
+
+
+# region Reports callbacks
+def report_players(
     player_ids: list[str] = None,
 ) -> tuple[str, str, str, str, int]:  # all players if None
     players_json = chess.model.storage.sort_data()[chess.model.storage.PLAYERS]
@@ -38,7 +71,9 @@ def list_players(
     return returned_list
 
 
-def list_players_from_tournament(tournament_id: str) -> tuple[str, str, str, str, int]:
+def report_players_from_tournament(
+    tournament_id: str,
+) -> tuple[str, str, str, str, int]:
     tournaments_json = chess.model.storage.load_data()[chess.model.storage.TOURNAMENTS]
 
     try:
@@ -52,10 +87,10 @@ def list_players_from_tournament(tournament_id: str) -> tuple[str, str, str, str
 
     player_ids = [x[0] for x in player_score]
 
-    return list_players(player_ids)
+    return report_players(player_ids)
 
 
-def list_rounds_from_tournament(
+def report_rounds_from_tournament(
     tournament_id: str, match_is_int: bool = True
 ) -> tuple[int, str, str, str, str]:  # multiline if match_is_int is False
     json = chess.model.storage.sort_data()
@@ -106,7 +141,7 @@ def list_rounds_from_tournament(
     return returned_list
 
 
-def list_matches_from_round(round_id: str):
+def report_matches_from_round(round_id: str):
     json = chess.model.storage.sort_data()
     rounds_json = json[chess.model.storage.ROUNDS]
     matches_json = json[chess.model.storage.MATCHES]
@@ -121,13 +156,15 @@ def list_matches_from_round(round_id: str):
         return [["Round"], ["non trouvé."]]
 
     returned_list = [["ID", "Joueurs: Score", "Joueur blanc"]]
-    matches_json = slim_json_dict_by_ids(matches_json, [str(m) for m in match_ids])
+    matches_json = utils.slim_json_dict_by_ids(
+        matches_json, [str(m) for m in match_ids]
+    )
 
     for key, value in matches_json.items():
         returned_list.append(
             [
                 key,
-                f"{nested_list_to_str(value["score"],": "," vs ")}",
+                f"{utils.nested_list_to_str(value["score"],": "," vs ")}",
                 value["white"],
             ]
         )
@@ -135,7 +172,7 @@ def list_matches_from_round(round_id: str):
     return returned_list
 
 
-def list_tournaments(
+def report_tournaments(
     tournament_id: str = None,
 ) -> tuple[str, str, str, str, str, str, str, str, str]:  # all tournaments if None
     tournaments_json = chess.model.storage.sort_data()[chess.model.storage.TOURNAMENTS]
@@ -194,30 +231,4 @@ def list_tournaments(
     return returned_list
 
 
-def update_tournament_scores(
-    tournament: chess.model.Tournament, finished_matches: list[chess.model.Match]
-):
-    for match in finished_matches:
-        for player in match.players:
-            for t_player in tournament.players:
-                if t_player[0].id == player.id:
-                    t_player[1] += match.score[player]
-                    break
-    tournament.save()
-
-
-def start_new_round(tournament: chess.model.Tournament) -> chess.model.Round:
-    generated_pairs = utils.generate_pairs_for_new_round(tournament)
-    matches = []
-    for opponents in generated_pairs:
-        match_id = utils.generate_available_id(chess.model.storage.MATCHES)
-        matches.append(chess.model.Match(id=match_id, players=opponents))
-
-    round_id = utils.generate_available_id(chess.model.storage.ROUNDS)
-    new_round = chess.model.Round(
-        id=round_id,
-        name=f"Round {len(tournament.rounds)+1}",
-        matches=matches,
-    )
-    tournament.rounds.append(new_round)
-    return new_round
+# endregion

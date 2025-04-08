@@ -19,39 +19,39 @@ class AddPlayers(_abstract.Menu):
         )
 
     def generate_new_random(self):
-        amount = int(input("Combien : ").strip())
+        amount = int(self.view.my_input("Combien : ").strip())
         players = utils.generate_players(amount)
         for player in players:
             player.save()
-            print(f"player {str(player)} added.")
+            self.view.my_print(f"player {str(player)} added.")
 
     def generate_new_player(self):
         player = model.Player(
             id=self.get_valid_player_id(),
-            first_name=input("First name : "),
-            last_name=input("Last name : "),
+            first_name=self.view.my_input("First name : "),
+            last_name=self.view.my_input("Last name : "),
             birth_date=self.get_valid_date(),
-            elo=int(input("Elo : ").strip()),
+            elo=int(self.view.my_input("Elo : ").strip()),
         )
         player.save()
-        print(f"player {str(player)} added.")
+        self.view.my_print(f"player {str(player)} added.")
 
     def get_valid_player_id(self) -> str:
-        player_id = input("Player ID : ")
+        player_id = self.view.my_input("Player ID : ")
         if not model.Player(player_id, "", "", None).is_id_valid():
-            print("ID is not valid (format AB12345).")
+            self.view.my_print("ID is not valid (format AB12345).")
             player_id = self.get_valid_player_id()
         if model.Player.from_id(player_id) is not None:
-            print("ID already exists.")
+            self.view.my_print("ID already exists.")
             player_id = self.get_valid_player_id()
         return player_id
 
     def get_valid_date(self) -> datetime.date:
         try:
-            date = input("Birth date (format DD/MM/YYYY) : ")
+            date = self.view.my_input("Birth date (format DD/MM/YYYY) : ")
             day, month, year = [int(x.strip()) for x in date.split("/")]
             date = datetime.date(year, month, day)
         except ValueError:
-            print("Wrong date format.")
+            self.view.my_print("Wrong date format.")
             date = self.get_valid_date()
         return date

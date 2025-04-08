@@ -7,10 +7,7 @@ __all__ = [
     "generate_specific_str",
     "generate_str",
 ]
-import typing  # FIXME
-
-if typing.TYPE_CHECKING:
-    import chess.model as model
+import chess.model as model
 import chess.model.storage as storage
 import random
 import numpy.random as nprand
@@ -29,7 +26,6 @@ def generate_players(amount: int = 4) -> list["model.Player"]:
     Returns:
         list[model.Player]: List of players generated.
     """
-    import chess.model as model  # FIXME
 
     new_players = []
     for player in range(amount):
@@ -59,7 +55,6 @@ def generate_address(person_name: str = None) -> "model.Address":
     Returns:
         model.Address: Random address.
     """
-    import chess.model as model  # FIXME
 
     if person_name is None:
         person_name = str(generate_players(1)[0])

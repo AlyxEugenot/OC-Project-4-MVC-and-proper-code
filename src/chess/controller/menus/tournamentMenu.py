@@ -1,7 +1,7 @@
 import chess.view
 import chess.controller.menus
 import chess.controller.menus._abstract as _abstract
-import chess.utils.generate as utils
+import chess.model.generate as generate
 
 # from typing import TYPE_CHECKING
 # if TYPE_CHECKING:
@@ -46,23 +46,25 @@ class WhichTournament(_abstract.Menu):
 
     # TODO faire une fonction qui valide l'input et le redemande si pas bon
     def create_tournament(self) -> model.Tournament:
-        tournament_id = input("Quel est l'ID du tournoi ? (Générer au hasard si vide) ")
-
-        tournament = model.Tournament.from_id(tournament_id)
-        if tournament is not None:
-            want_new = input(
-                f"Le tournoi {tournament} existe déjà avec cet ID. "
-                "Voulez-vous en créer un autre ? (O/N)"
+        tournament_id_is_ok = False
+        problem = ""
+        while not tournament_id_is_ok:
+            self.view.my_print(f"\n{problem}\n") if problem == "" else None
+            tournament_id = self.view.my_input(
+                "Quel est l'ID du tournoi ? (Générer au hasard si vide) "
             )
-            if want_new.capitalize().strip() == "O":
-                return self.create_tournament()
-            else:
-                return tournament
+            if tournament_id == "":
+                tournament_id = generate.generate_available_id(
+                    chess.model.storage.TOURNAMENTS
+                )
+                break
 
-        if tournament_id == "":
-            tournament_id = utils.generate_available_id(chess.model.storage.TOURNAMENTS)
-        name = input("Nom du tournoi: ")
-        players: str = input(
+            (tournament_id_is_ok, problem) = chess.model.storage.is_id_valid(
+                tournament_id, "tournaments"
+            )
+
+        name = self.view.my_input("Nom du tournoi: ")
+        players: str = self.view.my_input(
             "Sélectionnez les ID de joueurs séparés par des "
             "virgules : (peut être vide) "
         )
@@ -72,9 +74,13 @@ class WhichTournament(_abstract.Menu):
             for player in players
             if model.Player.from_id(player.strip()) is not None
         ]
-        localization = chess.view.inputs.create_address("\nAdresse du tournoi: ")
-        rounds_amount = input("\nRounds amount (default 4): ")
-        description = input("Description:(generate if empty) ")
+        localization_strs = chess.view.inputs.create_address("\nAdresse du tournoi: ")
+        if localization_strs is None:
+            localization = generate.generate_address(generate.generate_players(1)[0])
+        else:
+            localization = model.Address(*localization_strs)
+        rounds_amount = self.view.my_input("\nRounds amount (default 4): ")
+        description = self.view.my_input("Description:(generate if empty) ")
 
         tournament = model.Tournament(
             id=tournament_id,
@@ -98,13 +104,10 @@ class TournamentHandling(_abstract.Menu):
         super().__init__(title="Tournoi vide")
         self.loop_above = True
 
-        self.round_menu = chess.controller.menus.RoundHandling()
         # set up tournament-round parent relationship
-        self.add_child(self.round_menu)
-        self.children.remove(self.round_menu)
-        # créé pour récup les nombres de points des joueurs et bien commencer le nouveau round MAIS
-        # inutile si on save à chaque fin de match et que l'on check les data à chaque fois qu'on veut connaitre les points
-        # en plus, "le cumul des points" peut servir à pas mal d'endroits
+        self.round_menu = self.invisible_child = self.add_remanent_menu_not_child(
+            chess.controller.menus.RoundHandling()
+        )
 
         self.callback_start_new_round = _abstract.not_implemented  # done
         self.callback_add_players_to_tournament = _abstract.not_implemented  # done
@@ -144,7 +147,7 @@ class TournamentHandling(_abstract.Menu):
                         )
                     )
                 else:
-                    print("Minimum 4 joueurs pour commencer le tournoi.")
+                    self.view.my_print("Minimum 4 joueurs pour commencer le tournoi.")
             elif not self.any_round_not_over():
                 if self.tournament_final_round_reached():
                     self.add_child(
@@ -205,15 +208,15 @@ class TournamentHandling(_abstract.Menu):
     def add_players_to_tournament(self):
         # afficher les joueurs ajoutables au tournoi
         while True:
-            id = input("ID du joueur: ")
+            id = self.view.my_input("ID du joueur: ")
             if id == "":
                 break
 
             result = self.callback_add_players_to_tournament(id, self.tournament)
             if result is None:
-                print("Joueur non trouvé. Ne rien entrer pour revenir au tournoi.\n")
+                self.view.my_print("Joueur non trouvé. Ne rien entrer pour revenir au tournoi.\n")
             else:
-                print("Joueur ajouté. Ne rien entrer pour revenir au tournoi.\n")
+                self.view.my_print("Joueur ajouté. Ne rien entrer pour revenir au tournoi.\n")
 
     def any_round_not_over(self) -> bool:
         for round in self.tournament.rounds:

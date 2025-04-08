@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import datetime
+import re
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 SAVED_DATA_PATH = PROJECT_ROOT / "data" / "tournaments" / "data.json"
@@ -22,12 +23,13 @@ DICT_STRUCTURE = {
 
 
 def save_data(data_to_save: dict[str, dict]) -> dict:
-    """Update json file with "data_to_save". All values to save must be placed \
+    """Update json file with "data_to_save". All values to save must be placed\
         under existing dictionnaries : 'players', 'tournaments', 'rounds',\
             'matches'. KeyError raised otherwise.
 
     Args:
-        data_to_save (dict[str, dict]): data in dict format `players:dict[id:dict]`
+        data_to_save (dict[str, dict]): data in dict format\
+            `players:dict[id:dict]`
 
     Returns:
         dict: json file saved
@@ -120,7 +122,31 @@ def sort_data() -> dict[str, dict[str, dict]]:
     return sorted_json
 
 
-def id_already_exists(id, dict_key: str):
+def is_id_valid(id, json_key: str) -> tuple[bool, str]:
+    if id_already_exists(id, json_key):
+        return (False, "Cet ID existe déjà")
+
+    match json_key:
+        case "players":
+            if re.match("[A-Z]{2}[0-9]{5}$", id) is None:
+                return (False, "Le format (AB12345) de l'ID n'est pas bon.")
+            else:
+                return (True, "")
+        case "rounds" | "tournaments":
+            if re.match("[0-9]{6}$", id) is None:
+                return (False, "Le format (123456) de l'ID n'est pas bon.")
+            else:
+                return (True, "")
+        case "matches":
+            if re.match("[0-9]{10}$", id) is None:
+                return (False, "Le format (12346578910) de l'ID n'est pas bon.")
+            else:
+                return (True, "")
+        case _:
+            raise ("dumbass programmer doesn't know how to put right parameters")
+
+
+def id_already_exists(id, dict_key: str) -> bool:
     this_json = load_data()
     if dict_key not in this_json.keys():
         raise LookupError
@@ -128,4 +154,3 @@ def id_already_exists(id, dict_key: str):
         return True
     else:
         return False
-

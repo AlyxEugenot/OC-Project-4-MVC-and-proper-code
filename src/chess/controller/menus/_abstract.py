@@ -1,7 +1,8 @@
 import typing
+from chess.view import View
 
 if typing.TYPE_CHECKING:
-    from chess.controller.app import Context
+    from chess.controller.context import Context
 
 
 class MenuAbstractItem:
@@ -26,6 +27,8 @@ class Menu(MenuAbstractItem):
         self.children: list[MenuAbstractItem] = []
         self.loop_above = False
         self.context: "Context" = None
+        self.view: View = None
+        self.invisible_child: Menu = None
 
     def add_child(self, item: MenuAbstractItem) -> None:
         if item.parent != None:
@@ -33,19 +36,42 @@ class Menu(MenuAbstractItem):
         item.parent = self
         self.children.append(item)
 
+        # for late menu creation, late_init takes care of initial arborescence
         if issubclass(type(item), Menu):
             item.context = self.context
+            item.view = self.view
+
+    def add_remanent_menu_not_child(self, item: MenuAbstractItem) -> "Menu":
+        if item.parent != None:
+            raise ValueError("Contient déjà un parent")
+        item.parent = self
+
+        return item
+
+    def late_init(self, am_root: bool = False):
+        if not am_root:
+            self.context = self.parent.context
+            self.view = self.parent.view
+
+        children: list[Menu] = [
+            child for child in self.children if issubclass(type(child), Menu)
+        ]
+        if self.invisible_child is not None:
+            children.append(self.invisible_child)
+
+        for child in children:
+            child.late_init()
 
     def execute(self) -> None:
         while True:
-            print()
+            self.view.my_print("")
             if self.parent != None:
-                print("0", f"Revenir à {self.parent.title}")
+                self.view.my_print(f"0, Revenir à {self.parent.title}")
 
             for i, item in enumerate(self.children):
-                print(i + 1, item.menu_option_name)
+                self.view.my_print(f"{i + 1}, {item.menu_option_name}")
 
-            choice = input("Sélectionne un choix : ")
+            choice = self.view.my_input("Sélectionne un choix : ")
             # regular_inputs(choice) # TODO
 
             try:
@@ -53,7 +79,7 @@ class Menu(MenuAbstractItem):
             except ValueError:
                 pass
 
-            print()
+            self.view.my_print("")
 
             if choice == 0 and self.parent != None:
                 self.on_exit()
@@ -63,7 +89,7 @@ class Menu(MenuAbstractItem):
                 self.children[choice - 1].execute()
 
             else:
-                print("Input non reconnu.")
+                self.view.my_print("Input non reconnu.")
 
             if self.loop_above:
                 break

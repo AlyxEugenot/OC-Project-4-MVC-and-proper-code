@@ -9,10 +9,10 @@ class RoundHandling(_abstract.Menu):
         super().__init__(title="Round vide")
         self.loop_above = True
 
-        self.match_menu = chess.controller.menus.MatchHandling()
         # set up round-match parent relationship
-        self.add_child(self.match_menu)
-        self.children.remove(self.match_menu)
+        self.match_menu = self.invisible_child = self.add_remanent_menu_not_child(
+            chess.controller.menus.MatchHandling()
+        )
 
         self.callback_update_tournament_scores = _abstract.not_implemented
 

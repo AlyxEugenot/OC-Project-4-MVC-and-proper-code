@@ -128,6 +128,3 @@ class Round:
             int: Round ID.
         """
         return self.id
-
-
-# endregion

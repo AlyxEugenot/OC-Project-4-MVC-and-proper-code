@@ -53,13 +53,13 @@ class Reports(_abstract.Menu):
 
     def all_players_from_tournament(self, tournament_id: str = None):
         if tournament_id is None:
-            tournament_id = input("ID du tournoi : ")
+            tournament_id = self.view.my_input("ID du tournoi : ")
         players_list = self.callback_all_players_from_tournament(tournament_id)
         Reports.display_by_table(players_list)
 
     def all_rounds_of_tournament_and_all_their_matches(self, tournament_id: str = None):
         if tournament_id is None:
-            tournament_id = input("ID du tournoi : ")
+            tournament_id = self.view.my_input("ID du tournoi : ")
         rounds_list = self.callback_rounds_matches_from_tournament(tournament_id)
         Reports.display_by_table(
             rounds_list, is_multiline=True, table_col_width_if_multiline=29
@@ -67,17 +67,18 @@ class Reports(_abstract.Menu):
 
     def all_rounds_of_tournament(self, tournament_id: str = None):
         if tournament_id is None:
-            tournament_id = input("ID du tournoi : ")
+            tournament_id = self.view.my_input("ID du tournoi : ")
         rounds_list = self.callback_rounds_from_tournament(tournament_id)
         Reports.display_by_table(rounds_list)
 
     def all_matches_of_round(self, round_id: str = None):
         if round_id is None:
-            round_id = input("ID du round : ")
+            round_id = self.view.my_input("ID du round : ")
         matches_list = self.callback_matches_from_tournament(round_id)
         Reports.display_by_table(matches_list)
 
     def display_by_table(
+        self,
         results_to_display: list[list[str]],
         is_multiline: bool = False,
         table_col_width_if_multiline: int = 11,
@@ -98,29 +99,29 @@ class Reports(_abstract.Menu):
                 stralign="center",
             )
 
-        print(table)
+        self.view.my_print(table)
 
 
 if __name__ == "__main__":
     import chess.model.callbacks
 
     reports = Reports()
-    reports.callback_all_players = chess.model.callbacks.list_players
-    reports.callback_all_tournaments = chess.model.callbacks.list_tournaments
+    reports.callback_all_players = chess.model.callbacks.report_players
+    reports.callback_all_tournaments = chess.model.callbacks.report_tournaments
     reports.callback_all_players_from_tournament = (
-        lambda id: chess.model.callbacks.list_players_from_tournament(id)
+        lambda id: chess.model.callbacks.report_players_from_tournament(id)
     )
-    reports.callback_all_tournaments = chess.model.callbacks.list_tournaments
+    reports.callback_all_tournaments = chess.model.callbacks.report_tournaments
     reports.callback_rounds_from_tournament = (
-        lambda id: chess.model.callbacks.list_rounds_from_tournament(id)
+        lambda id: chess.model.callbacks.report_rounds_from_tournament(id)
     )
     reports.callback_rounds_matches_from_tournament = (
-        lambda id: chess.model.callbacks.list_rounds_from_tournament(
+        lambda id: chess.model.callbacks.report_rounds_from_tournament(
             id, match_is_int=False
         )
     )
     reports.callback_matches_from_tournament = (
-        lambda id: chess.model.callbacks.list_matches_from_round(id)
+        lambda id: chess.model.callbacks.report_matches_from_round(id)
     )
 
     # reports.all_players()
