@@ -22,7 +22,9 @@ class WhichTournament(_abstract.Menu):
             self.children.clear()
 
             self.add_tournaments_to_continue()
-            self.add_child(_abstract.Action("Créer un tournoi", self.create_tournament))
+            self.add_child(
+                _abstract.Action("Créer un tournoi", self.create_tournament)
+            )
 
             return super().execute()
 
@@ -30,12 +32,17 @@ class WhichTournament(_abstract.Menu):
         tournaments_ids = chess.model.storage.load_data()[
             chess.model.storage.TOURNAMENTS
         ].keys()
-        all_tournaments = [model.Tournament.from_id(int(x)) for x in tournaments_ids]
-        unfinished_tournaments = [x for x in all_tournaments if x.end_time is None]
+        all_tournaments: list[model.Tournament] = [
+            model.Tournament.from_id(int(x)) for x in tournaments_ids
+        ]
+        unfinished_tournaments = [
+            x for x in all_tournaments if x.end_time is None
+        ]
         for t in unfinished_tournaments:
             self.add_child(
                 _abstract.Action(
-                    f"Tournoi {t.name}", lambda id=t.id: self.select_tournament(id)
+                    f"Tournoi {t.name}",
+                    lambda id=t.id: self.select_tournament(id),
                 )
             )
 
@@ -74,9 +81,13 @@ class WhichTournament(_abstract.Menu):
             for player in players
             if model.Player.from_id(player.strip()) is not None
         ]
-        localization_strs = chess.view.inputs.create_address("\nAdresse du tournoi: ")
+        localization_strs = chess.view.inputs.create_address(
+            "\nAdresse du tournoi: "
+        )
         if localization_strs is None:
-            localization = generate.generate_address(generate.generate_players(1)[0])
+            localization = generate.generate_address(
+                generate.generate_players(1)[0]
+            )
         else:
             localization = model.Address(*localization_strs)
         rounds_amount = self.view.my_input("\nRounds amount (default 4): ")
@@ -105,22 +116,28 @@ class TournamentHandling(_abstract.Menu):
         self.loop_above = True
 
         # set up tournament-round parent relationship
-        self.round_menu = self.invisible_child = self.add_remanent_menu_not_child(
-            chess.controller.menus.RoundHandling()
+        self.round_menu = self.invisible_child = (
+            self.add_remanent_menu_not_child(
+                chess.controller.menus.RoundHandling()
+            )
         )
 
         self.callback_start_new_round = _abstract.not_implemented  # done
-        self.callback_add_players_to_tournament = _abstract.not_implemented  # done
+        self.callback_add_players_to_tournament = (
+            _abstract.not_implemented
+        )  # done
 
     def on_exit(self):
         self.tournament = None
         self.context.current_tournament_id = None
-        self.title = f"Tournoi vide"
+        self.title = "Tournoi vide"
 
     def load_tournament(self):
         if self.context.current_tournament_id is None:
             raise TypeError("Trying to load a tournament it does not find.")
-        self.tournament = model.Tournament.from_id(self.context.current_tournament_id)
+        self.tournament = model.Tournament.from_id(
+            self.context.current_tournament_id
+        )
         self.title = f"Tournoi {str(self.tournament)}"
 
     def execute(self):
@@ -131,23 +148,29 @@ class TournamentHandling(_abstract.Menu):
             self.children.clear()
 
             if self.tournament.end_time is not None:
-                pass  # TODO reports résumé du tournoi (global à toutes les options ?)
+                pass
+            # TODO reports résumé du tournoi (global à toutes les options ?)
             elif self.tournament.start_time is None:
                 self.add_child(
                     _abstract.Action(
-                        f"Ajouter des joueurs au tournoi ({len(self.tournament.players)} actuellement).",
+                        (
+                            "Ajouter des joueurs au tournoi "
+                            f"({len(self.tournament.players)} actuellement)."
+                        ),
                         self.add_players_to_tournament,
                     )
                 )
                 if len(self.tournament.players) > 3:
                     self.add_child(
                         _abstract.Action(
-                            f"Commencer le tournoi.",
+                            "Commencer le tournoi.",
                             self.start_tournament,
                         )
                     )
                 else:
-                    self.view.my_print("Minimum 4 joueurs pour commencer le tournoi.")
+                    self.view.my_print(
+                        "Minimum 4 joueurs pour commencer le tournoi."
+                    )
             elif not self.any_round_not_over():
                 if self.tournament_final_round_reached():
                     self.add_child(
@@ -212,11 +235,18 @@ class TournamentHandling(_abstract.Menu):
             if id == "":
                 break
 
-            result = self.callback_add_players_to_tournament(id, self.tournament)
+            result = self.callback_add_players_to_tournament(
+                id, self.tournament
+            )
             if result is None:
-                self.view.my_print("Joueur non trouvé. Ne rien entrer pour revenir au tournoi.\n")
+                self.view.my_print(
+                    "Joueur non trouvé. "
+                    "Ne rien entrer pour revenir au tournoi.\n"
+                )
             else:
-                self.view.my_print("Joueur ajouté. Ne rien entrer pour revenir au tournoi.\n")
+                self.view.my_print(
+                    "Joueur ajouté. Ne rien entrer pour revenir au tournoi.\n"
+                )
 
     def any_round_not_over(self) -> bool:
         for round in self.tournament.rounds:

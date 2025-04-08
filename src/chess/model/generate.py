@@ -58,24 +58,35 @@ def generate_address(person_name: str = None) -> "model.Address":
 
     if person_name is None:
         person_name = str(generate_players(1)[0])
-    addressee_id = f"{random.choice(["Mr","Mme","Mx"])}. {person_name}"
-    delivery_point = f"{nprand.choice(
-        a=["", 
-            f"Appartement {random.randint(1,50)}", 
+    addressee_id = f"{random.choice(["Mr", "Mme", "Mx"])}. {person_name}"
+    delivery_point = nprand.choice(
+        a=[
+            "",
+            f"Appartement {random.randint(1, 50)}",
             f"Escalier {random.choice("ABCDE")}",
-            f"Chambre {random.randint(1,50)}"
-            ],
-        p=[.3,.3,.3,.1]
-        )}"
-    house_nb_street_name = f"{random.randint(1,250)} {nprand.choice(
-            a=["Rue", "Avenue","Place","Parvis"],
-            p=[.45,.35,.15,.05]
-        )} {nprand.choice(["","Bis","Ter"],p=[.7,.2,.1])} {" ".join(
-            [generate_str(2,6) for i in range(random.randint(1,4))]
-            ).title()}"
+            f"Chambre {random.randint(1, 50)}",
+        ],
+        p=[0.3, 0.3, 0.3, 0.1],
+    )
+    # region house_nb_street_name
+    _house_nb = random.randint(1, 250)
+    _street_title = nprand.choice(
+        a=["Rue", "Avenue", "Place", "Parvis"], p=[0.45, 0.35, 0.15, 0.05]
+    )
+    _street_bis_ter = nprand.choice(["", "Bis", "Ter"], p=[0.7, 0.2, 0.1])
+    _street_name = " ".join(
+        [generate_str(2, 6) for i in range(random.randint(1, 4))]
+    ).title()
+    # endregion
+    house_nb_street_name = (
+        f"{_house_nb} {_street_title}{_street_bis_ter} {_street_name}"
+    )
+
     postcode = f"{generate_specific_str("nnnnn")} {generate_str().upper()}"
 
-    result = model.Address(addressee_id, delivery_point, house_nb_street_name, postcode)
+    result = model.Address(
+        addressee_id, delivery_point, house_nb_street_name, postcode
+    )
     return result
 
 
@@ -90,7 +101,10 @@ def generate_str(min_len: int = 3, max_len: int = 8) -> str:
         str: String generated.
     """
     return "".join(
-        i for i in random.sample(string.ascii_letters, random.randint(min_len, max_len))
+        i
+        for i in random.sample(
+            string.ascii_letters, random.randint(min_len, max_len)
+        )
     )
 
 
@@ -141,6 +155,7 @@ def generate_available_id(json_key: str):
                 id = random.randint(1000000000, 9999999999)
             case _:
                 raise ValueError(
-                    "La clé n'existe pas dans le fichier de save. / Elle est mal écrite."
+                    "La clé n'existe pas dans le fichier de save. "
+                    "/ Elle est mal écrite."
                 )
     return id

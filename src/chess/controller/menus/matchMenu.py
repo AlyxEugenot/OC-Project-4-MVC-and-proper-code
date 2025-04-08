@@ -12,7 +12,7 @@ class MatchHandling(_abstract.Menu):
         self.parent.load_round()
         self.match = None
         self.context.current_match_id = None
-        self.title = f"Match vide"
+        self.title = "Match vide"
 
     def load_match(self):
         if self.context.current_match_id is None:
@@ -30,7 +30,8 @@ class MatchHandling(_abstract.Menu):
             if self.match.is_over():
                 self.add_child(
                     _abstract.Action(
-                        f"{self.match.result()} Annuler le résultat ?", self.reset_match
+                        f"{self.match.result()} Annuler le résultat ?",
+                        self.reset_match,
                     )
                 )
             else:

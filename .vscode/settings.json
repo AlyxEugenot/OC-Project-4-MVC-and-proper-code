@@ -1,16 +1,18 @@
 {
-    "files.exclude": {
-        "**/__pycache__": true
-    },
-    "terminal.integrated.defaultProfile.windows": "Command Prompt",
-    "terminal.integrated.env.windows": {
-        "PYTHONPATH": "${workspaceFolder}/src",
-    },
-    "terminal.integrated.env.linux": {
-        "PYTHONPATH": "${workspaceFolder}/src",
-    },
-    "python.terminal.activateEnvInCurrentTerminal": true,
-    "python.terminal.activateEnvironment": true,
-    "editor.rulers": [80],
-    "autoDocstring.docstringFormat": "google",
+  "files.exclude": {
+    "**/__pycache__": true
+  },
+  "terminal.integrated.defaultProfile.windows": "Command Prompt",
+  "terminal.integrated.env.windows": {
+    "PYTHONPATH": "${workspaceFolder}/src"
+  },
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}/src"
+  },
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.terminal.activateEnvironment": true,
+  "editor.rulers": [80],
+  "black-formatter.args": ["--line-length", "79"],
+  "autoDocstring.docstringFormat": "google",
+  "[python]": {}
 }

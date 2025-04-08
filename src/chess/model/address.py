@@ -34,7 +34,8 @@ class Address:
             additional_delivery_info (str, optional):
                 5. Hamlet (lieu-dit) or particular distribution service:\
                 post box, poste restante. ex: La Chaise Dieu. Defaults to "".
-            country_name (str, optional): 7. Country name. Defaults to "FRANCE".
+            country_name (str, optional): 7. Country name.\
+                Defaults to "FRANCE".
         """
         self.addressee_id = addressee_id
         self.delivery_point = delivery_point

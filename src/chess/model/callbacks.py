@@ -17,7 +17,8 @@ def add_player_to_tournament(
 
 
 def update_tournament_scores(
-    tournament: chess.model.Tournament, finished_matches: list[chess.model.Match]
+    tournament: chess.model.Tournament,
+    finished_matches: list[chess.model.Match],
 ):
     for match in finished_matches:
         for player in match.players:
@@ -37,7 +38,9 @@ def start_new_round(tournament: chess.model.Tournament) -> chess.model.Round:
         )
         matches.append(chess.model.Match(id=match_id, players=opponents))
 
-    round_id = chess.model.generate.generate_available_id(chess.model.storage.ROUNDS)
+    round_id = chess.model.generate.generate_available_id(
+        chess.model.storage.ROUNDS
+    )
     new_round = chess.model.Round(
         id=round_id,
         name=f"Round {len(tournament.rounds)+1}",
@@ -74,7 +77,9 @@ def report_players(
 def report_players_from_tournament(
     tournament_id: str,
 ) -> tuple[str, str, str, str, int]:
-    tournaments_json = chess.model.storage.load_data()[chess.model.storage.TOURNAMENTS]
+    tournaments_json = chess.model.storage.load_data()[
+        chess.model.storage.TOURNAMENTS
+    ]
 
     try:
         player_score = tournaments_json[tournament_id]["players"]
@@ -107,7 +112,9 @@ def report_rounds_from_tournament(
         return [["Tournoi"], ["non trouvé."]]
 
     returned_list = [["ID", "Nom", "Matchs", "Début du round", "Fin du round"]]
-    rounds_json = utils.slim_json_dict_by_ids(rounds_json, [str(r) for r in rounds])
+    rounds_json = utils.slim_json_dict_by_ids(
+        rounds_json, [str(r) for r in rounds]
+    )
 
     for key, value in rounds_json.items():
         if match_is_int:
@@ -117,15 +124,32 @@ def report_rounds_from_tournament(
             for match_id in value["matches"]:
                 match_json = json[chess.model.storage.MATCHES][str(match_id)]
                 # ex: player1[W]: 1, player2: 0
-                match_result = (
-                    f"{str(match_json["score"][0][0])}"
-                    f"{"[W]" if match_json["white"] == match_json["score"][0][0] else ""}: "
-                    f"{match_json["score"][0][1]}, "
-                    f"{str(match_json["score"][1][0])}"
-                    f"{"[W]" if match_json["white"] == match_json["score"][1][0] else ""}: "
-                    f"{match_json["score"][1][1]}"
+                if match_json["white"] == match_json["score"][0][0]:
+                    match_result = (
+                        f"{str(match_json["score"][0][0])}[W]: "
+                        f"{match_json["score"][0][1]}, "
+                        f"{str(match_json["score"][1][0])}: "
+                        f"{match_json["score"][1][1]}"
+                    )
+                else:
+                    match_result = (
+                        f"{str(match_json["score"][0][0])}: "
+                        f"{match_json["score"][0][1]}, "
+                        f"{str(match_json["score"][1][0])}[W]: "
+                        f"{match_json["score"][1][1]}"
+                    )
+                # TODO voir avec Julien s'il préfère PEP 8 ou pas
+                # match_result = (
+                #     f"{str(match_json["score"][0][0])}"
+                #     f"{"[W]" if match_json["white"] == match_json["score"][0][0] else ""}: "
+                #     f"{match_json["score"][0][1]}, "
+                #     f"{str(match_json["score"][1][0])}"
+                #     f"{"[W]" if match_json["white"] == match_json["score"][1][0] else ""}: "
+                #     f"{match_json["score"][1][1]}"
+                # )
+                matches_str.append(
+                    f"------ {str(match_id)} ------\n{match_result}"
                 )
-                matches_str.append(f"------ {str(match_id)} ------\n{match_result}")
 
             matches_str = "\n".join(matches_str)
 
@@ -164,7 +188,7 @@ def report_matches_from_round(round_id: str):
         returned_list.append(
             [
                 key,
-                f"{utils.nested_list_to_str(value["score"],": "," vs ")}",
+                f"{utils.nested_list_to_str(value["score"], ": ", " vs ")}",
                 value["white"],
             ]
         )
@@ -174,8 +198,12 @@ def report_matches_from_round(round_id: str):
 
 def report_tournaments(
     tournament_id: str = None,
-) -> tuple[str, str, str, str, str, str, str, str, str]:  # all tournaments if None
-    tournaments_json = chess.model.storage.sort_data()[chess.model.storage.TOURNAMENTS]
+) -> tuple[
+    str, str, str, str, str, str, str, str, str
+]:  # all tournaments if None
+    tournaments_json = chess.model.storage.sort_data()[
+        chess.model.storage.TOURNAMENTS
+    ]
 
     returned_list = [
         [

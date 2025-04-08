@@ -6,20 +6,21 @@ import chess.view
 
 
 def my_input(prompt_text: str):
-    return input(f"input {prompt_text}")
+    return input(f"input {prompt_text}")  # TODO str prefix
 
 
 # def ask_prompt(text_prompt: str, default_text: str = None):
 #     if default_text is None:
 #         answer = click.prompt(text_prompt, show_default=False)
 #     else:
-#         answer = click.prompt(text_prompt, default=default_text, show_default=True)
+#         answer = click.prompt(text_prompt, default=default_text,
+#               show_default=True)
 #     return answer
 
 
 def create_address(
     address_context: str,
-) -> tuple[str, str, str, str, str, str, str] | None:  # TODO str_prefix
+) -> tuple[str, str, str, str, str, str, str] | None:
     chess.view.my_print(address_context)
 
     suffix = "\n\t\t-> "
@@ -38,7 +39,8 @@ def create_address(
         (
             "2. Complément d’identification du destinataire ou point de "
             "remise à l’intérieur du bâtiment : N° appartement, boite aux "
-            f"lettres, étage, couloir.\n\tEx : Appartement 12 Escalier C{suffix}"
+            "lettres, étage, couloir.\n\tEx : Appartement 12 Escalier "
+            f"C{suffix}"
         )
     )
     additional_geo_info = my_input(
@@ -49,12 +51,15 @@ def create_address(
         )
     )
     house_nb_street_name = my_input(
-        ("4. Numéro et libellé de la voie.\n\tEx : 1 impasse de " f"l'Eglise{suffix}")
+        (
+            "4. Numéro et libellé de la voie.\n\tEx : 1 impasse de "
+            f"l'Eglise{suffix}"
+        )
     )
     additional_delivery_info = my_input(
         (
-            f"5. Facultatif. Lieu dit ou service particulier de distribution – "
-            f"Poste restante, boite postale, etc.\n\tEx : AMAREINS{suffix}"
+            f"5. Facultatif. Lieu dit ou service particulier de distribution –"
+            f" Poste restante, boite postale, etc.\n\tEx : AMAREINS{suffix}"
         )
     )
     postcode = my_input(

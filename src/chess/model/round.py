@@ -1,13 +1,8 @@
 import datetime
-import random
-from typing import Self, TYPE_CHECKING
+from typing import Self
 from chess.model.storage import save_data, load_data, ROUNDS
 from chess.model import Match
 import chess.utils as utils
-
-
-if TYPE_CHECKING:
-    from chess.model import Tournament, Player
 
 
 class Round:

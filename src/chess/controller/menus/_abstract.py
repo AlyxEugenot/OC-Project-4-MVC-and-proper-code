@@ -31,7 +31,7 @@ class Menu(MenuAbstractItem):
         self.invisible_child: Menu = None
 
     def add_child(self, item: MenuAbstractItem) -> None:
-        if item.parent != None:
+        if item.parent is not None:
             raise ValueError("Contient déjà un parent")
         item.parent = self
         self.children.append(item)
@@ -42,7 +42,7 @@ class Menu(MenuAbstractItem):
             item.view = self.view
 
     def add_remanent_menu_not_child(self, item: MenuAbstractItem) -> "Menu":
-        if item.parent != None:
+        if item.parent is not None:
             raise ValueError("Contient déjà un parent")
         item.parent = self
 
@@ -65,7 +65,7 @@ class Menu(MenuAbstractItem):
     def execute(self) -> None:
         while True:
             self.view.my_print("")
-            if self.parent != None:
+            if self.parent is not None:
                 self.view.my_print(f"0, Revenir à {self.parent.title}")
 
             for i, item in enumerate(self.children):
@@ -81,7 +81,7 @@ class Menu(MenuAbstractItem):
 
             self.view.my_print("")
 
-            if choice == 0 and self.parent != None:
+            if choice == 0 and self.parent is not None:
                 self.on_exit()
                 self.parent.execute()
 
@@ -112,7 +112,10 @@ class Menu(MenuAbstractItem):
         return self.title
 
     def __repr__(self):
-        return f"{str(self.parent)} > {self.title} > {"|".join(str(x) for x in self.children)}"
+        return (
+            f"{str(self.parent)} > {self.title} > "
+            f"{" | ".join(str(x) for x in self.children)}"
+        )
 
 
 def not_implemented():
@@ -121,7 +124,9 @@ def not_implemented():
 
 class Action(MenuAbstractItem):
     def __init__(
-        self, menu_option_name: str, callback: typing.Callable = not_implemented
+        self,
+        menu_option_name: str,
+        callback: typing.Callable = not_implemented,
     ) -> None:
         super().__init__(menu_option_name)
         self.callback = callback
@@ -136,7 +141,9 @@ class Action(MenuAbstractItem):
         return f"Action: {self.menu_option_name}"
 
 
-def find_menu(menutype: typing.Type[Menu], menu_to_search: Menu) -> Menu | None:
+def find_menu(
+    menutype: typing.Type[Menu], menu_to_search: Menu
+) -> Menu | None:
     for child in menu_to_search.children:
         if issubclass(type(child), Menu):
             if type(child) is menutype:

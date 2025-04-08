@@ -11,11 +11,14 @@ class AddPlayers(_abstract.Menu):
         super().__init__(title=title, menu_option_name=menu_option_name)
         self.add_child(
             _abstract.Action(
-                "Générer des nouveaux joueurs aléatoires", self.generate_new_random
+                "Générer des nouveaux joueurs aléatoires",
+                self.generate_new_random,
             )
         )
         self.add_child(
-            _abstract.Action("Entrer un nouveau joueur", self.generate_new_player)
+            _abstract.Action(
+                "Entrer un nouveau joueur", self.generate_new_player
+            )
         )
 
     def generate_new_random(self):

@@ -10,8 +10,10 @@ class RoundHandling(_abstract.Menu):
         self.loop_above = True
 
         # set up round-match parent relationship
-        self.match_menu = self.invisible_child = self.add_remanent_menu_not_child(
-            chess.controller.menus.MatchHandling()
+        self.match_menu = self.invisible_child = (
+            self.add_remanent_menu_not_child(
+                chess.controller.menus.MatchHandling()
+            )
         )
 
         self.callback_update_tournament_scores = _abstract.not_implemented
@@ -20,7 +22,7 @@ class RoundHandling(_abstract.Menu):
         self.parent.load_tournament()
         self.round = None
         self.context.current_round_id = None
-        self.title = f"Round vide"
+        self.title = "Round vide"
 
     def load_round(self):
         if self.context.current_round_id is None:
@@ -51,7 +53,8 @@ class RoundHandling(_abstract.Menu):
                 if not self.parent.tournament_final_round_reached():
                     self.add_child(
                         _abstract.Action(
-                            "Terminer le round et commencer le nouveau.", self.end_round
+                            "Terminer le round et commencer le nouveau.",
+                            self.end_round,
                         )
                     )
 

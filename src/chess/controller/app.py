@@ -22,7 +22,9 @@ class App:
         tournament.callback_add_players_to_tournament = (
             chess.model.callbacks.add_player_to_tournament
         )
-        tournament.callback_start_new_round = chess.model.callbacks.start_new_round
+        tournament.callback_start_new_round = (
+            chess.model.callbacks.start_new_round
+        )
         round_menu: menus.RoundHandling = tournament.round_menu
         round_menu.callback_update_tournament_scores = (
             chess.model.callbacks.update_tournament_scores
@@ -33,7 +35,9 @@ class App:
             menus.Reports, self.main_menu
         )
         reports.callback_all_players = chess.model.callbacks.report_players
-        reports.callback_all_tournaments = chess.model.callbacks.report_tournaments
+        reports.callback_all_tournaments = (
+            chess.model.callbacks.report_tournaments
+        )
         reports.callback_all_players_from_tournament = (
             lambda id: chess.model.callbacks.report_players_from_tournament(id)
         )

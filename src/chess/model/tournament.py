@@ -23,7 +23,8 @@ class Tournament:
         """Tournament init.
 
         Args:
-            id (int): Tournament ID. Must be unique for saving/loading purposes.
+            id (int): Tournament ID. Must be unique for saving/loading\
+                purposes.
             name (str): Tournament name.
             players (list[Player, int]): List of players and their points for\
                 this tournament.
@@ -77,7 +78,9 @@ class Tournament:
             TOURNAMENTS: {
                 self.id: {
                     "name": self.name,
-                    "players": [[player[0].id, player[1]] for player in self.players],
+                    "players": [
+                        [player[0].id, player[1]] for player in self.players
+                    ],
                     "rounds": [round.id for round in self.rounds],
                     "localization": self.localization.to_json(),
                     "rounds_amount": self.rounds_amount,
@@ -110,7 +113,8 @@ class Tournament:
             id=tournament_id,
             name=json_ref["name"],
             players=[
-                [Player.from_id(player[0]), player[1]] for player in json_ref["players"]
+                [Player.from_id(player[0]), player[1]]
+                for player in json_ref["players"]
             ],
             rounds=[Round.from_id(id) for id in json_ref["rounds"]],
             localization=Address.from_json(json_ref["localization"]),

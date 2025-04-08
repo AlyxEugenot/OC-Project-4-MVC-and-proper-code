@@ -1,4 +1,3 @@
-import typing
 import random
 from typing import Self
 from chess.model import Player
@@ -8,12 +7,15 @@ from chess.model.storage import save_data, load_data, MATCHES
 class Match:
     """Match class. Used to keep track of match results."""
 
-    def __init__(self, id: int, players: list[Player], white_player: Player = None):
+    def __init__(
+        self, id: int, players: list[Player], white_player: Player = None
+    ):
         """Match init.
 
         Args:
             id (int): Match ID. (len 10)
-            players (list[Player, int]): Players and their current match points.
+            players (list[Player, int]): Players and their current match\
+                points.
             white_player (Player): Player playing first. Always leave empty.
         """
         self.id = id
@@ -21,7 +23,9 @@ class Match:
         self.players = players
         self.score = {players[0]: 0, players[1]: 0}
         self.white = (
-            white_player if white_player is not None else self.pick_white_player()
+            white_player
+            if white_player is not None
+            else self.pick_white_player()
         )
         self.save()
 
@@ -105,14 +109,16 @@ class Match:
         this_match = Match(
             id=match_id,
             # parent_round=round_from_id(json_ref["parent_round"]),
-            players=[Player.from_id(player[0]) for player in json_ref["score"]],
+            players=[
+                Player.from_id(player[0]) for player in json_ref["score"]
+            ],
             white_player=Player.from_id(json_ref["white"]),
         )
         this_match.score = {
             this_match.players[0]: json_ref["score"][0][1],
             this_match.players[1]: json_ref["score"][1][1],
         }
-        
+
         this_match.save()
         return this_match
 

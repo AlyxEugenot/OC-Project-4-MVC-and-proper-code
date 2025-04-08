@@ -9,7 +9,9 @@ def generate_pairs_for_new_round(
     tournament: "chess.model.Tournament",
 ) -> list[list["chess.model.Player"]]:
     # sort by player score
-    sorted_players: list = sorted(tournament.players, key=lambda i: i[1], reverse=True)
+    sorted_players: list = sorted(
+        tournament.players, key=lambda i: i[1], reverse=True
+    )
     duos = []
     # assign players by duo
     for i in range(0, len(sorted_players), 2):
@@ -23,14 +25,17 @@ def generate_pairs_for_new_round(
                 # get next possible player
                 player2_idx += 1
 
-                # if no more players available, get 1st one given (closest score)
+                # if no more players available,
+                # get 1st one given (closest score)
                 try:
                     sorted_players[player2_idx]
                 except IndexError:
                     player2_idx = 1
                     break
 
-        duos.append([sorted_players[player1_idx][0], sorted_players[player2_idx][0]])
+        duos.append(
+            [sorted_players[player1_idx][0], sorted_players[player2_idx][0]]
+        )
         sorted_players.pop(player2_idx)
         sorted_players.pop(player1_idx)
 
@@ -38,7 +43,9 @@ def generate_pairs_for_new_round(
 
 
 def nested_list_to_str(
-    nested_list: list[list[str]], inner_join_str: str = " ", outer_join_str: str = "\n"
+    nested_list: list[list[str]],
+    inner_join_str: str = " ",
+    outer_join_str: str = "\n",
 ) -> str:
     inner_strs = []
     for outer in nested_list:
@@ -54,7 +61,9 @@ def json_date_to_str(json_date: str) -> str:
         return datetime.fromisoformat(json_date).strftime("%d-%m-%Y")
 
 
-def slim_json_dict_by_ids(dict_to_slim: dict[str, dict], ids: list) -> dict[str, dict]:
+def slim_json_dict_by_ids(
+    dict_to_slim: dict[str, dict], ids: list
+) -> dict[str, dict]:
     reduced_dict = {}
     for id in ids:
         try:

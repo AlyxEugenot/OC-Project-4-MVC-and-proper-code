@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-import datetime
 import re
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
@@ -43,7 +42,7 @@ def save_data(data_to_save: dict[str, dict]) -> dict:
             saved_data[which_dict][str(key)] = value
 
     with open(SAVED_DATA_PATH, mode="w", encoding="utf-8") as file:
-        new_file = json.dump(saved_data, file, indent=4)
+        json.dump(saved_data, file, indent=4)
     return saved_data
 
 
@@ -139,11 +138,16 @@ def is_id_valid(id, json_key: str) -> tuple[bool, str]:
                 return (True, "")
         case "matches":
             if re.match("[0-9]{10}$", id) is None:
-                return (False, "Le format (12346578910) de l'ID n'est pas bon.")
+                return (
+                    False,
+                    "Le format (12346578910) de l'ID n'est pas bon.",
+                )
             else:
                 return (True, "")
         case _:
-            raise ("dumbass programmer doesn't know how to put right parameters")
+            raise (
+                "dumbass programmer doesn't know how to put right parameters"
+            )
 
 
 def id_already_exists(id, dict_key: str) -> bool:

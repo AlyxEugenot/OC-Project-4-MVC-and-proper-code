@@ -22,8 +22,10 @@ class MainMenu(_abstract.Menu):
         self.add_child(reportsMenu.Reports())
 
         # set up tournament parent relationship
-        self.tournament = self.invisible_child = self.add_remanent_menu_not_child(
-            tournamentMenu.TournamentHandling()
+        self.tournament = self.invisible_child = (
+            self.add_remanent_menu_not_child(
+                tournamentMenu.TournamentHandling()
+            )
         )
 
         self.late_init(am_root=True)

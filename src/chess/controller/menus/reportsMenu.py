@@ -12,13 +12,19 @@ class Reports(_abstract.Menu):
         self.callback_all_players = _abstract.not_implemented
         self.callback_all_tournaments = _abstract.not_implemented
         self.callback_all_players_from_tournament = _abstract.not_implemented
-        self.callback_rounds_matches_from_tournament = _abstract.not_implemented
+        self.callback_rounds_matches_from_tournament = (
+            _abstract.not_implemented
+        )
         self.callback_rounds_from_tournament = _abstract.not_implemented
         self.callback_matches_from_tournament = _abstract.not_implemented
 
-        self.add_child(_abstract.Action("Liste de tous les joueurs", self.all_players))
         self.add_child(
-            _abstract.Action("Liste de tous les tournois", self.all_tournaments)
+            _abstract.Action("Liste de tous les joueurs", self.all_players)
+        )
+        self.add_child(
+            _abstract.Action(
+                "Liste de tous les tournois", self.all_tournaments
+            )
         )
         self.add_child(
             _abstract.Action(
@@ -34,12 +40,14 @@ class Reports(_abstract.Menu):
         )
         self.add_child(
             _abstract.Action(
-                "Liste de tous les rounds d'un tournoi", self.all_rounds_of_tournament
+                "Liste de tous les rounds d'un tournoi",
+                self.all_rounds_of_tournament,
             )
         )
         self.add_child(
             _abstract.Action(
-                "Liste de tous les matchs d'un round", self.all_matches_of_round
+                "Liste de tous les matchs d'un round",
+                self.all_matches_of_round,
             )
         )
 
@@ -57,10 +65,14 @@ class Reports(_abstract.Menu):
         players_list = self.callback_all_players_from_tournament(tournament_id)
         Reports.display_by_table(players_list)
 
-    def all_rounds_of_tournament_and_all_their_matches(self, tournament_id: str = None):
+    def all_rounds_of_tournament_and_all_their_matches(
+        self, tournament_id: str = None
+    ):
         if tournament_id is None:
             tournament_id = self.view.my_input("ID du tournoi : ")
-        rounds_list = self.callback_rounds_matches_from_tournament(tournament_id)
+        rounds_list = self.callback_rounds_matches_from_tournament(
+            tournament_id
+        )
         Reports.display_by_table(
             rounds_list, is_multiline=True, table_col_width_if_multiline=29
         )
