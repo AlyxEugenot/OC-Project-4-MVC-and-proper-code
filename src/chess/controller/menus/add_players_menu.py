@@ -36,6 +36,12 @@ class AddPlayers(_abstract.Menu):
                 "Entrer un nouveau joueur", self.generate_new_player
             )
         )
+        self.add_child(
+            _abstract.Action(
+                "Afficher les joueurs existants.",
+                lambda: self.display_report(self.reports.all_players),
+            )
+        )
 
     def generate_new_random(self):
         """Add new random players to data.json.

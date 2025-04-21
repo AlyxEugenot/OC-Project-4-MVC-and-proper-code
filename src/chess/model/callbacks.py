@@ -1,9 +1,14 @@
 """All callbacks to do with model."""
 
+import sys
+import typing
 import chess.model
 import chess.model.generate
 import chess.model.storage
 from chess import utils
+
+if typing.TYPE_CHECKING:
+    from chess.controller.menus._abstract import Menu
 
 
 def add_player_to_tournament(
@@ -376,6 +381,87 @@ def report_tournaments(
         )
 
     return returned_list
+
+
+# endregion
+
+
+# region View callbacks
+def quit_program(my_print: typing.Callable):
+    """view.inputs.regular_inputs method.
+
+    Quit program.
+
+    Args:
+        my_print (typing.Callable): view.my_print as in view to print
+            as expected.
+    """
+    my_print("\nArrêt du programme...")
+    sys.exit(0)
+
+
+def execute_main_menu(
+    main_menu: "Menu",
+    current_menu_arborescence: list[str],
+    my_print: typing.Callable,
+    menu_header: typing.Callable,
+):
+    """view.inputs.regular_inputs method.
+
+    Execute main menu.
+
+    Args:
+        main_menu (Menu): Menu to execute.
+        current_menu_arborescence (list[str]): view.current_menu_arborescence
+            object.
+        my_print (typing.Callable): view.my_print as in view to print
+            as expected.
+        menu_header (typing.Callable): view.my_print_header as in view to
+            print headers as expected.
+    """
+    my_print("menu principal...")
+    current_menu_arborescence.clear()
+    current_menu_arborescence.append("Menu principal")
+    menu_header()
+    main_menu.execute()
+
+
+def cancel(
+    current_menu: "Menu",
+    current_menu_arborescence: list[str],
+    my_print: typing.Callable,
+    menu_header: typing.Callable,
+):
+    """view.inputs.regular_inputs method.
+
+    Execute last menu. (Execute this menu if current menu item is action.
+    Else, execute parent)
+
+    Update header and view.current_menu_arborescence on the way.
+
+    Args:
+        current_menu (Menu): Current menu. (execute this or parents' execute)
+        current_menu_arborescence (list[str]): view.current_menu_arborescence
+            object.
+        my_print (typing.Callable): view.my_print as in view to print
+            as expected.
+        menu_header (typing.Callable): view.my_print_header as in view to
+            print headers as expected.
+    """
+    my_print("retour...")
+    if current_menu_arborescence[-1].startswith("action"):
+        menu = current_menu
+    else:
+        if current_menu.parent is not None:
+            menu = current_menu.parent
+        else:
+            # if we were already in main_menu
+            current_menu_arborescence.append("")
+            menu = current_menu
+
+    current_menu_arborescence.pop()
+    menu_header()
+    menu.execute()
 
 
 # endregion

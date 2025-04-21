@@ -48,10 +48,10 @@ class MainMenu(_abstract.Menu):
 
         self.add_child(tournament_menu.WhichTournament())
         self.add_child(add_players_menu.AddPlayers())
-        self.add_child(reports_menu.Reports())
+        self.reports = self.add_child(reports_menu.Reports())
 
         # set up tournament parent relationship
-        self.tournament: chess.controller.menus.TournamentHandling = (
+        self.tournament_menu: chess.controller.menus.TournamentHandling = (
             self.add_remanent_menu_not_child(
                 tournament_menu.TournamentHandling()
             )

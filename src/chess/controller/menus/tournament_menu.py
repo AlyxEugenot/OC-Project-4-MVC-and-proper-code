@@ -67,8 +67,8 @@ class WhichTournament(_abstract.Menu):
             _id (int): ID of tournament to load.
         """
         self.context.current_tournament_id = _id
-        self.parent.tournament.load_tournament()
-        self.parent.tournament.execute()
+        self.parent.tournament_menu.load_tournament()
+        self.parent.tournament_menu.execute()
 
     def create_tournament(self) -> model.Tournament:
         """Create tournament from user id. Can be generated if empty fields.
@@ -78,6 +78,7 @@ class WhichTournament(_abstract.Menu):
         """
         tournament_id = self.input_tournament_id()
         name = self.view.my_input("Nom du tournoi: ")
+        self.display_report(self.reports.all_players)
         players: str = self.view.my_input(
             "Sélectionnez les ID de joueurs séparés par des "
             "virgules : (peut être vide) "
@@ -95,8 +96,8 @@ class WhichTournament(_abstract.Menu):
             )
         else:
             localization = model.Address(*localization_strs)
-        rounds_amount = self.view.my_input("\nRounds amount (default 4): ")
-        description = self.view.my_input("Description:(generate if empty) ")
+        rounds_amount = self.view.my_input("\nNombre de rounds (default 4): ")
+        description = self.view.my_input("Description (générée is vide): ")
 
         tournament = model.Tournament(
             _id=tournament_id,
@@ -126,7 +127,7 @@ class WhichTournament(_abstract.Menu):
                 self.view.my_print(f"\n{problem}\n")
 
             tournament_id = self.view.my_input(
-                "Quel est l'ID du tournoi ? (Générer au hasard si vide) "
+                "Quel est l'ID du tournoi ? (Généré au hasard si vide) "
             )
             if tournament_id == "":
                 tournament_id = generate.generate_available_id(
@@ -187,6 +188,7 @@ class TournamentHandling(_abstract.Menu):
         self.tournament = None
         self.context.current_tournament_id = None
         self.title = "Tournoi vide"
+        super().on_exit()
 
     def load_tournament(self):
         """When entering this tournament, get id from context and enable menu.
@@ -200,6 +202,8 @@ class TournamentHandling(_abstract.Menu):
             self.context.current_tournament_id
         )
         self.title = f"Tournoi {str(self.tournament)}"
+        self.view.my_print("Chargement du tournoi...")
+        self._update_current_menu(self)
 
     def execute(self):
         """
@@ -220,7 +224,6 @@ class TournamentHandling(_abstract.Menu):
 
             if self.tournament.end_time is not None:
                 pass
-            # TODO reports résumé du tournoi (global à toutes les options ?)
             elif self.tournament.start_time is None:
                 self.add_child(
                     _abstract.Action(
@@ -229,6 +232,12 @@ class TournamentHandling(_abstract.Menu):
                             f"({len(self.tournament.players)} actuellement)."
                         ),
                         self.add_players_to_tournament,
+                    )
+                )
+                self.add_child(
+                    _abstract.Action(
+                        ("Afficher les joueurs existants."),
+                        lambda: self.display_report(self.reports.all_players),
                     )
                 )
                 if len(self.tournament.players) > 3:
@@ -258,13 +267,13 @@ class TournamentHandling(_abstract.Menu):
                     )
             else:
                 # créer une copie de la liste
-                rounds = list(self.tournament.rounds)
+                rounds: list[model.Round] = list(self.tournament.rounds)
                 unfinished_round = [x for x in rounds if x.end_time is None]
                 if len(unfinished_round) > 1:
                     raise RecursionError(
                         "Multiple unfinished rounds. Normally impossible."
                     )
-                unfinished_round = unfinished_round[0]
+                unfinished_round: model.Round = unfinished_round[0]
                 self.add_child(
                     _abstract.Action(
                         f"En cours: {unfinished_round.name}",
@@ -275,10 +284,20 @@ class TournamentHandling(_abstract.Menu):
                 for r in rounds:
                     self.add_child(
                         _abstract.Action(
-                            f"Terminé: {r.name}", lambda: self.load_round(r.id)
+                            f"Terminé: {r.name}",
+                            lambda id=r.id: self.load_round(id),
                         )
                     )
-
+            if len(self.tournament.rounds) > 0:
+                self.add_child(
+                    _abstract.Action(
+                        ("Rapport : déroulement du tournoi actuel."),
+                        lambda: self.display_report(
+                            self.reports.all_rounds_of_tournament_and_all_their_matches,  # noqa
+                            self.context.current_tournament_id,
+                        ),
+                    )
+                )
             super().execute()
 
     def start_tournament(self):
@@ -313,7 +332,6 @@ class TournamentHandling(_abstract.Menu):
 
     def add_players_to_tournament(self):
         """Let user input existing player IDs to add them to tournament."""
-        # TODO afficher les joueurs ajoutables au tournoi
         while True:
             _id = self.view.my_input("ID du joueur: ")
             if _id == "":

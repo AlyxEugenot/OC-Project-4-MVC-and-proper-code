@@ -85,7 +85,7 @@ class Reports(_abstract.Menu):
             )
         )
 
-    def all_players(self):
+    def all_players(self, print_from_reports: bool = True) -> str:
         """Report all players.
 
         Columns are:
@@ -94,11 +94,21 @@ class Reports(_abstract.Menu):
             First name
             Birth date
             Elo
+
+        Args:
+            print_from_reports (bool, optional): Display from menu Reports if
+                True. Defaults to True.
+
+        Returns:
+            str: str table to print.
         """
         all_players_list = self.callback_all_players()
-        self.display_by_table(all_players_list)
 
-    def all_tournaments(self):
+        return self.display_by_table(
+            all_players_list, print_from_function=print_from_reports
+        )
+
+    def all_tournaments(self, print_from_reports: bool = True) -> str:
         """Report all tournaments.
 
         Columns are:
@@ -111,11 +121,24 @@ class Reports(_abstract.Menu):
             Description
             Tournament beginning datetime
             Tournament ending datetime
+
+        Args:
+            print_from_reports (bool, optional): Display from menu Reports if
+                True. Defaults to True.
+
+        Returns:
+            str: str table to print.
         """
         tournaments_list = self.callback_all_tournaments()
-        self.display_by_table(tournaments_list, is_multiline=True)
+        return self.display_by_table(
+            tournaments_list,
+            is_multiline=True,
+            print_from_function=print_from_reports,
+        )
 
-    def all_players_from_tournament(self, tournament_id: str = None):
+    def all_players_from_tournament(
+        self, tournament_id: str | int = None, print_from_reports: bool = True
+    ) -> str:
         """Report all players from a tournament.
 
         Columns are:
@@ -126,18 +149,27 @@ class Reports(_abstract.Menu):
             Elo
 
         Args:
-            tournament_id (str, optional): Tournament to show players from.
-                Get input of which tournament if None. Defaults to None.
+            tournament_id (str | int, optional): Tournament to show players
+                from. Get input of which tournament if None. Defaults to None.
+            print_from_reports (bool, optional): Display from menu Reports if
+                True. Defaults to True.
+
+        Returns:
+            str: str table to print.
         """
         if tournament_id is None:
             tournament_id = self.view.my_input("ID du tournoi : ")
         # pylint: disable=assignment-from-no-return
-        players_list = self.callback_all_players_from_tournament(tournament_id)
-        self.display_by_table(players_list)
+        players_list = self.callback_all_players_from_tournament(
+            str(tournament_id)
+        )
+        return self.display_by_table(
+            players_list, print_from_function=print_from_reports
+        )
 
     def all_rounds_of_tournament_and_all_their_matches(
-        self, tournament_id: str = None
-    ):
+        self, tournament_id: str | int = None, print_from_reports: bool = True
+    ) -> str:
         """Report all rounds and matches from tournament.
 
         Columns are:
@@ -148,21 +180,31 @@ class Reports(_abstract.Menu):
             Round ending datetime
 
         Args:
-            tournament_id (str, optional): Tournament to show rounds and
+            tournament_id (str | int, optional): Tournament to show rounds and
                 matches from. Get input of which tournament if None.
                 Defaults to None.
+            print_from_reports (bool, optional): Display from menu Reports if
+                True. Defaults to True.
+
+        Returns:
+            str: str table to print.
         """
         if tournament_id is None:
             tournament_id = self.view.my_input("ID du tournoi : ")
         # pylint: disable=assignment-from-no-return
         rounds_list = self.callback_rounds_matches_from_tournament(
-            tournament_id
+            str(tournament_id)
         )
-        self.display_by_table(
-            rounds_list, is_multiline=True, table_col_width_if_multiline=29
+        return self.display_by_table(
+            rounds_list,
+            is_multiline=True,
+            table_col_width_if_multiline=29,
+            print_from_function=print_from_reports,
         )
 
-    def all_rounds_of_tournament(self, tournament_id: str = None):
+    def all_rounds_of_tournament(
+        self, tournament_id: str | int = None, print_from_reports: bool = True
+    ) -> str:
         """Report all rounds from tournament.
 
         Columns are:
@@ -173,16 +215,25 @@ class Reports(_abstract.Menu):
             Round ending datetime
 
         Args:
-            tournament_id (str, optional): Tournament to show rounds from.
-                Get input of which tournament if None. Defaults to None.
+            tournament_id (str | int, optional): Tournament to show rounds
+                from. Get input of which tournament if None. Defaults to None.
+            print_from_reports (bool, optional): Display from menu Reports if
+                True. Defaults to True.
+
+        Returns:
+            str: str table to print.
         """
         if tournament_id is None:
             tournament_id = self.view.my_input("ID du tournoi : ")
         # pylint: disable=assignment-from-no-return
-        rounds_list = self.callback_rounds_from_tournament(tournament_id)
-        self.display_by_table(rounds_list)
+        rounds_list = self.callback_rounds_from_tournament(str(tournament_id))
+        return self.display_by_table(
+            rounds_list, print_from_function=print_from_reports
+        )
 
-    def all_matches_of_round(self, round_id: str = None):
+    def all_matches_of_round(
+        self, round_id: str | int = None, print_from_reports: bool = True
+    ) -> str:
         """Report all matches from round.
 
         Columns are:
@@ -191,14 +242,21 @@ class Reports(_abstract.Menu):
             White player
 
         Args:
-            round_id (str, optional): Round to show matches from.
+            round_id (str | int, optional): Round to show matches from.
                 Get input of which round if None. Defaults to None.
+            print_from_reports (bool, optional): Display from menu Reports if
+                True. Defaults to True.
+
+        Returns:
+            str: str table to print.
         """
         if round_id is None:
             round_id = self.view.my_input("ID du round : ")
         # pylint: disable=assignment-from-no-return
-        matches_list = self.callback_matches_from_tournament(round_id)
-        self.display_by_table(matches_list)
+        matches_list = self.callback_matches_from_tournament(str(round_id))
+        return self.display_by_table(
+            matches_list, print_from_function=print_from_reports
+        )
 
     def display_by_table(
         self,

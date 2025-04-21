@@ -5,13 +5,14 @@ from chess.view import View
 
 if typing.TYPE_CHECKING:
     from chess.controller.context import Context
+    from chess.controller.menus.reports_menu import Reports
 
 
 class MenuAbstractItem:
     """Most basic menu element."""
 
     def __init__(self, menu_option_name: str) -> None:
-        self.menu_option_name = menu_option_name
+        self.title = self.menu_option_name = menu_option_name
         self.parent: Menu | None = None
 
     def execute(self) -> None:
@@ -44,11 +45,12 @@ class Menu(MenuAbstractItem):
         super().__init__(self.menu_option_name)
         self.children: list[MenuAbstractItem] = []
         self.loop_above = False
-        self.context: typing.Optional["Context"]
-        self.view: typing.Optional[View]
-        self.invisible_child: typing.Optional[Menu]
+        self.context: "Context" | None = None
+        self.view: View | None = None
+        self.invisible_child: View | None = None
+        self.reports: Reports | None = None
 
-    def add_child(self, item: MenuAbstractItem) -> None:
+    def add_child(self, item: MenuAbstractItem) -> "Menu":
         """Add child to menu choices.
 
         Also sets child parent relationship.
@@ -58,6 +60,9 @@ class Menu(MenuAbstractItem):
 
         Raises:
             ValueError: If already has parent.
+
+        Returns:
+            Menu: Menu item set.
         """
         if item.parent is not None:
             raise ValueError("Contient déjà un parent")
@@ -68,6 +73,8 @@ class Menu(MenuAbstractItem):
         if issubclass(type(item), Menu):
             item.context = self.context
             item.view = self.view
+
+        return item
 
     def add_remanent_menu_not_child(self, item: "Menu") -> "Menu":
         """Set parent relationship to this for item.
@@ -102,6 +109,7 @@ class Menu(MenuAbstractItem):
         if not am_root:
             self.context = self.parent.context
             self.view = self.parent.view
+            self.reports = self.parent.reports
 
         children: list[Menu] = [
             child for child in self.children if issubclass(type(child), Menu)
@@ -119,38 +127,85 @@ class Menu(MenuAbstractItem):
             time it is called.
         """
         while True:
-            self.view.my_print("")
+            if self.view.current_menu_arborescence[-1].startswith("action"):
+                # if previous behaviour was action, pop (for cancel() purposes)
+                self.view.current_menu_arborescence.pop()
+                # and print empty for next menu
+                self.view.my_print("")
+
             if self.parent is not None:
-                self.view.my_print(f"0, Revenir à {self.parent.title}")
+                self.view.my_print(f"0 Revenir à {self.parent.title}")
 
             for i, item in enumerate(self.children):
-                self.view.my_print(f"{i + 1}, {item.menu_option_name}")
+                self.view.my_print(f"{i + 1} {item.menu_option_name}")
 
             choice = self.view.my_input("Sélectionne un choix : ")
-            # regular_inputs(choice) # TODO
 
             try:
                 choice = int(choice)
             except ValueError:
-                pass
+                self.view.my_print(
+                    "Input non reconnu : nombre ou r/m/q nécessaire.\n"
+                )
 
-            self.view.my_print("")
+            if isinstance(choice, int):
+                if choice == 0 and self.parent is not None:
+                    self.on_exit()
+                    self.parent.execute()
 
-            if choice == 0 and self.parent is not None:
-                self.on_exit()
-                self.parent.execute()
+                elif choice > 0 and choice <= len(self.children):
+                    self._update_current_menu(self.children[choice - 1])
+                    self.children[choice - 1].execute()
 
-            elif choice > 0 and choice <= len(self.children):
-                self.children[choice - 1].execute()
-
-            else:
-                self.view.my_print("Input non reconnu.")
+                else:
+                    self.view.my_print("Input non reconnu.")
 
             if self.loop_above:
                 break
 
+    def _update_current_menu(
+        self, menu_abstract_item_chosen: MenuAbstractItem
+    ):
+        """Update headers, view print prefixes and context.current_menu for
+        regular_inputs purposes.
+
+        Args:
+            menu_abstract_item_chosen (MenuAbstractItem): Menu item to update
+                headers with.
+        """
+        current_menu = ["Menu principal"]
+
+        if isinstance(menu_abstract_item_chosen, Action):
+            current_menu.append(f"action{menu_abstract_item_chosen.title}")
+            menu_abstract_item_chosen = menu_abstract_item_chosen.parent
+        else:
+            self.context.current_menu = menu_abstract_item_chosen
+
+        while menu_abstract_item_chosen.parent is not None:
+            current_menu.insert(1, menu_abstract_item_chosen.title)
+            menu_abstract_item_chosen = menu_abstract_item_chosen.parent
+
+        self.view.current_menu_arborescence = current_menu
+        self.view.my_print_header()
+
+    def display_report(self, report_method: typing.Callable, argument=None):
+        """Display report. Meant for outside of reports menu.
+
+        Args:
+            report_method (typing.Callable): Report to display.
+            argument (Any, optional): Argument if needed for report.
+                Defaults to None.
+        """
+        if argument is not None:
+            table: str = report_method(argument, print_from_reports=False)
+        else:
+            table: str = report_method(print_from_reports=False)
+
+        self.view.my_print(table)
+
     def on_exit(self):
         """To call behaviour on exiting a menu."""
+        self._update_current_menu(self.parent)
 
     def organize_children(self):
         """Sort children menu first, action second."""

@@ -37,6 +37,7 @@ class MatchHandling(_abstract.Menu):
         self.match = None
         self.context.current_match_id = None
         self.title = "Match vide"
+        super().on_exit()
 
     def load_match(self):
         """When entering this menu, get id from context and enable menu.
@@ -48,6 +49,8 @@ class MatchHandling(_abstract.Menu):
             raise TypeError("Trying to load a match it does not find.")
         self.match = chess.model.Match.from_id(self.context.current_match_id)
         self.title = f"Match {str(self.match)}"
+        self.view.my_print("Chargement du match...")
+        self._update_current_menu(self)
 
     def execute(self):
         """Declare winner of match. Match can be reset when finished.

@@ -51,6 +51,7 @@ class RoundHandling(_abstract.Menu):
         self.round = None
         self.context.current_round_id = None
         self.title = "Round vide"
+        super().on_exit()
 
     def load_round(self):
         """When entering this round, get id from context and enable menu.
@@ -62,6 +63,8 @@ class RoundHandling(_abstract.Menu):
             raise TypeError("Trying to load a round it does not find.")
         self.round = chess.model.Round.from_id(self.context.current_round_id)
         self.title = str(self.round)
+        self.view.my_print("Chargement du round...")
+        self._update_current_menu(self)
 
     def execute(self):
         """Navigate to different matches.
@@ -76,8 +79,16 @@ class RoundHandling(_abstract.Menu):
             self.children.clear()
 
             if self.round.end_time is not None:
-                # TODO ?
-                # rapport des matchs finis de ce round ?
+                self.add_child(
+                    _abstract.Action(
+                        "Rapport : afficher les rounds terminés de ce tour.",
+                        lambda: self.display_report(
+                            self.reports.all_matches_of_round,
+                            str(self.context.current_round_id),
+                        ),
+                    )
+                )
+                super().execute()
                 continue
                 # on ne veut pas pouvoir modifier les matchs déjà finis dans un
                 # round passé donc on fait pas la suite de la while loop
@@ -114,6 +125,16 @@ class RoundHandling(_abstract.Menu):
                         lambda id=match.id: self.load_match(id),
                     )
                 )
+
+            self.add_child(
+                _abstract.Action(
+                    "Rapport : afficher les matchs de ce tour.",
+                    lambda: self.display_report(
+                        self.reports.all_matches_of_round,
+                        str(self.context.current_round_id),
+                    ),
+                )
+            )
 
             super().execute()
 
