@@ -70,7 +70,9 @@ class Menu(MenuAbstractItem):
             item.view = self.view
 
     def add_remanent_menu_not_child(self, item: "Menu") -> "Menu":
-        """Sets parent relationship to this for item.
+        """Set parent relationship to this for item.
+
+        Set item as invisible_child for late_init.
 
         Args:
             item (Menu): Menu item to set.
@@ -84,6 +86,7 @@ class Menu(MenuAbstractItem):
         if item.parent is not None:
             raise ValueError("Contient déjà un parent")
         item.parent = self
+        self.invisible_child = item
 
         return item
 

@@ -51,7 +51,7 @@ class MainMenu(_abstract.Menu):
         self.add_child(reports_menu.Reports())
 
         # set up tournament parent relationship
-        self.tournament = self.invisible_child = (
+        self.tournament: chess.controller.menus.TournamentHandling = (
             self.add_remanent_menu_not_child(
                 tournament_menu.TournamentHandling()
             )

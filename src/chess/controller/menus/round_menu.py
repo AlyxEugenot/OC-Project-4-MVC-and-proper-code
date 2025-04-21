@@ -37,7 +37,7 @@ class RoundHandling(_abstract.Menu):
         self.loop_above = True
 
         # set up round-match parent relationship
-        self.match_menu = self.invisible_child = (
+        self.match_menu: chess.controller.menus.MatchHandling = (
             self.add_remanent_menu_not_child(
                 chess.controller.menus.MatchHandling()
             )
@@ -97,7 +97,7 @@ class RoundHandling(_abstract.Menu):
                     )
 
             # créer une copie de la liste
-            matches = list(self.round.matches)
+            matches: list[chess.model.Match] = list(self.round.matches)
             unfinished_matches = [x for x in matches if not x.is_over()]
             for match in unfinished_matches:
                 self.add_child(

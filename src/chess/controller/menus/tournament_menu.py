@@ -173,8 +173,8 @@ class TournamentHandling(_abstract.Menu):
         self.loop_above = True
 
         # set up tournament-round parent relationship
-        self.round_menu = self.invisible_child = (
-            self.add_remanent_menu_not_child(RoundHandling())
+        self.round_menu: RoundHandling = self.add_remanent_menu_not_child(
+            RoundHandling()
         )
 
         self.callback_start_new_round = _abstract.not_implemented  # done
