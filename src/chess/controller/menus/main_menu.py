@@ -2,9 +2,9 @@
 
 from typing import TYPE_CHECKING
 from chess.controller.menus import _abstract
-from chess.controller.menus import tournamentMenu
-from chess.controller.menus import addPlayersMenu
-from chess.controller.menus import reportsMenu
+from chess.controller.menus import tournament_menu
+from chess.controller.menus import add_players_menu
+from chess.controller.menus import reports_menu
 
 
 if TYPE_CHECKING:
@@ -46,14 +46,14 @@ class MainMenu(_abstract.Menu):
         self.context = context
         self.view = view
 
-        self.add_child(tournamentMenu.WhichTournament())
-        self.add_child(addPlayersMenu.AddPlayers())
-        self.add_child(reportsMenu.Reports())
+        self.add_child(tournament_menu.WhichTournament())
+        self.add_child(add_players_menu.AddPlayers())
+        self.add_child(reports_menu.Reports())
 
         # set up tournament parent relationship
         self.tournament = self.invisible_child = (
             self.add_remanent_menu_not_child(
-                tournamentMenu.TournamentHandling()
+                tournament_menu.TournamentHandling()
             )
         )
 
