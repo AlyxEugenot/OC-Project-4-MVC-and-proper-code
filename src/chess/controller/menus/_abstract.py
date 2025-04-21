@@ -1,3 +1,5 @@
+"""Base menu elements."""
+
 import typing
 from chess.view import View
 
@@ -6,19 +8,35 @@ if typing.TYPE_CHECKING:
 
 
 class MenuAbstractItem:
+    """Most basic menu element."""
+
     def __init__(self, menu_option_name: str) -> None:
         self.menu_option_name = menu_option_name
-        self.parent: Menu = None
+        self.parent: Menu | None = None
 
     def execute(self) -> None:
-        pass
+        """Function holding the behaviour of the menu object."""
 
     def __str__(self) -> str:
         return self.menu_option_name
 
 
 class Menu(MenuAbstractItem):
-    def __init__(self, title: str, menu_option_name: str = None) -> None:
+    """Menu item containing other items.
+
+    Inherit from MenuAbstractItem.
+    """
+
+    def __init__(
+        self, title: str, menu_option_name: str | None = None
+    ) -> None:
+        """Menu init.
+
+        Args:
+            title (str): Title of the menu. Used on tree view.
+            menu_option_name (str | None, optional): Note for menu choices.\
+                Defaults to title's content.
+        """
         self.title = title
         self.menu_option_name = (
             menu_option_name if menu_option_name is not None else title
@@ -26,11 +44,21 @@ class Menu(MenuAbstractItem):
         super().__init__(self.menu_option_name)
         self.children: list[MenuAbstractItem] = []
         self.loop_above = False
-        self.context: "Context" = None
-        self.view: View = None
-        self.invisible_child: Menu = None
+        self.context: typing.Optional["Context"]
+        self.view: typing.Optional[View]
+        self.invisible_child: typing.Optional[Menu]
 
     def add_child(self, item: MenuAbstractItem) -> None:
+        """Add child to menu choices.
+
+        Also sets child parent relationship.
+
+        Args:
+            item (MenuAbstractItem): Menu item to add.
+
+        Raises:
+            ValueError: If already has parent.
+        """
         if item.parent is not None:
             raise ValueError("Contient déjà un parent")
         item.parent = self
@@ -41,7 +69,18 @@ class Menu(MenuAbstractItem):
             item.context = self.context
             item.view = self.view
 
-    def add_remanent_menu_not_child(self, item: MenuAbstractItem) -> "Menu":
+    def add_remanent_menu_not_child(self, item: "Menu") -> "Menu":
+        """Sets parent relationship to this for item.
+
+        Args:
+            item (Menu): Menu item to set.
+
+        Raises:
+            ValueError: If already has parent.
+
+        Returns:
+            Menu: Menu item set.
+        """
         if item.parent is not None:
             raise ValueError("Contient déjà un parent")
         item.parent = self
@@ -49,6 +88,14 @@ class Menu(MenuAbstractItem):
         return item
 
     def late_init(self, am_root: bool = False):
+        """Init aiming at setting context and view objects to entire tree.
+
+        Called after general init.
+
+        Args:
+            am_root (bool, optional): If root object, needs to be True.\
+                Defaults to False.
+        """
         if not am_root:
             self.context = self.parent.context
             self.view = self.parent.view
@@ -63,6 +110,11 @@ class Menu(MenuAbstractItem):
             child.late_init()
 
     def execute(self) -> None:
+        """For Menu objects, sets up the menu choice.
+
+        If loop_above is True, also execute the inherited function body every\
+            time it is called.
+        """
         while True:
             self.view.my_print("")
             if self.parent is not None:
@@ -95,16 +147,16 @@ class Menu(MenuAbstractItem):
                 break
 
     def on_exit(self):
-        pass
+        """To call behaviour on exiting a menu."""
 
     def organize_children(self):
         """Sort children menu first, action second."""
         children, new_children = self.children, []
         for child in children:
-            if type(child) is Menu:
+            if isinstance(child, Menu):
                 new_children.append(child)
         for child in children:
-            if type(child) is Action:
+            if isinstance(child, Action):
                 new_children.append(child)
         self.children = new_children
 
@@ -118,11 +170,21 @@ class Menu(MenuAbstractItem):
         )
 
 
-def not_implemented():
-    print("not implemented")
+def not_implemented(*args):
+    """Default implementation to be overridden."""
+    print(
+        "not implemented."
+        f"{" args entered are"if len(args) > 0 else ""} "
+        f"{", ".join([str(arg) for arg in args])}."
+    )
 
 
 class Action(MenuAbstractItem):
+    """Menu item NOT containing other items. Only behaviour.
+
+    Inherit from MenuAbstractItem.
+    """
+
     def __init__(
         self,
         menu_option_name: str,
@@ -134,20 +196,27 @@ class Action(MenuAbstractItem):
     def execute(self) -> None:
         self.callback()
 
-    def connect(self, ext_callback) -> None:
-        self.callback = ext_callback
-
     def __repr__(self):
         return f"Action: {self.menu_option_name}"
 
 
 def find_menu(
-    menutype: typing.Type[Menu], menu_to_search: Menu
+    menutype: typing.Type[Menu], menu_to_search_from: Menu
 ) -> Menu | None:
-    for child in menu_to_search.children:
+    """Find a menu in children.
+
+    Args:
+        menutype (Type[Menu]): Menu to search.
+        menu_to_search_from (Menu): Menu to search FROM.
+
+    Returns:
+        Menu | None: Return menu found or None if not found.
+    """
+    for child in menu_to_search_from.children:
         if issubclass(type(child), Menu):
-            if type(child) is menutype:
+            if isinstance(child, menutype):
                 return child
             found_deeper = find_menu(menutype, child)
             if found_deeper is not None:
                 return found_deeper
+    return None

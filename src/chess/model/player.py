@@ -1,8 +1,10 @@
+"""Player object."""
+
 import datetime
 import re
 from typing import Self
 from chess.model.storage import save_data, load_data, PLAYERS
-import chess.utils as utils
+from chess import utils
 
 
 class Player:
@@ -10,7 +12,7 @@ class Player:
 
     def __init__(
         self,
-        id: str,
+        _id: str,
         first_name: str,
         last_name: str,
         birth_date: datetime.date,
@@ -26,13 +28,14 @@ class Player:
             elo (int, optional): Ranking in official worldwide chess systems.
                 Defaults to 1000.
         """
-        self.id = id
+        self.id = _id
         self.first_name = first_name.title()
         self.last_name = last_name.title()
         self.birth_date = birth_date
         self.elo = elo
 
     def save(self):
+        """Save player in data.json."""
         save_data(self.to_json())
 
     def to_json(self) -> dict:
@@ -56,6 +59,7 @@ class Player:
         }
         return this_json
 
+    # pylint: disable=no-self-argument
     def from_id(player_id: str) -> Self | None:
         """Return Player object from json through id.
         Return None if ID not found.
@@ -64,7 +68,7 @@ class Player:
             player_id (str): Player ID (format AB12345)
 
         Returns:
-            Player: Player object
+            Player | None: Player object or None if not found.
         """
         data = load_data()
         if PLAYERS not in data:
@@ -73,7 +77,7 @@ class Player:
             return None
         json_ref = data[PLAYERS][player_id]
         player = Player(
-            id=player_id,
+            _id=player_id,
             first_name=json_ref["first_name"],
             last_name=json_ref["last_name"],
             birth_date=datetime.date.fromisoformat(json_ref["birth_date"]),

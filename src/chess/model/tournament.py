@@ -1,68 +1,76 @@
+"""Tournament object."""
+
 import datetime
-from chess.model import Player, Address, Round
 from typing import Self
+from chess.model import Player, Address, Round
 from chess.model.storage import save_data, load_data, TOURNAMENTS
-import chess.utils as utils
+from chess import utils
 
 
 class Tournament:
-    """Tournament class. Tournaments are split in multiple rounds."""
+    """Tournament class. Tournaments are composed of multiple rounds."""
 
     def __init__(
         self,
-        id: int,
+        _id: int,
         name: str,
         players: list[list[Player, int]],
         rounds: list[Round],
         localization: Address,
         rounds_amount: int = 4,
-        start_time: datetime.datetime = None,
-        end_time: datetime.datetime = None,
+        # start_time: datetime.datetime = None,
+        # end_time: datetime.datetime = None,
         description: str = "",
-    ):  # FIXME redo docstring
+    ):
         """Tournament init.
 
         Args:
-            id (int): Tournament ID. Must be unique for saving/loading\
-                purposes.
+            _id (int): Tournament ID. (len 6)
             name (str): Tournament name.
-            players (list[Player, int]): List of players and their points for\
-                this tournament.
+            players (list[list[Player, int]]): list of [Players, Scores] of
+                tournament.
+            rounds (list[Round]): All rounds from this tournament.
             localization (Address): Tournament address.
-            rounds_amount (int, optional): Number of rounds until tournament's\
+            rounds_amount (int, optional): Number of rounds until tournament
                 end. Defaults to 4.
-            description (str, optional): Tournament description.
+            description (str, optional): Tounament description. Defaults to
+                "Tournoi {name} à {localization.postcode}."
         """
-        self.id = id
+        self.id = _id
         self.name = name
         self.players = [[player[0], player[1]] for player in players]
         self.rounds = rounds
         self.localization = localization
         self.rounds_amount = rounds_amount
 
-        self.start_time = start_time
-        self.end_time = end_time
+        self.start_time: datetime = None
+        self.end_time: datetime = None
 
         if description == "":
-            self.description = (
-                f"Tournoi {name} à {localization.postcode}."
-                # f"the {self.start_time}."
-            )
+            self.description = f"Tournoi {name} à {localization.postcode}."
         else:
             self.description = description
 
     def add_player(self, player: Player):
+        """Add player to tournament.
+
+        Args:
+            player (Player): Player to add to tournament.
+        """
         self.players.append([player, 0])
 
     def start_tournament(self):
+        """Start tournament and set start_time."""
         self.start_time = datetime.datetime.now()
         self.save()
 
     def end_tournament(self):
+        """End tournament and set end_time."""
         self.end_time = datetime.datetime.now()
         self.save()
 
     def save(self):
+        """Save match in data.json."""
         save_data(self.to_json())
 
     def to_json(self) -> dict:
@@ -92,7 +100,8 @@ class Tournament:
         }
         return this_json
 
-    def from_id(tournament_id: int) -> Self:
+    # pylint: disable=no-self-argument
+    def from_id(tournament_id: int) -> Self | None:
         """Return Tournament object from json through id.
         Return None if ID not found.
 
@@ -100,7 +109,7 @@ class Tournament:
             tournament_id (int): Tournament ID
 
         Returns:
-            Tournament: Tournament object
+            Tournament | None: Tournament object or None if not found.
         """
         str_tournament_id = str(tournament_id)
         data = load_data()
@@ -110,7 +119,7 @@ class Tournament:
             return None
         json_ref = data[TOURNAMENTS][str_tournament_id]
         tournament = Tournament(
-            id=tournament_id,
+            _id=tournament_id,
             name=json_ref["name"],
             players=[
                 [Player.from_id(player[0]), player[1]]
@@ -138,14 +147,24 @@ class Tournament:
         return tournament
 
     def players_already_met(self, player1: Player, player2: Player) -> bool:
+        """Check if players met in previous rounds. Return True if so.
+
+        Args:
+            player1 (Player): Player to check if other player already played
+                against.
+            player2 (Player): Player to check if other player already played
+                against.
+
+        Returns:
+            bool: True if players already met.
+        """
         for r in self.rounds:
             for m in r.matches:
                 ids = [player.id for player in m.players]
                 if player1.id in ids:
                     if player2.id in ids:
                         return True
-                    else:
-                        break  # plus d'équivalence possible dans ce round
+                    break  # plus d'équivalence possible dans ce round
         return False
 
     def __str__(self):

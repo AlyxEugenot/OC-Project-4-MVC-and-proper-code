@@ -1,27 +1,29 @@
+"""Round object."""
+
 import datetime
 from typing import Self
-from chess.model.storage import save_data, load_data, ROUNDS
+from chess import utils
 from chess.model import Match
-import chess.utils as utils
+from chess.model.storage import save_data, load_data, ROUNDS
 
 
 class Round:
     """Round class. Rounds are composed of multiple matches."""
 
-    def __init__(self, id: int, name: str, matches: list[Match]):
+    def __init__(self, _id: int, name: str, matches: list[Match]):
         """Round init.
 
         Args:
             id (int): Round ID. (len 6)
-            name (str): Round Name. ex: "Round 1"
+            name (str): Round name. ex: "Round 1"
             matches(list[Match]): All matches of this round.
         """
-        self.id = id
+        self.id = _id
         self.name = name
         # self.parent_tournament = tournament
 
-        self.start_time = None
-        self.end_time = None
+        self.start_time: datetime = None
+        self.end_time: datetime = None
         self.matches = matches
 
         self.start_round()
@@ -47,6 +49,7 @@ class Round:
         return self.end_time
 
     def save(self):
+        """Save round in data.json."""
         save_data(self.to_json())
 
     def to_json(self) -> dict:
@@ -71,7 +74,8 @@ class Round:
         }
         return this_json
 
-    def from_id(round_id: int) -> Self:
+    # pylint: disable=no-self-argument
+    def from_id(round_id: int) -> Self | None:
         """Return Round object from json through id.
         Return None if ID not found.
 
@@ -79,7 +83,7 @@ class Round:
             round_id (int): Round ID
 
         Returns:
-            Round: Round object
+            Round | None: Round object or None if not found.
         """
         str_round_id = str(round_id)
         data = load_data()
@@ -89,7 +93,7 @@ class Round:
             return None
         json_ref = data[ROUNDS][str_round_id]
         this_round = Round(
-            id=round_id,
+            _id=round_id,
             name=json_ref["name"],
             matches=[Match.from_id(entry) for entry in json_ref["matches"]],
             # tournament=json_ref["parent_tournament"],

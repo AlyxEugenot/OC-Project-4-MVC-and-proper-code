@@ -1,25 +1,42 @@
+"""All callbacks to do with model."""
+
 import chess.model
 import chess.model.generate
 import chess.model.storage
-import chess.utils as utils
+from chess import utils
 
 
 def add_player_to_tournament(
     player_id: str, tournament: chess.model.Tournament
 ) -> chess.model.Player | None:
+    """Add player to tournament if exist in data.json.
+
+    Args:
+        player_id (str): Player ID to add. (format AB12345)
+        tournament (chess.model.Tournament): Tournament to add players to.
+
+    Returns:
+        chess.model.Player | None: Return Player if added to tournament.\
+            Else return None.
+    """
     player = chess.model.Player.from_id(player_id)
     if player is not None:
         tournament.add_player(player)
         tournament.save()
         return player
-    else:
-        return None
+    return None
 
 
 def update_tournament_scores(
     tournament: chess.model.Tournament,
     finished_matches: list[chess.model.Match],
 ):
+    """Update tournament scores from matches results on round end.
+
+    Args:
+        tournament (chess.model.Tournament): Tournament to update.
+        finished_matches (list[chess.model.Match]): All finished matches.
+    """
     for match in finished_matches:
         for player in match.players:
             for t_player in tournament.players:
@@ -30,19 +47,27 @@ def update_tournament_scores(
 
 
 def start_new_round(tournament: chess.model.Tournament) -> chess.model.Round:
+    """Set the round when beginning it by generating match pairs and round ID.
+
+    Args:
+        tournament (chess.model.Tournament): Tournament to set new round in.
+
+    Returns:
+        chess.model.Round: Round set up.
+    """
     generated_pairs = utils.generate_pairs_for_new_round(tournament)
     matches = []
     for opponents in generated_pairs:
         match_id = chess.model.generate.generate_available_id(
             chess.model.storage.MATCHES
         )
-        matches.append(chess.model.Match(id=match_id, players=opponents))
+        matches.append(chess.model.Match(_id=match_id, players=opponents))
 
     round_id = chess.model.generate.generate_available_id(
         chess.model.storage.ROUNDS
     )
     new_round = chess.model.Round(
-        id=round_id,
+        _id=round_id,
         name=f"Round {len(tournament.rounds)+1}",
         matches=matches,
     )
@@ -53,7 +78,28 @@ def start_new_round(tournament: chess.model.Tournament) -> chess.model.Round:
 # region Reports callbacks
 def report_players(
     player_ids: list[str] = None,
-) -> tuple[str, str, str, str, int]:  # all players if None
+) -> list[tuple[str, str, str, str, int]]:  # all players if None
+    """Get list of player info from data.json.
+    All players if player_ids is None.
+
+    First tuple element is info type (headers).
+
+    Returned tuples are:
+        ID
+        Last name
+        First name
+        Birth date
+        Elo
+
+    Args:
+        player_ids (list[str], optional): IDs to get player info from.
+            Get all players if None. Defaults to None.
+
+    Returns:
+        list[tuple[str, str, str, str, int]]: Player info. First list element
+            is info type (headers). Returned tuples are
+            (ID, Last name, First name, Birth date, Elo)
+    """
     players_json = chess.model.storage.sort_data()[chess.model.storage.PLAYERS]
 
     returned_list = [["ID", "Nom", "Prénom", "Date de naissance", "Elo"]]
@@ -76,7 +122,27 @@ def report_players(
 
 def report_players_from_tournament(
     tournament_id: str,
-) -> tuple[str, str, str, str, int]:
+) -> list[tuple[str, str, str, str, int]]:
+    """Get list of player info of tournament from data.json.
+
+    First tuple element is info type (headers).
+
+    Returned tuples are:
+        ID
+        Last name
+        First name
+        Birth date
+        Elo
+
+
+    Args:
+        tournament_id (str): Tournament ID as str to get info from.
+
+    Returns:
+        list[tuple[str, str, str, str, int]]: Player info of tournament.
+            First list element is info type (headers). Returned tuples are
+            (ID, Last name, First name, Birth date, Elo)
+    """
     tournaments_json = chess.model.storage.load_data()[
         chess.model.storage.TOURNAMENTS
     ]
@@ -97,7 +163,33 @@ def report_players_from_tournament(
 
 def report_rounds_from_tournament(
     tournament_id: str, match_is_int: bool = True
-) -> tuple[int, str, str, str, str]:  # multiline if match_is_int is False
+) -> list[tuple[int, str, str, str, str]]:  # multiline if match_is_int False
+    """Get list of round info of tournament from data.json.
+
+    If match_is_int is False, return all match info as well. Return match IDs
+    instead if True.
+
+    First tuple element is info type (headers).
+
+    Returned tuple is:
+        ID
+        Round name
+        Matches (format "player1[W]: 1, player2: 0" if match_is_int is False)
+        Round beginning datetime
+        Round ending datetime
+
+    Args:
+        tournament_id (str): Tournament ID as str to get info from.
+        match_is_int (bool, optional):  If False, return all match info.
+            If True, return match IDs instead. Defaults to True.
+
+    Returns:
+        list[tuple[int, str, str, str, str]]: Round info. First tuple element
+            is info type (headers). Returned tuples are
+            (ID, Round name, Matches, Round beginning datetime,
+            Round ending datetime)
+    """
+
     json = chess.model.storage.sort_data()
     tournaments_json = json[chess.model.storage.TOURNAMENTS]
     rounds_json = json[chess.model.storage.ROUNDS]
@@ -124,29 +216,14 @@ def report_rounds_from_tournament(
             for match_id in value["matches"]:
                 match_json = json[chess.model.storage.MATCHES][str(match_id)]
                 # ex: player1[W]: 1, player2: 0
-                if match_json["white"] == match_json["score"][0][0]:
-                    match_result = (
-                        f"{str(match_json["score"][0][0])}[W]: "
-                        f"{match_json["score"][0][1]}, "
-                        f"{str(match_json["score"][1][0])}: "
-                        f"{match_json["score"][1][1]}"
-                    )
-                else:
-                    match_result = (
-                        f"{str(match_json["score"][0][0])}: "
-                        f"{match_json["score"][0][1]}, "
-                        f"{str(match_json["score"][1][0])}[W]: "
-                        f"{match_json["score"][1][1]}"
-                    )
-                # TODO voir avec Julien s'il préfère PEP 8 ou pas
-                # match_result = (
-                #     f"{str(match_json["score"][0][0])}"
-                #     f"{"[W]" if match_json["white"] == match_json["score"][0][0] else ""}: "
-                #     f"{match_json["score"][0][1]}, "
-                #     f"{str(match_json["score"][1][0])}"
-                #     f"{"[W]" if match_json["white"] == match_json["score"][1][0] else ""}: "
-                #     f"{match_json["score"][1][1]}"
-                # )
+                match_result = (
+                    f"{str(match_json["score"][0][0])}"
+                    f"{"[W]" if match_json["white"] == match_json["score"][0][0] else ""}: "  # noqa
+                    f"{match_json["score"][0][1]}, "
+                    f"{str(match_json["score"][1][0])}"
+                    f"{"[W]" if match_json["white"] == match_json["score"][1][0] else ""}: "  # noqa
+                    f"{match_json["score"][1][1]}"
+                )
                 matches_str.append(
                     f"------ {str(match_id)} ------\n{match_result}"
                 )
@@ -165,7 +242,24 @@ def report_rounds_from_tournament(
     return returned_list
 
 
-def report_matches_from_round(round_id: str):
+def report_matches_from_round(round_id: str) -> list[tuple[int, str, str]]:
+    """Get list of match info of round from data.json.
+
+    First tuple element is info type (headers).
+
+    Returned tuple is:
+        ID
+        Players and scores
+        White player
+
+    Args:
+        round_id (str): Round ID as str to get info from.
+
+    Returns:
+        list[tuple[int, str, str]]: Match info. First tuple element is info
+            type (headers). Returned tuples are
+            (ID, Players and scores, White player)
+    """
     json = chess.model.storage.sort_data()
     rounds_json = json[chess.model.storage.ROUNDS]
     matches_json = json[chess.model.storage.MATCHES]
@@ -198,9 +292,34 @@ def report_matches_from_round(round_id: str):
 
 def report_tournaments(
     tournament_id: str = None,
-) -> tuple[
-    str, str, str, str, str, str, str, str, str
-]:  # all tournaments if None
+) -> list[tuple[str, str, str, str, str, str, str, str, str]]:
+    """Get list of tournament info from data.json.
+    All tournaments if tournament_id is None.
+
+    First tuple element is info type (headers).
+
+    Returned tuple is:
+        ID
+        Tournament name
+        Players and scores
+        Rounds
+        Address
+        Round amount
+        Description
+        Tournament beginning datetime
+        Tournament ending datetime
+
+    Args:
+        tournament_id (str, optional): ID to get tournament info from.
+            Get all tournaments if None. Defaults to None.
+
+    Returns:
+        list[ tuple[str, str, str, str, str, str, str, str, str] ]: Tournament
+            info. First tuple element is info type (headers). Returned tuples
+            are (ID, Tournament name, Players and scores, Rounds, Address,
+            Round amount, Description, Tournament beginning datetime,
+            Tournament ending datetime)
+    """
     tournaments_json = chess.model.storage.sort_data()[
         chess.model.storage.TOURNAMENTS
     ]

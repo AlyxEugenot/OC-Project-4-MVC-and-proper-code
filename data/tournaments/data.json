@@ -1,431 +1,302 @@
 {
-    "players": {
-        "HK07443": {
-            "first_name": "Ruxfo",
-            "last_name": "Aixu",
-            "birth_date": "1991-03-16",
-            "elo": 639
-        },
-        "VD28459": {
-            "first_name": "Luome",
-            "last_name": "Bwgd",
-            "birth_date": "2016-01-13",
-            "elo": 181
-        },
-        "OH25697": {
-            "first_name": "Barbo",
-            "last_name": "Bxa",
-            "birth_date": "1976-10-23",
-            "elo": 210
-        },
-        "OX62338": {
-            "first_name": "Zuacu",
-            "last_name": "Clbkpez",
-            "birth_date": "1987-07-23",
-            "elo": 521
-        },
-        "GV57377": {
-            "first_name": "Qogza",
-            "last_name": "Cttr",
-            "birth_date": "2018-09-14",
-            "elo": 1459
-        },
-        "NY14677": {
-            "first_name": "Roctu",
-            "last_name": "Eoxsvik",
-            "birth_date": "2021-01-22",
-            "elo": 1044
-        },
-        "IY53956": {
-            "first_name": "Texra",
-            "last_name": "Epzxy",
-            "birth_date": "1995-06-24",
-            "elo": 1561
-        },
-        "NX92880": {
-            "first_name": "Behgi",
-            "last_name": "Hkzwf",
-            "birth_date": "2015-04-26",
-            "elo": 1424
-        },
-        "UI73169": {
-            "first_name": "Hopxa",
-            "last_name": "Iwz",
-            "birth_date": "2005-03-15",
-            "elo": 1462
-        },
-        "YQ49911": {
-            "first_name": "Dupce",
-            "last_name": "Ksydf",
-            "birth_date": "1977-07-22",
-            "elo": 833
-        },
-        "AA11111": {
-            "first_name": "Maxime",
-            "last_name": "Marset",
-            "birth_date": "1995-06-24",
-            "elo": 1000
-        },
-        "AA00000": {
-            "first_name": "Julien",
-            "last_name": "Millot",
-            "birth_date": "1972-03-04",
-            "elo": 2000
-        },
-        "YC58257": {
-            "first_name": "Xibgo",
-            "last_name": "Nxvvdf",
-            "birth_date": "2009-12-10",
-            "elo": 1720
-        },
-        "UU92527": {
-            "first_name": "Mybhu",
-            "last_name": "Nze",
-            "birth_date": "1997-02-01",
-            "elo": 1232
-        },
-        "NK00418": {
-            "first_name": "Fajzy",
-            "last_name": "Oavsdnrb",
-            "birth_date": "1978-03-24",
-            "elo": 1194
-        },
-        "VS13593": {
-            "first_name": "Fuyse",
-            "last_name": "Obg",
-            "birth_date": "1970-03-16",
-            "elo": 79
-        },
-        "HO31948": {
-            "first_name": "Diphu",
-            "last_name": "Ubtgkkid",
-            "birth_date": "1982-05-06",
-            "elo": 1203
-        },
-        "EX00504": {
-            "first_name": "Miyti",
-            "last_name": "Wsxpzlfn",
-            "birth_date": "1975-08-23",
-            "elo": 1735
-        },
-        "BL37659": {
-            "first_name": "Qowbe",
-            "last_name": "Zepiqha",
-            "birth_date": "2003-12-04",
-            "elo": 1242
-        },
-        "GX66539": {
-            "first_name": "Gexho",
-            "last_name": "Zmfyy",
-            "birth_date": "2004-09-11",
-            "elo": 438
-        }
+  "players": {
+    "HK07443": {
+      "first_name": "Ruxfo",
+      "last_name": "Aixu",
+      "birth_date": "1991-03-16",
+      "elo": 639
     },
-    "tournaments": {
-        "615594": {
-            "name": "le super tournoi de fou",
-            "players": [],
-            "rounds": [],
-            "localization": {
-                "addressee_id": "Mr. Ceana Ohflmyoc",
-                "delivery_point": "Appartement 13",
-                "additional_geo_info": "",
-                "house_nb_street_name": "227 Rue  Lz",
-                "additional_delivery_info": "",
-                "postcode": "85135 IXBCGSK",
-                "country_name": "FRANCE"
-            },
-            "rounds_amount": 4,
-            "description": "Tournament le super tournoi de fou at 85135 IXBCGSK.",
-            "start_time": null,
-            "end_time": null
-        },
-        "890793": {
-            "name": "oe oe oe",
-            "players": [
-                [
-                    "AA00000",
-                    4.5
-                ],
-                [
-                    "BL37659",
-                    0
-                ],
-                [
-                    "NK00418",
-                    1.5
-                ],
-                [
-                    "AA11111",
-                    4.5
-                ],
-                [
-                    "HO31948",
-                    2
-                ],
-                [
-                    "GX66539",
-                    2.5
-                ]
-            ],
-            "rounds": [
-                200617,
-                995432,
-                535075,
-                786761
-            ],
-            "localization": {
-                "addressee_id": "Mr. Qoqzi Tdal",
-                "delivery_point": "Escalier D",
-                "additional_geo_info": "",
-                "house_nb_street_name": "51 Avenue Bis Krlgj Tf",
-                "additional_delivery_info": "",
-                "postcode": "87368 NFXQ",
-                "country_name": "FRANCE"
-            },
-            "rounds_amount": 4,
-            "description": "Tournament oe oe oe at 87368 NFXQ.",
-            "start_time": "2025-03-14T17:23:59.078785",
-            "end_time": null
-        }
+    "VD28459": {
+      "first_name": "Luome",
+      "last_name": "Bwgd",
+      "birth_date": "2016-01-13",
+      "elo": 181
     },
-    "rounds": {
-        "200617": {
-            "name": "Round 1",
-            "matches": [
-                4743352307,
-                5526334274,
-                9800683079
-            ],
-            "start_time": "2025-03-18T22:12:26.560432",
-            "end_time": "2025-03-18T23:04:29.210415"
-        },
-        "995432": {
-            "name": "Round 2",
-            "matches": [
-                4716478859,
-                9245997015,
-                6082129109
-            ],
-            "start_time": "2025-03-18T23:07:38.290708",
-            "end_time": "2025-03-18T23:10:14.654173"
-        },
-        "535075": {
-            "name": "Round 3",
-            "matches": [
-                3542213982,
-                5221426959,
-                3126922570
-            ],
-            "start_time": "2025-03-18T23:12:27.308858",
-            "end_time": "2025-03-25T19:05:35.690038"
-        },
-        "786761": {
-            "name": "Round 4",
-            "matches": [
-                1875610977,
-                5020004121,
-                5146278171
-            ],
-            "start_time": "2025-03-25T19:05:37.101931",
-            "end_time": null
-        }
+    "OH25697": {
+      "first_name": "Barbo",
+      "last_name": "Bxa",
+      "birth_date": "1976-10-23",
+      "elo": 210
     },
-    "matches": {
-        "1875610977": {
-            "score": [
-                [
-                    "AA00000",
-                    0.5
-                ],
-                [
-                    "GX66539",
-                    0.5
-                ]
-            ],
-            "white": "AA00000"
-        },
-        "3126922570": {
-            "score": [
-                [
-                    "GX66539",
-                    1
-                ],
-                [
-                    "BL37659",
-                    0
-                ]
-            ],
-            "white": "GX66539"
-        },
-        "3523995068": {
-            "score": [
-                [
-                    "AA00000",
-                    1
-                ],
-                [
-                    "GX66539",
-                    0
-                ]
-            ],
-            "white": "AA00000"
-        },
-        "3542213982": {
-            "score": [
-                [
-                    "AA00000",
-                    1
-                ],
-                [
-                    "HO31948",
-                    0
-                ]
-            ],
-            "white": "HO31948"
-        },
-        "4716478859": {
-            "score": [
-                [
-                    "AA00000",
-                    0.5
-                ],
-                [
-                    "AA11111",
-                    0.5
-                ]
-            ],
-            "white": "AA00000"
-        },
-        "4743352307": {
-            "score": [
-                [
-                    "AA00000",
-                    1
-                ],
-                [
-                    "BL37659",
-                    0
-                ]
-            ],
-            "white": "BL37659"
-        },
-        "5020004121": {
-            "score": [
-                [
-                    "AA11111",
-                    0
-                ],
-                [
-                    "HO31948",
-                    0
-                ]
-            ],
-            "white": "AA11111"
-        },
-        "5146278171": {
-            "score": [
-                [
-                    "NK00418",
-                    0
-                ],
-                [
-                    "BL37659",
-                    0
-                ]
-            ],
-            "white": "BL37659"
-        },
-        "5221426959": {
-            "score": [
-                [
-                    "AA11111",
-                    1
-                ],
-                [
-                    "NK00418",
-                    0
-                ]
-            ],
-            "white": "NK00418"
-        },
-        "5526334274": {
-            "score": [
-                [
-                    "AA11111",
-                    1
-                ],
-                [
-                    "NK00418",
-                    0
-                ]
-            ],
-            "white": "NK00418"
-        },
-        "6082129109": {
-            "score": [
-                [
-                    "NK00418",
-                    0.5
-                ],
-                [
-                    "GX66539",
-                    0.5
-                ]
-            ],
-            "white": "GX66539"
-        },
-        "8796987938": {
-            "score": [
-                [
-                    "AA11111",
-                    1
-                ],
-                [
-                    "HO31948",
-                    0
-                ]
-            ],
-            "white": "AA11111"
-        },
-        "9047318314": {
-            "score": [
-                [
-                    "NK00418",
-                    1
-                ],
-                [
-                    "BL37659",
-                    0
-                ]
-            ],
-            "white": "BL37659"
-        },
-        "9245997015": {
-            "score": [
-                [
-                    "HO31948",
-                    1
-                ],
-                [
-                    "BL37659",
-                    0
-                ]
-            ],
-            "white": "BL37659"
-        },
-        "9800683079": {
-            "score": [
-                [
-                    "HO31948",
-                    1
-                ],
-                [
-                    "GX66539",
-                    0
-                ]
-            ],
-            "white": "HO31948"
-        }
+    "OX62338": {
+      "first_name": "Zuacu",
+      "last_name": "Clbkpez",
+      "birth_date": "1987-07-23",
+      "elo": 521
+    },
+    "GV57377": {
+      "first_name": "Qogza",
+      "last_name": "Cttr",
+      "birth_date": "2018-09-14",
+      "elo": 1459
+    },
+    "NY14677": {
+      "first_name": "Roctu",
+      "last_name": "Eoxsvik",
+      "birth_date": "2021-01-22",
+      "elo": 1044
+    },
+    "IY53956": {
+      "first_name": "Texra",
+      "last_name": "Epzxy",
+      "birth_date": "1995-06-24",
+      "elo": 1561
+    },
+    "NX92880": {
+      "first_name": "Behgi",
+      "last_name": "Hkzwf",
+      "birth_date": "2015-04-26",
+      "elo": 1424
+    },
+    "UI73169": {
+      "first_name": "Hopxa",
+      "last_name": "Iwz",
+      "birth_date": "2005-03-15",
+      "elo": 1462
+    },
+    "YQ49911": {
+      "first_name": "Dupce",
+      "last_name": "Ksydf",
+      "birth_date": "1977-07-22",
+      "elo": 833
+    },
+    "AA11111": {
+      "first_name": "Maxime",
+      "last_name": "Marset",
+      "birth_date": "1995-06-24",
+      "elo": 1000
+    },
+    "AA00000": {
+      "first_name": "Julien",
+      "last_name": "Millot",
+      "birth_date": "1972-03-04",
+      "elo": 2000
+    },
+    "YC58257": {
+      "first_name": "Xibgo",
+      "last_name": "Nxvvdf",
+      "birth_date": "2009-12-10",
+      "elo": 1720
+    },
+    "UU92527": {
+      "first_name": "Mybhu",
+      "last_name": "Nze",
+      "birth_date": "1997-02-01",
+      "elo": 1232
+    },
+    "NK00418": {
+      "first_name": "Fajzy",
+      "last_name": "Oavsdnrb",
+      "birth_date": "1978-03-24",
+      "elo": 1194
+    },
+    "VS13593": {
+      "first_name": "Fuyse",
+      "last_name": "Obg",
+      "birth_date": "1970-03-16",
+      "elo": 79
+    },
+    "HO31948": {
+      "first_name": "Diphu",
+      "last_name": "Ubtgkkid",
+      "birth_date": "1982-05-06",
+      "elo": 1203
+    },
+    "EX00504": {
+      "first_name": "Miyti",
+      "last_name": "Wsxpzlfn",
+      "birth_date": "1975-08-23",
+      "elo": 1735
+    },
+    "BL37659": {
+      "first_name": "Qowbe",
+      "last_name": "Zepiqha",
+      "birth_date": "2003-12-04",
+      "elo": 1242
+    },
+    "GX66539": {
+      "first_name": "Gexho",
+      "last_name": "Zmfyy",
+      "birth_date": "2004-09-11",
+      "elo": 438
     }
+  },
+  "tournaments": {
+    "615594": {
+      "name": "le super tournoi de fou",
+      "players": [],
+      "rounds": [],
+      "localization": {
+        "addressee_id": "Mr. Ceana Ohflmyoc",
+        "delivery_point": "Appartement 13",
+        "additional_geo_info": "",
+        "house_nb_street_name": "227 Rue  Lz",
+        "additional_delivery_info": "",
+        "postcode": "85135 IXBCGSK",
+        "country_name": "FRANCE"
+      },
+      "rounds_amount": 4,
+      "description": "Tournament le super tournoi de fou at 85135 IXBCGSK.",
+      "start_time": null,
+      "end_time": null
+    },
+    "890793": {
+      "name": "oe oe oe",
+      "players": [
+        ["AA00000", 4.5],
+        ["BL37659", 0],
+        ["NK00418", 1.5],
+        ["AA11111", 4.5],
+        ["HO31948", 2],
+        ["GX66539", 2.5]
+      ],
+      "rounds": [200617, 995432, 535075, 786761],
+      "localization": {
+        "addressee_id": "Mr. Qoqzi Tdal",
+        "delivery_point": "Escalier D",
+        "additional_geo_info": "",
+        "house_nb_street_name": "51 Avenue Bis Krlgj Tf",
+        "additional_delivery_info": "",
+        "postcode": "87368 NFXQ",
+        "country_name": "FRANCE"
+      },
+      "rounds_amount": 4,
+      "description": "Tournament oe oe oe at 87368 NFXQ.",
+      "start_time": "2025-03-14T17:23:59.078785",
+      "end_time": null
+    }
+  },
+  "rounds": {
+    "200617": {
+      "name": "Round 1",
+      "matches": [4743352307, 5526334274, 9800683079],
+      "start_time": "2025-03-18T22:12:26.560432",
+      "end_time": "2025-03-18T23:04:29.210415"
+    },
+    "995432": {
+      "name": "Round 2",
+      "matches": [4716478859, 9245997015, 6082129109],
+      "start_time": "2025-03-18T23:07:38.290708",
+      "end_time": "2025-03-18T23:10:14.654173"
+    },
+    "535075": {
+      "name": "Round 3",
+      "matches": [3542213982, 5221426959, 3126922570],
+      "start_time": "2025-03-18T23:12:27.308858",
+      "end_time": "2025-03-25T19:05:35.690038"
+    },
+    "786761": {
+      "name": "Round 4",
+      "matches": [1875610977, 5020004121, 5146278171],
+      "start_time": "2025-03-25T19:05:37.101931",
+      "end_time": null
+    }
+  },
+  "matches": {
+    "1875610977": {
+      "score": [
+        ["AA00000", 0.5],
+        ["GX66539", 0.5]
+      ],
+      "white": "AA00000"
+    },
+    "3126922570": {
+      "score": [
+        ["GX66539", 1],
+        ["BL37659", 0]
+      ],
+      "white": "GX66539"
+    },
+    "3523995068": {
+      "score": [
+        ["AA00000", 1],
+        ["GX66539", 0]
+      ],
+      "white": "AA00000"
+    },
+    "3542213982": {
+      "score": [
+        ["AA00000", 1],
+        ["HO31948", 0]
+      ],
+      "white": "HO31948"
+    },
+    "4716478859": {
+      "score": [
+        ["AA00000", 0.5],
+        ["AA11111", 0.5]
+      ],
+      "white": "AA00000"
+    },
+    "4743352307": {
+      "score": [
+        ["AA00000", 1],
+        ["BL37659", 0]
+      ],
+      "white": "BL37659"
+    },
+    "5020004121": {
+      "score": [
+        ["AA11111", 0],
+        ["HO31948", 0]
+      ],
+      "white": "AA11111"
+    },
+    "5146278171": {
+      "score": [
+        ["NK00418", 0],
+        ["BL37659", 0]
+      ],
+      "white": "BL37659"
+    },
+    "5221426959": {
+      "score": [
+        ["AA11111", 1],
+        ["NK00418", 0]
+      ],
+      "white": "NK00418"
+    },
+    "5526334274": {
+      "score": [
+        ["AA11111", 1],
+        ["NK00418", 0]
+      ],
+      "white": "NK00418"
+    },
+    "6082129109": {
+      "score": [
+        ["NK00418", 0.5],
+        ["GX66539", 0.5]
+      ],
+      "white": "GX66539"
+    },
+    "8796987938": {
+      "score": [
+        ["AA11111", 1],
+        ["HO31948", 0]
+      ],
+      "white": "AA11111"
+    },
+    "9047318314": {
+      "score": [
+        ["NK00418", 1],
+        ["BL37659", 0]
+      ],
+      "white": "BL37659"
+    },
+    "9245997015": {
+      "score": [
+        ["HO31948", 1],
+        ["BL37659", 0]
+      ],
+      "white": "BL37659"
+    },
+    "9800683079": {
+      "score": [
+        ["HO31948", 1],
+        ["GX66539", 0]
+      ],
+      "white": "HO31948"
+    }
+  }
 }

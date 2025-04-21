@@ -7,12 +7,12 @@ __all__ = [
     "generate_specific_str",
     "generate_str",
 ]
-import chess.model as model
-import chess.model.storage as storage
 import random
-import numpy.random as nprand
 import string
 import datetime
+import numpy.random as nprand
+from chess import model
+from chess.model import storage
 
 VOWEL, CONSONNANT = ("aeiouy"), ("bcdfghjklmnpqrstvwxz")
 
@@ -30,7 +30,7 @@ def generate_players(amount: int = 4) -> list["model.Player"]:
     new_players = []
     for player in range(amount):
         player = model.Player(
-            id=generate_available_id(storage.PLAYERS),
+            _id=generate_available_id(storage.PLAYERS),
             first_name=generate_specific_str("Cvacv"),
             last_name=generate_str().title(),
             birth_date=datetime.date(
@@ -108,20 +108,20 @@ def generate_str(min_len: int = 3, max_len: int = 8) -> str:
     )
 
 
-def generate_specific_str(model: str) -> str:
-    """Generates specific str from model in argument. Same length and 
-    c=consonnant, v=vowel, n=number, any=letter. 
-    Upper and lower stay as is.
+def generate_specific_str(str_model: str) -> str:
+    """Generates specific str from model in argument. Same length and\
+        c=consonnant, v=vowel, n=number, any=letter.\
+            Upper and lower stay as is.
 
     Args:
-        model (str): Model to generate string from random letters.\
+        str_model (str): Model to generate string from random letters.\
         c=consonnant, v=vowel, n=number, any=letter
 
     Returns:
         str: String generated.
     """
     chars = []
-    for char in model:
+    for char in str_model:
         if char.lower() == "v":
             c = random.choice(VOWEL)
         elif char.lower() == "c":
@@ -141,21 +141,32 @@ def generate_specific_str(model: str) -> str:
     return "".join(chars)
 
 
-def generate_available_id(json_key: str):
-    id = None
-    while id is None or storage.id_already_exists(id, json_key):
+def generate_available_id(json_key: str) -> str | int:
+    """Generate available random ID of json_key type.
+
+    Args:
+        json_key (str): json_key from data.json\
+            Can be players, rounds, tournaments or matches.
+
+    Raises:
+        ValueError: ValueError raised if json_key is wrong.
+
+    Returns:
+        str | int: str or int ID depending on what ID is for.
+    """
+    _id = None
+    while _id is None or storage.id_already_exists(_id, json_key):
         match json_key:
             case storage.PLAYERS:
-                id = generate_specific_str("aannnnn")
+                _id = generate_specific_str("aannnnn")
             case storage.TOURNAMENTS:
-                id = random.randint(100000, 999999)
+                _id = random.randint(100000, 999999)
             case storage.ROUNDS:
-                id = random.randint(100000, 999999)
+                _id = random.randint(100000, 999999)
             case storage.MATCHES:
-                id = random.randint(1000000000, 9999999999)
+                _id = random.randint(1000000000, 9999999999)
             case _:
                 raise ValueError(
-                    "La clé n'existe pas dans le fichier de save. "
-                    "/ Elle est mal écrite."
+                    "json_key does not exist in data.json. It is wrong."
                 )
-    return id
+    return _id

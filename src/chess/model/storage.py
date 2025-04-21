@@ -121,40 +121,88 @@ def sort_data() -> dict[str, dict[str, dict]]:
     return sorted_json
 
 
-def is_id_valid(id, json_key: str) -> tuple[bool, str]:
-    if id_already_exists(id, json_key):
+def is_id_valid(_id: str, json_key: str) -> tuple[bool, str]:
+    """Verify ID is valid for any data type.
+
+    Args:
+        _id (str): ID to verify.
+        json_key (str): json_key from data.json.\
+            Can be players, rounds, tournaments or matches.
+
+    Raises:
+        ValueError: ValueError raised if json_key is wrong.
+
+    Returns:
+        tuple[bool, str]: True if id is valid.\
+            str references problem to user, is only useful if bool is False.
+    """
+
+    if id_already_exists(_id, json_key):
         return (False, "Cet ID existe déjà")
 
     match json_key:
         case "players":
-            if re.match("[A-Z]{2}[0-9]{5}$", id) is None:
-                return (False, "Le format (AB12345) de l'ID n'est pas bon.")
-            else:
-                return (True, "")
+            return regex_match_id(
+                _id,
+                regex_expression="[A-Z]{2}[0-9]{5}$",
+                error_if_no_match="Le format (AB12345) de l'ID n'est pas bon.",
+            )
         case "rounds" | "tournaments":
-            if re.match("[0-9]{6}$", id) is None:
-                return (False, "Le format (123456) de l'ID n'est pas bon.")
-            else:
-                return (True, "")
+            return regex_match_id(
+                _id,
+                regex_expression="[0-9]{6}$",
+                error_if_no_match="Le format (123456) de l'ID n'est pas bon.",
+            )
         case "matches":
-            if re.match("[0-9]{10}$", id) is None:
-                return (
-                    False,
-                    "Le format (12346578910) de l'ID n'est pas bon.",
-                )
-            else:
-                return (True, "")
+            return regex_match_id(
+                _id,
+                regex_expression="[0-9]{10}$",
+                error_if_no_match=(
+                    "Le format (12346578910) de l'ID n'est pas bon."
+                ),
+            )
         case _:
-            raise (
+            raise ValueError(
                 "dumbass programmer doesn't know how to put right parameters"
             )
 
 
-def id_already_exists(id, dict_key: str) -> bool:
+def regex_match_id(
+    _id, regex_expression: str, error_if_no_match: str
+) -> tuple[bool, str]:
+    """For is_id_valid. Verify if _id matches the regex expression.
+
+    Return False and error str if regex doesn't match.
+
+    Args:
+        _id (str): ID to verify.
+        regex_expression (str): RegEx to match with.
+        error_if_no_match (str): Error returned if no match.
+
+    Returns:
+        tuple[bool, str]: True if id matches regex expression.\
+            str returned if bool is False.
+    """
+    if re.match(regex_expression, _id) is None:
+        return (False, error_if_no_match)
+    return (True, "")
+
+
+def id_already_exists(_id, dict_key: str) -> bool:
+    """Check if id exists in data.json.
+
+    Args:
+        _id (str): ID to check.
+        dict_key (str): json_key from data.json.\
+            Can be players, rounds, tournaments or matches.
+
+    Raises:
+        ValueError: ValueError raised if json_key is wrong.
+
+    Returns:
+        bool: True if id is already present in saved data.
+    """
     this_json = load_data()
     if dict_key not in this_json.keys():
-        raise LookupError
-    if id in this_json[dict_key].keys():
-        return True
-    else:
-        return False
+        raise ValueError
+    return _id in this_json[dict_key].keys()

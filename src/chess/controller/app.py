@@ -1,12 +1,23 @@
+"""Main controller. Entry point to the program after chessTournamentApp."""
+
 import chess.model
-import chess.controller.menus as menus
+from chess.controller import menus
 import chess.controller.context
 import chess.model.callbacks
 from chess.view import View
 
 
 class App:
+    """Main Controller.
+
+    Set up the program. Initiate menus. Set up callbacks, context, view.
+    """
+
     def __init__(self):
+        """Set up the program.
+
+        Initiate menus. Set up callbacks, context, view.
+        """
         self.context = chess.controller.context.Context()
         self.view = View()
         self.main_menu = menus.MainMenu(self.context, self.view)
@@ -14,23 +25,27 @@ class App:
         self.setup()
 
     def setup(self):
+        """Set up menu and reports callbacks."""
         self.setup_permanent_menus()
         self.setup_reports()
 
     def setup_permanent_menus(self):
-        tournament: menus.TournamentHandling = self.main_menu.tournament
-        tournament.callback_add_players_to_tournament = (
+        """Set up menu callbacks."""
+        tournament_menu: menus.TournamentHandling = self.main_menu.tournament
+        tournament_menu.callback_add_players_to_tournament = (
             chess.model.callbacks.add_player_to_tournament
         )
-        tournament.callback_start_new_round = (
+        tournament_menu.callback_start_new_round = (
             chess.model.callbacks.start_new_round
         )
-        round_menu: menus.RoundHandling = tournament.round_menu
+        round_menu: menus.RoundHandling = tournament_menu.round_menu
         round_menu.callback_update_tournament_scores = (
             chess.model.callbacks.update_tournament_scores
         )
 
     def setup_reports(self):
+        """Set up reports callbacks."""
+        # pylint: disable=protected-access, unnecessary-lambda
         reports: menus.Reports = menus._abstract.find_menu(
             menus.Reports, self.main_menu
         )

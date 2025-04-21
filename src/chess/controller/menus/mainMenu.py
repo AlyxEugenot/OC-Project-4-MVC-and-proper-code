@@ -1,17 +1,46 @@
-import chess.controller.menus._abstract as _abstract
-import chess.controller.menus.tournamentMenu as tournamentMenu
-import chess.controller.menus.addPlayersMenu as addPlayersMenu
-import chess.controller.menus.reportsMenu as reportsMenu
+"""Main menu. Root of menu arborescence."""
 
 from typing import TYPE_CHECKING
+from chess.controller.menus import _abstract
+from chess.controller.menus import tournamentMenu
+from chess.controller.menus import addPlayersMenu
+from chess.controller.menus import reportsMenu
+
 
 if TYPE_CHECKING:
-    from chess.controller.app import Context
+    from chess.controller.context import Context
     from chess.view import View
 
 
 class MainMenu(_abstract.Menu):
+    """First menu the user interacts with.
+
+    Inherit from Menu.
+
+    Children:
+        WhichTournament (Menu)
+        AddPlayers (Menu)
+        Reports (Menu)
+
+    Parent of TournamentHandling (Menu)
+    """
+
     def __init__(self, context: "Context", view: "View"):
+        """Initialize super init.
+
+        Set complete arborescence with late_init to set context and view.
+
+        Add children:
+            WhichTournament
+            AddPlayers
+            Reports
+
+        Set as parent to TournamentHandling.
+
+        Args:
+            context (Context): Context object to share with all menus.
+            view (View): View object to share with all menus.
+        """
         title = "Menu principal"
         super().__init__(title=title)
         self.context = context

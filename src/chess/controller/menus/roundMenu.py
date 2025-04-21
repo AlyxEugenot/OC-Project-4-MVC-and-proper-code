@@ -1,10 +1,37 @@
+"""Menu handling rounds.
+
+Raises:
+    TypeError: TypeError raised if round ID was not found when loaded.
+    RuntimeError: RuntimeError raised if function body is run when round\
+        ID not found.
+"""
+
 import chess.model
 import chess.controller.menus
-import chess.controller.menus._abstract as _abstract
+from chess.controller.menus import _abstract
 
 
 class RoundHandling(_abstract.Menu):
+    """Menu handling rounds.
+
+    Inherit from Menu.
+
+    Children:
+        end_round (Action)
+        load_match (Action)
+
+    Parent of MatchHandling (Menu)
+    """
+
     def __init__(self):
+        """Initialize super init. Set update_tournament_scores callback.
+
+        Add children:
+            end_round
+            load_match
+
+        Set as parent to MatchHandling.
+        """
         self.round: chess.model.Round = None
         super().__init__(title="Round vide")
         self.loop_above = True
@@ -19,18 +46,29 @@ class RoundHandling(_abstract.Menu):
         self.callback_update_tournament_scores = _abstract.not_implemented
 
     def on_exit(self):
+        """Reset RoundHandling when exiting menu back to TournamentHandling."""
         self.parent.load_tournament()
         self.round = None
         self.context.current_round_id = None
         self.title = "Round vide"
 
     def load_round(self):
+        """When entering this round, get id from context and enable menu.
+
+        Raises:
+            TypeError: TypeError raised if round_id is None in context.
+        """
         if self.context.current_round_id is None:
             raise TypeError("Trying to load a round it does not find.")
         self.round = chess.model.Round.from_id(self.context.current_round_id)
         self.title = str(self.round)
 
     def execute(self):
+        """Navigate to different matches.
+
+        Raises:
+            RuntimeError: RuntimeError raised if round not loaded.
+        """
         while True:
             if self.round is None:
                 raise RuntimeError("Round should be set.")
@@ -43,7 +81,7 @@ class RoundHandling(_abstract.Menu):
                 continue
                 # on ne veut pas pouvoir modifier les matchs déjà finis dans un
                 # round passé donc on fait pas la suite de la while loop
-            elif not self.any_match_not_over():
+            if not self.any_match_not_over():
                 self.add_child(
                     _abstract.Action(
                         "Terminer le round et revenir au tournoi.",
@@ -80,11 +118,25 @@ class RoundHandling(_abstract.Menu):
             super().execute()
 
     def load_match(self, match_id: int):
+        """Load match. Then execute MatchHandling menu.
+
+        Args:
+            match_id (int): ID of match to load.
+        """
         self.context.current_match_id = match_id
         self.match_menu.load_match()
         self.match_menu.execute()
 
     def end_round(self, start_new_round: bool = True):
+        """End and exit round. Set end_time to round.
+
+        Start new round instantly if start_new_round is True instead of
+        going back to TournamentHandling.
+
+        Args:
+            start_new_round (bool, optional): Start new round instead of
+                going back to TournamentHandling if True. Defaults to True.
+        """
         self.round.end_round()
         self.callback_update_tournament_scores(
             self.parent.tournament, self.round.matches
@@ -96,6 +148,11 @@ class RoundHandling(_abstract.Menu):
             self.parent.execute()
 
     def any_match_not_over(self) -> bool:
+        """True if any match is unresolved.
+
+        Returns:
+            bool: True if any match is unresolved.
+        """
         for match in self.round.matches:
             if not match.is_over():
                 return True

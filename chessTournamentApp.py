@@ -1,6 +1,6 @@
 """Main"""
 
-import chess
+from src import chess
 
 if __name__ == "__main__":
     app = chess.App()

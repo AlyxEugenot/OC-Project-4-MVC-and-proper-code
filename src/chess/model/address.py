@@ -1,4 +1,4 @@
-from typing import Self
+"""Address object."""
 
 
 class Address:
@@ -65,7 +65,9 @@ class Address:
         }
         return this_json
 
-    def from_json(address: dict) -> Self:
+    # pylint: disable=no-self-argument
+    def from_json(address: dict) -> "Address":
+        # pylint: disable=unsubscriptable-object
         """Return Address object from json.
 
         Args:

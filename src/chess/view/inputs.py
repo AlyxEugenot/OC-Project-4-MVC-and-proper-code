@@ -1,12 +1,23 @@
+"""View inputs."""
+
 # import click
 
 # handle text beautifully
-
+import datetime
 import chess.view
 
 
-def my_input(prompt_text: str):
-    return input(f"input {prompt_text}")  # TODO str prefix
+def my_input(prompt_text: str) -> str:
+    """Handle input.
+
+    Args:
+        prompt_text (str): Text to preface the input.
+
+    Returns:
+        str: Returned input.
+    """
+    # TODO redo docstring if i do str prefix
+    return input(f"input {prompt_text}").strip()  # TODO str prefix
 
 
 # def ask_prompt(text_prompt: str, default_text: str = None):
@@ -21,6 +32,15 @@ def my_input(prompt_text: str):
 def create_address(
     address_context: str,
 ) -> tuple[str, str, str, str, str, str, str] | None:
+    """Create address from user input.
+
+    Args:
+        address_context (str): Text to preface the address inputs.
+
+    Returns:
+        tuple[str, str, str, str, str, str, str] | None: Return all address
+            fields.
+    """
     chess.view.my_print(address_context)
 
     suffix = "\n\t\t-> "
@@ -78,3 +98,19 @@ def create_address(
         postcode,
         country_name,  # ="France"
     )
+
+
+def get_valid_date() -> datetime.date:
+    """Create date from user input.
+
+    Returns:
+        datetime.date: Return date input.
+    """
+    try:
+        date = my_input("Birth date (format DD/MM/YYYY) : ")
+        day, month, year = [int(x.strip()) for x in date.split("/")]
+        date = datetime.date(year, month, day)
+    except ValueError:
+        chess.view.my_print("Wrong date format.")
+        date = get_valid_date()
+    return date

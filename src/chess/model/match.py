@@ -1,3 +1,5 @@
+"""Match object."""
+
 import random
 from typing import Self
 from chess.model import Player
@@ -8,7 +10,7 @@ class Match:
     """Match class. Used to keep track of match results."""
 
     def __init__(
-        self, id: int, players: list[Player], white_player: Player = None
+        self, _id: int, players: list[Player], white_player: Player = None
     ):
         """Match init.
 
@@ -18,7 +20,7 @@ class Match:
                 points.
             white_player (Player): Player playing first. Always leave empty.
         """
-        self.id = id
+        self.id = _id
         # self.parent_round = parent_round
         self.players = players
         self.score = {players[0]: 0, players[1]: 0}
@@ -64,6 +66,7 @@ class Match:
         raise ValueError
 
     def save(self):
+        """Save match in data.json."""
         save_data(self.to_json())
 
     def to_json(self) -> dict:
@@ -89,7 +92,8 @@ class Match:
         }
         return this_json
 
-    def from_id(match_id: int) -> Self:
+    # pylint: disable=no-self-argument
+    def from_id(match_id: int) -> Self | None:
         """Return Match object from json through id.
         Return None if ID not found.
 
@@ -97,7 +101,7 @@ class Match:
             match_id (int): Match ID
 
         Returns:
-            Match: Match object
+            Match | None: Match object or None if not found.
         """
         str_match_id = str(match_id)
         data = load_data()
@@ -107,7 +111,7 @@ class Match:
             return None
         json_ref = data[MATCHES][str_match_id]
         this_match = Match(
-            id=match_id,
+            _id=match_id,
             # parent_round=round_from_id(json_ref["parent_round"]),
             players=[
                 Player.from_id(player[0]) for player in json_ref["score"]
@@ -123,6 +127,7 @@ class Match:
         return this_match
 
     def is_over(self) -> bool:
+        """True if sum of players scores is 1. False if 0."""
         if self.score[self.players[0]] + self.score[self.players[1]] < 1:
             return False
         return True

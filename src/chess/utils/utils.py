@@ -1,3 +1,5 @@
+"""Utils."""
+
 from datetime import datetime
 import typing
 
@@ -7,7 +9,17 @@ if typing.TYPE_CHECKING:
 
 def generate_pairs_for_new_round(
     tournament: "chess.model.Tournament",
-) -> list[list["chess.model.Player"]]:
+) -> list[tuple["chess.model.Player", "chess.model.Player"]]:
+    """Generate pairs for new round from players in tournament.
+
+    Verify players have not matched before.
+
+    Args:
+        tournament (Tournament): Tournament to generate new player pairs in.
+
+    Returns:
+        list[tuple[Player, Player]]: List of Player pairs
+    """
     # sort by player score
     sorted_players: list = sorted(
         tournament.players, key=lambda i: i[1], reverse=True
@@ -47,6 +59,18 @@ def nested_list_to_str(
     inner_join_str: str = " ",
     outer_join_str: str = "\n",
 ) -> str:
+    """Decompose a nested list to a single str joined with inner_join_str and
+    outer_join_str.
+
+    Args:
+        nested_list (list[list[str]]): Nested list to decompose.
+        inner_join_str (str, optional): inner join char. Defaults to " ".
+        outer_join_str (str, optional): outer join char. Defaults to "\\n".
+
+    Returns:
+        str: Decomposed nested list joined with inner_join_str and
+        outer_join_str.
+    """
     inner_strs = []
     for outer in nested_list:
         inner_strs.append(inner_join_str.join([str(x) for x in outer]))
@@ -55,52 +79,84 @@ def nested_list_to_str(
 
 
 def json_date_to_str(json_date: str) -> str:
-    if json_date == "null":
-        return "null"
-    else:
-        return datetime.fromisoformat(json_date).strftime("%d-%m-%Y")
+    """Adapt date in json to str in "day-month-year" format.
+
+    Args:
+        json_date (str): json date to adapt as str.
+
+    Returns:
+        str: Date in "day-month-year" format.
+    """
+    if json_date is None:
+        return "None"
+    return datetime.fromisoformat(json_date).strftime("%d-%m-%Y")
+
+
+def json_datetime_to_str(json_datetime: str) -> str:
+    """Adapt json datetime to str in "day-month-year hour:minute" format.
+
+    Args:
+        json_datetime (str): json datetime to adapt as str.
+
+    Returns:
+        str: Date in "day-month-year hour:minute" format.
+    """
+    if json_datetime is None:
+        return "None"
+    return datetime.fromisoformat(json_datetime).strftime("%d-%m-%Y %H:%M")
 
 
 def slim_json_dict_by_ids(
     dict_to_slim: dict[str, dict], ids: list
 ) -> dict[str, dict]:
+    """Cut down dict to only retain list of IDs.
+
+    Args:
+        dict_to_slim (dict[str, dict]): Dict to cut down.
+        ids (list): List of IDs to keep from dict.
+
+    Raises:
+        ValueError: ValueError raised if any ID not found.
+
+    Returns:
+        dict[str, dict]: Reduced dict.
+    """
     reduced_dict = {}
-    for id in ids:
+    for _id in ids:
         try:
-            reduced_dict[id] = dict_to_slim[id]
-        except KeyError:
-            print(f"{id} non trouvé.")
+            reduced_dict[_id] = dict_to_slim[_id]
+        except ValueError:
+            print(f"{_id} non trouvé.")
     return reduced_dict
 
 
 def is_empty_string(string_to_test: str) -> bool:
+    """True if str is equals to "" or is None.
+
+    Args:
+        string_to_test (str): str to test if is empty or None.
+
+    Returns:
+        bool: True if str is equals to "" or is None.
+    """
     if string_to_test == "" or string_to_test is None:
         return True
-    else:
-        return False
-
-
-def json_datetime_to_str(json_datetime: str) -> str:
-    if json_datetime is None:
-        return "None"
-    else:
-        return datetime.fromisoformat(json_datetime).strftime("%d-%m-%Y %H:%M")
+    return False
 
 
 def datetime_to_isoformat(
-    datetime: datetime,
+    _datetime: datetime,
 ) -> str:
     """Return datetime or date to isoformat.
 
     Return None if date is None, to let empty data stay empty.
 
     Args:
-        date (datetime.datetime): datetime or date to stringify
+        _datetime (datetime.datetime): datetime to stringify
 
     Returns:
         str: date to isoformat. None if None
     """
-    if datetime is not None:
-        return datetime.isoformat()
-    else:
-        return None
+    if _datetime is not None:
+        return _datetime.isoformat()
+    return None
