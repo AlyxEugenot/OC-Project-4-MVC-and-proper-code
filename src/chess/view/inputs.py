@@ -181,7 +181,7 @@ def regular_inputs(
 ):
     """Regular inputs. To trigger on any input.
 
-    `q` for quit program. (Confirmation needed with `O`)
+    `q` for quit program. (Confirmation needed with `o`)
 
     `r` for cancel to execute last menu.
 
@@ -196,13 +196,15 @@ def regular_inputs(
     """
     match _input.lower():
         case "q":  # for quitter
-            if (
-                _my_input(
-                    "Voulez-vous vraiment quitter ? "
-                    "Retour au dernier menu si non. (O/N) : "
-                ).upper()
-                == "O"
-            ):
+            prompt = (
+                "\nVoulez-vous vraiment quitter ?\n"
+                "Retour au dernier menu si non. (o/n) : "
+            )
+            _input = _my_input(prompt).lower()
+            while _input not in ("o", "n"):
+                _input = _my_input(f"Input non reconnu.\n{prompt}").lower()
+
+            if _input == "o":
                 quit_callback()
             cancel_callback()
         case "r":  # for retour
