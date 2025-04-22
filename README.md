@@ -1,7 +1,7 @@
 # OC-Project-4-MVC-and-proper-code - Bienvenue.
 
 Ce code est un exercice de scraping dans mon cursus de Python d'OpenClassroom
-dédié à faire une application de tournoi d'échecs avec un code propre qui respecte la PEP8 dont [ce lien flake8]("https://rawcdn.githack.com/AlyxEugenot/OC-Project-4-MVC-and-proper-code/main/flake-report/index.html") en atteste la qualité.
+dédié à faire une application de tournoi d'échecs avec un code propre qui respecte la PEP8 dont <a ref="https://rawcdn.githack.com/AlyxEugenot/OC-Project-4-MVC-and-proper-code/main/flake-report/index.html">ce lien flake8</a> en atteste la qualité.
 
 ### Pour lancer ce projet :
 
