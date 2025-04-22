@@ -1,7 +1,8 @@
 # OC-Project-4-MVC-and-proper-code - Bienvenue.
 
-Ce code est un exercice de scraping dans mon cursus de Python d'OpenClassroom
-dédié à faire une application de tournoi d'échecs avec un code propre qui respecte la PEP8 dont <a ref="https://rawcdn.githack.com/AlyxEugenot/OC-Project-4-MVC-and-proper-code/main/flake-report/index.html">ce lien flake8</a> en atteste la qualité.
+Ce code est un exercice de MVC dans mon cursus de Python d'OpenClassroom
+dédié à faire une application de tournoi d'échecs avec un code propre qui respecte la PEP8 dont
+[ce lien flake8](https://rawcdn.githack.com/AlyxEugenot/OC-Project-4-MVC-and-proper-code/main/flake-report/index.html) en atteste la qualité.
 
 ### Pour lancer ce projet :
 
@@ -52,18 +53,18 @@ pip install -r requirements.txt
 
 ### Avant de pouvoir lancer le programme, il faut soit :
 
-> Remonter le fichier chess hors du fichier src, à la racine du projet.
+Remonter le fichier chess hors du fichier src, à la racine du projet.
 
 ### Soit :
 
-> - Ecrire dans le terminal `python -c "import sysconfig; print(sysconfig.get_path('purelib'))"`
-> - Copier ce résultat et écrire :
-> - **sous bash :**
->   - `echo "$PWD"/src > ` **Coller résultat ici**`/my_project.pth`
->     - la partie droite du `>` devrait ressembler à `C:/some/path\OC-Project-4-MVC-and-proper-code/.venv/Lib/site-packages/my_project.pth`
-> - **sous cmd :**
->   - `%cd%\src > ` **Coller résultat ici**`\my_project.pth`
->     - la partie droite du `>` devrait ressembler à `C:\some\path\OC-Project-4-MVC-and-proper-code\.venv\Lib\site-packages\my_project.pth`
+- Ecrire dans le terminal `python -c "import sysconfig; print(sysconfig.get_path('purelib'))"`
+- Copier ce résultat et écrire :
+- **sous bash :**
+  - `echo "$PWD"/src > ` **Coller résultat ici**`/my_project.pth`
+    - la partie droite du `>` devrait ressembler à `C:/some/path\OC-Project-4-MVC-and-proper-code/.venv/Lib/site-packages/my_project.pth`
+- **sous cmd :**
+  - `%cd%\src > ` **Coller résultat ici**`\my_project.pth`
+    - la partie droite du `>` devrait ressembler à `C:\some\path\OC-Project-4-MVC-and-proper-code\.venv\Lib\site-packages\my_project.pth`
 
 ---
 
@@ -77,7 +78,7 @@ python chess_tournament_app.py
 
 ---
 
-> ## Si vous désirez générer un nouveau rapport flake8 :
+## Si vous désirez générer un nouveau rapport flake8 :
 
 Toujours dans l'environnement virtuel, installez flake-html en écrivant
 
