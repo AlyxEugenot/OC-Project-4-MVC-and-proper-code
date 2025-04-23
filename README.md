@@ -51,27 +51,18 @@ pip install -r requirements.txt
 
 ---
 
-### Avant de pouvoir lancer le programme, il faut soit :
-
-Remonter le fichier chess hors du fichier src, à la racine du projet.
-
-### Soit :
-
-- Ecrire dans le terminal `python -c "import sysconfig; print(sysconfig.get_path('purelib'))"`
-- Copier ce résultat et écrire :
-- **sous bash :**
-  - `echo "$PWD"/src > ` **Coller résultat ici**`/my_project.pth`
-    - la partie droite du `>` devrait ressembler à `C:/some/path\OC-Project-4-MVC-and-proper-code/.venv/Lib/site-packages/my_project.pth`
-- **sous cmd :**
-  - `%cd%\src > ` **Coller résultat ici**`\my_project.pth`
-    - la partie droite du `>` devrait ressembler à `C:\some\path\OC-Project-4-MVC-and-proper-code\.venv\Lib\site-packages\my_project.pth`
-
----
-
 Enfin, pour lancer le programme, vous pouvez lancer :
 
+**sous cmd** :
+
 ```
-python chess_tournament_app.py
+python src\chess_tournament_app.py
+```
+
+**sous Bash** :
+
+```
+python src/chess_tournament_app.py
 ```
 
 ---
