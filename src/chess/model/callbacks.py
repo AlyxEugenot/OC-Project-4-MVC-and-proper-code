@@ -403,7 +403,6 @@ def quit_program(my_print: typing.Callable):
 def execute_main_menu(
     main_menu: "Menu",
     current_menu_arborescence: list[str],
-    my_print: typing.Callable,
     menu_header: typing.Callable,
 ):
     """view.inputs.regular_inputs method.
@@ -419,7 +418,6 @@ def execute_main_menu(
         menu_header (typing.Callable): view.my_print_header as in view to
             print headers as expected.
     """
-    my_print("menu principal...")
     current_menu_arborescence.clear()
     current_menu_arborescence.append("Menu principal")
     menu_header()

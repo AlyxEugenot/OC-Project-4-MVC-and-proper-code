@@ -80,7 +80,6 @@ class App:
             lambda: callbacks.execute_main_menu(
                 main_menu=self.main_menu,
                 current_menu_arborescence=self.view.current_menu_arborescence,
-                my_print=self.view.my_print,
                 menu_header=self.view.my_print_header,
             )
         )

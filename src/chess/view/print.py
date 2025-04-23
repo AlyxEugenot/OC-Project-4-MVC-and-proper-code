@@ -1,5 +1,7 @@
 """View prints."""
 
+import click
+
 
 def my_print(text_to_print: str, menu_arborescence: list[str]):
     """Handle app prints.
@@ -18,11 +20,11 @@ def str_prefix(menu_arborescence: list[str]) -> str:
     """Prefix to preface all print statements to align with headers.
 
     Example :
-        `┌ Menu 1                  <-- header`
-        `├┬ Menu 2                 <-- header`
-        `│├─ Action                <-- header`
-        `││                        <-- prefixed`
-        `││ Other printed things   <-- prefixed`
+        `┌ Menu 1                                   <-- header`
+        `├┬ Menu 2                                  <-- header`
+        `│├─ Action                                 <-- header`
+        `││ r:retour, m:menu principal, q:quitter   <-- prefixed`
+        `││ Other printed things                    <-- prefixed`
 
     Args:
         menu_arborescence (list[str]): Arborescence needed to adapt the prefix.
@@ -44,7 +46,7 @@ def title_headers(menu_arborescence: list[str]):
         `┌ Menu 1`
         `├┬ Menu 2`
         `│├─ Action`
-        `││`
+        `││ r:retour, m:menu principal, q:quitter`
         `││ Other printed things`
 
     Args:
@@ -71,4 +73,12 @@ def title_headers(menu_arborescence: list[str]):
 
     print("\n".join(new_arborescence_list))
 
-    my_print("", menu_arborescence)
+    click.echo(
+        str_prefix(menu_arborescence)
+        + click.style(
+            "r:retour, m:menu principal, q:quitter",
+            fg="black",
+            italic=True,
+            dim=True,
+        ),
+    )

@@ -1,10 +1,8 @@
 """View inputs."""
 
-# import click
-
-# handle text beautifully
 from typing import Callable
 import datetime
+import click
 from chess.view import print as _print
 
 
@@ -210,6 +208,7 @@ def regular_inputs(
         case "r":  # for retour
             cancel_callback()
         case "m":  # for menu principal
+            click.clear()
             main_menu_callback()
         case _:
             pass
