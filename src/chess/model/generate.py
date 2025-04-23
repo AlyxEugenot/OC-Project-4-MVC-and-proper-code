@@ -131,7 +131,7 @@ def generate_specific_str(str_model: str) -> str:
         else:
             c = random.choice(string.ascii_lowercase)
 
-        if type(c) is int:
+        if isinstance(c, int):
             c = str(c)
         elif char.isupper():
             c = c.upper()
