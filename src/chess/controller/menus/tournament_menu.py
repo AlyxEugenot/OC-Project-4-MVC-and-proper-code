@@ -85,7 +85,7 @@ class WhichTournament(_abstract.Menu):
         )
         players = players.split(",")
         players_found = [
-            player.strip()
+            [player.strip(), 0]  # Player as formatted in tournament init
             for player in players
             if model.Player.from_id(player.strip()) is not None
         ]

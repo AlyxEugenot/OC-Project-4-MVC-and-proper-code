@@ -133,8 +133,9 @@ def generate_specific_str(str_model: str) -> str:
 
         if isinstance(c, int):
             c = str(c)
-        elif char.isupper():
-            c = c.upper()
+        elif isinstance(c, str):
+            if char.isupper():
+                c = c.upper()
 
         chars.append(c)
 
