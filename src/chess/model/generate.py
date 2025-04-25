@@ -158,7 +158,7 @@ def generate_available_id(json_key: str) -> str | int:
     while _id is None or storage.id_already_exists(_id, json_key):
         match json_key:
             case storage.PLAYERS:
-                _id = generate_specific_str("aannnnn")
+                _id = generate_specific_str("AAnnnnn")
             case storage.TOURNAMENTS:
                 _id = random.randint(100000, 999999)
             case storage.ROUNDS:
