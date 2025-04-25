@@ -5,6 +5,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     import chess.model
+    from chess.view import View
 
 
 def generate_pairs_for_new_round(
@@ -130,18 +131,27 @@ def slim_json_dict_by_ids(
     return reduced_dict
 
 
-def is_empty_string(string_to_test: str) -> bool:
-    """True if str is equals to "" or is None.
+def input_int(input_prompt: str, view: "View") -> int:
+    """Get user to input valid int.
 
     Args:
-        string_to_test (str): str to test if is empty or None.
+        input_prompt (str): Prompt about input.
+        view (View): View object for my_input.
 
     Returns:
-        bool: True if str is equals to "" or is None.
+        int: Input cast as int.
     """
-    if string_to_test == "" or string_to_test is None:
-        return True
-    return False
+    input_is_ok = False
+    while not input_is_ok:
+        _input = view.my_input(input_prompt)
+
+        try:
+            _input = int(_input)
+            input_is_ok = True
+        except ValueError:
+            view.my_print("Doit être un entier.")
+
+    return _input
 
 
 def datetime_to_isoformat(

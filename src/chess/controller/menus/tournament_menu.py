@@ -70,34 +70,35 @@ class WhichTournament(_abstract.Menu):
         self.parent.tournament_menu.load_tournament()
         self.parent.tournament_menu.execute()
 
-    def create_tournament(self) -> model.Tournament:
+    def create_tournament(self):
         """Create tournament from user id. Can be generated if empty fields.
 
-        Returns:
-            model.Tournament: Created tournament.
+        Load tournament after creation.
         """
         tournament_id = self.input_tournament_id()
-        name = self.view.my_input("Nom du tournoi: ")
+        name = self.view.my_input("Nom du tournoi : ", can_be_empty=False)
         self.display_report(self.reports.all_players)
         players: str = self.view.my_input(
             "Sélectionnez les ID de joueurs séparés par des "
             "virgules : (peut être vide) "
         )
-        players = players.split(",")
+        players = [id.strip() for id in players.split(",")]
+        players = set(players)
         players_found = [
-            [player.strip(), 0]  # Player as formatted in tournament init
+            [model.Player.from_id(player), 0]
+            # Player as formatted in tournament init
             for player in players
-            if model.Player.from_id(player.strip()) is not None
+            if model.Player.from_id(player) is not None
         ]
-        localization_strs = self.view.create_adress("\nAdresse du tournoi: ")
+        localization_strs = self.view.create_adress("Adresse du tournoi : ")
         if localization_strs is None:
             localization = generate.generate_address(
                 generate.generate_players(1)[0]
             )
         else:
             localization = model.Address(*localization_strs)
-        rounds_amount = self.view.my_input("\nNombre de rounds (default 4): ")
-        description = self.view.my_input("Description (générée is vide): ")
+        rounds_amount = self.view.my_input("\nNombre de rounds (4 si vide) : ")
+        description = self.view.my_input("Description (générée is vide) : ")
 
         tournament = model.Tournament(
             _id=tournament_id,
@@ -112,7 +113,8 @@ class WhichTournament(_abstract.Menu):
             tournament.description = description
 
         tournament.save()
-        return tournament
+
+        self.load_tournament(tournament.id)
 
     def input_tournament_id(self) -> int:
         """Get user to input available tournament id.
@@ -333,7 +335,7 @@ class TournamentHandling(_abstract.Menu):
     def add_players_to_tournament(self):
         """Let user input existing player IDs to add them to tournament."""
         while True:
-            _id = self.view.my_input("ID du joueur: ")
+            _id = self.view.my_input("ID du joueur : ")
             if _id == "":
                 break
 

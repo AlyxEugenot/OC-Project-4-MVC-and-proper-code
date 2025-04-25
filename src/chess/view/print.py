@@ -77,8 +77,7 @@ def title_headers(menu_arborescence: list[str]):
         str_prefix(menu_arborescence)
         + click.style(
             "r:retour, m:menu principal, q:quitter",
-            fg="black",
+            fg="bright_black",
             italic=True,
-            dim=True,
         ),
     )

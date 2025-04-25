@@ -10,6 +10,7 @@ def my_input(
     prompt_text: str,
     menu_arborescence: list[str],
     regular_inputs_method: Callable,
+    can_be_empty: bool = True,
 ) -> str:
     """Handle input.
 
@@ -18,13 +19,14 @@ def my_input(
         menu_arborescence (list[str]): Menu str list for prefix.
         regular_inputs_method (Callable): regular_inputs method loaded with
             callbacks.
+        can_be_empty (bool, optional): If False, force user to not input "".
+            Defaults to True.
 
 
     Returns:
         str: Returned input.
     """
     this_prefix = _print.str_prefix(menu_arborescence)
-
     lines = prompt_text.split("\n")
     if len(lines) > 1:
         before_last_line = ("\n").join(lines[:-1])
@@ -35,6 +37,12 @@ def my_input(
         user_input = input(f"{this_prefix}{prompt_text}").strip()
 
     regular_inputs_method(user_input)
+
+    if user_input == "" and not can_be_empty:
+        _print.my_print("\nNe peut pas être vide.\n", menu_arborescence)
+        my_input(
+            prompt_text, menu_arborescence, regular_inputs_method, can_be_empty
+        )
 
     return user_input
 
@@ -65,8 +73,12 @@ def create_address(
         tuple[str, str, str, str, str, str, str] | None: Return all address
             fields.
     """
-
-    _print.my_print(address_context, menu_arborescence)
+    print(_print.str_prefix(menu_arborescence))  # print("")
+    print(
+        f"{_print.str_prefix(menu_arborescence).removesuffix("│ ")}├┬─ "
+        f"{address_context}"
+    )
+    menu_arborescence[-1] = menu_arborescence[-1].removeprefix("action")
 
     suffix = "\n\t\t-> "
     addressee_id = my_input(
@@ -91,6 +103,7 @@ def create_address(
         ),
         menu_arborescence,
         regular_inputs_method,
+        can_be_empty=False,
     )
     additional_geo_info = my_input(
         (
@@ -109,6 +122,7 @@ def create_address(
         ),
         menu_arborescence,
         regular_inputs_method,
+        can_be_empty=False,
     )
     additional_delivery_info = my_input(
         (
@@ -125,12 +139,16 @@ def create_address(
         ),
         menu_arborescence,
         regular_inputs_method,
+        can_be_empty=False,
     )
     country_name = my_input(
         (f"7. Pays.\n\tEx : FRANCE{suffix}"),
         menu_arborescence,
         regular_inputs_method,
+        can_be_empty=False,
     )
+    menu_arborescence[-1] = f"action{menu_arborescence[-1]}"
+
     return (
         addressee_id,
         delivery_point,

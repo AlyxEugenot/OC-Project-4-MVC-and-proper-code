@@ -139,13 +139,15 @@ class Menu(MenuAbstractItem):
             for i, item in enumerate(self.children):
                 self.view.my_print(f"{i + 1} {item.menu_option_name}")
 
-            choice = self.view.my_input("Sélectionne un choix : ")
+            choice = self.view.my_input(
+                "Sélectionne un choix : ", can_be_empty=False
+            )
 
             try:
                 choice = int(choice)
             except ValueError:
                 self.view.my_print(
-                    "Input non reconnu : nombre ou r/m/q nécessaire.\n"
+                    "\nInput non reconnu : nombre ou r/m/q nécessaire.\n"
                 )
 
             if isinstance(choice, int):
@@ -158,7 +160,7 @@ class Menu(MenuAbstractItem):
                     self.children[choice - 1].execute()
 
                 else:
-                    self.view.my_print("Input non reconnu.")
+                    self.view.my_print("\nInput non reconnu.\n")
 
             if self.loop_above:
                 break

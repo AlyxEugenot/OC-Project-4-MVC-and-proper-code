@@ -10,8 +10,13 @@ class View:
     def __init__(self):
         """Set all view methods."""
         self.current_menu_arborescence: list[str] = ["Menu principal"]
-        self.my_input = lambda prompt: chess.view.inputs.my_input(
-            prompt, self.current_menu_arborescence, self.regular_inputs
+        self.my_input = (
+            lambda prompt, can_be_empty=True: chess.view.inputs.my_input(
+                prompt,
+                self.current_menu_arborescence,
+                self.regular_inputs,
+                can_be_empty,
+            )
         )
         self.my_print = lambda prompt: chess.view.print.my_print(
             prompt, self.current_menu_arborescence
